@@ -30,7 +30,9 @@ def create_app():
 
     # register blueprints
     from project.api.users import users_blueprint
+    from project.api.bots  import bots_blueprint
     app.register_blueprint(users_blueprint)
+    app.register_blueprint(bots_blueprint)
 
     # register default route
     @app.route('/', defaults={'path': ''})

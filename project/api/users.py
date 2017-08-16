@@ -13,13 +13,6 @@ from project.keys import super_secret
 
 users_blueprint = Blueprint('users', __name__, template_folder='./templates')
 
-@users_blueprint.route('/ping', methods=['GET'])
-def ping_pong():
-    return jsonify({
-        'status':'success',
-        'message':'pong!'
-    })
-
 @users_blueprint.route('/users', methods=['POST'])
 def add_user():
     post_data = request.get_json()
@@ -36,7 +29,7 @@ def add_user():
         user = User.query.filter_by(email=email).first()
         if not user:
             password = password.encode('utf-8')
-            hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+            hashed = bcrypt.hashpw(password, bcrypt.gensalt()).decode('utf-8')
 
             user = User(
                 name=name, 
@@ -55,11 +48,7 @@ def add_user():
             }
             return jsonify(response_object), 201
         else:
-            response_object = {
-                'status': 'fail',
-                'message': 'Sorry. That email already exists.'
-            }
-            return jsonify(response_object), 400
+            return jsonify({"email":"An account already exists for that email"}),404
     except exc.IntegrityError as e:
         db.session.rollback()
         response_object = {
@@ -67,6 +56,33 @@ def add_user():
             'message': 'Invalid payload.'
         }
         return jsonify(response_object), 400
+
+
+@users_blueprint.route('/auth',methods=['POST'])
+def auth():
+    post_data = request.get_json()
+    if not post_data:
+        response_object = {
+            'status': 'fail',
+            'message': 'Invalid payload.'
+        }
+        return jsonify(response_object), 400
+    
+    email = post_data.get('email')
+    password = post_data.get('password')  
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        password = password.encode('utf-8')
+        hashed = user.password.encode('utf-8')
+        if bcrypt.hashpw(password,hashed) == hashed:
+            token = jwt.encode({'name':user.name,'email':user.email, 'id':user.id},super_secret,algorithm='HS256').decode('utf-8')
+            return jsonify({"success":"true","token":token})
+        else:
+            return jsonify({"password":"Invalid Password"}),401
+    else:
+        return jsonify({"email":"No account exists for that email"}),404
 
 @users_blueprint.route('/users/<user_id>', methods=['GET'])
 def get_single_user(user_id):

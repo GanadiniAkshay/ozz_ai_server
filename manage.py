@@ -4,6 +4,7 @@ from flask_script import Manager
 
 from project import create_app, db
 from project.api.models.users import User
+from project.api.models.bots import Bot
 
 from flask_migrate import MigrateCommand
 
