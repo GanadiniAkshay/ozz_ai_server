@@ -23,3 +23,11 @@ python-editor==1.0.3
 six==1.10.0
 SQLAlchemy==1.1.13
 Werkzeug==0.12.2
+rasa-nlu==0.9.1
+scikit-learn==0.18.2
+scipy==0.19.1
+sklearn-crfsuite==0.3.6
+spacy==1.9.0
+matplotlib==1.5.3
+tqdm==4.11.2
+numpy==1.12.1
