@@ -5,6 +5,8 @@ from flask_script import Manager
 from project import create_app, db
 from project.api.models.users import User
 from project.api.models.bots import Bot
+from project.api.models.intents import Intent
+from project.api.models.entities import Entity
 
 from flask_migrate import MigrateCommand
 
@@ -28,14 +30,6 @@ def recreate_db():
     db.drop_all()
     db.create_all()
     db.session.commit()
-
-@manager.command
-def seed_db():
-    """Seeds the database."""
-    db.session.add(User(username='michael', email="michael@realpython.com", password="testpass"))
-    db.session.add(User(username='michaelherman', email="michael@mherman.org", password="testpass"))
-    db.session.commit()
-
 
 if __name__ == '__main__':
     manager.run()

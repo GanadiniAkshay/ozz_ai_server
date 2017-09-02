@@ -1,1 +1,6 @@
-{"pipeline": "mitie_sklearn", "mitie_file": "./data/total_word_feature_extractor.dat", "path": "./models", "data": "./data/demo-rasa.json", "active_model": "models/model_20170821-040042"}
+{
+    "pipeline": "mitie_sklearn",
+    "mitie_file": "./data/total_word_feature_extractor.dat", 
+    "path": "./models", 
+    "log_level":"ERROR"
+}

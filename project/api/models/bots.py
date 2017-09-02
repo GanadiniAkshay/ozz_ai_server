@@ -14,6 +14,7 @@ class Bot(db.Model):
     user_id = db.Column(db.Integer, ForeignKey("users.id"))
     name = db.Column(db.String())
     platforms = db.Column(JSON)
+    active_model = db.Column(db.String())
     team = db.Column(JSON)
     created = db.Column(db.DateTime(timezone=False))
     used = db.Column(db.DateTime(timezone=False))
@@ -25,6 +26,7 @@ class Bot(db.Model):
         self.platforms = platforms
         self.created = datetime.datetime.now()
         self.used = datetime.datetime.now()
+        self.active_model = ""
         self.team = {"admins":[{"user_id":user_id}],"developers":[]}
 
     def __repr__(self):

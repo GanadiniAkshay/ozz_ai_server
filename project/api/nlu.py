@@ -1,13 +1,23 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from project.helpers.parser import NLUParser
 from subprocess import call
+from werkzeug import secure_filename
 
-from rasa_nlu.converters import load_data
+from project.api.models.users import User
+from project.api.models.bots import Bot
+from project.api.models.intents import Intent
+from project.api.models.entities import Entity
+from project import db, cache, interpreters, trainer, nlp, d
+from sqlalchemy import exc
+
+from project.shared.checkAuth import checkAuth
+from project.helpers.trainer import load_train_data
+
 from rasa_nlu.config import RasaNLUConfig
-from rasa_nlu.model import Trainer
+from rasa_nlu.model import Trainer, Metadata, Interpreter
 
 import mitie
 import os
@@ -16,46 +26,155 @@ import sys
 import urllib
 import tarfile
 import shutil
+import time
 
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
-config = './project/config.json'
 
-with open(config,"r") as jsonFile:
-    data = json.load(jsonFile)
-    if "active_model" in data.keys():
-        model = data["active_model"]
-
-@nlu_blueprint.route('/parse', methods=['GET'])
-def parse():
+@nlu_blueprint.route('/parse/<bot_guid>', methods=['GET'])
+def parse(bot_guid):
+    global interpreters
+    nlus = interpreters
+    config = './project/config.json'
     message = request.args.get('q')
     if type(message) != str:
         message = message.decode('utf-8')
-    with open(config,"r") as jsonFile:
-        data = json.load(jsonFile)
-        model = data["active_model"]
-    nlu = NLUParser(model, config)
-    intent, entities = nlu.parse('hello')
+    
+    model = cache.get(bot_guid +'_model')
+    
+    bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+    if bot:
+        model = bot.active_model
+        nlu = nlus[model]
+        cache.set(bot_guid+'_model', model)
+    else:
+        return jsonify({"error":"Bot doesn't exist"}),404
+    intent, entities = nlu.parse(message)
     return jsonify({"intent":intent,"entities":entities})
+    
 
 
-@nlu_blueprint.route('/train', methods=['GET'])
-def train():
-    try:
-        path = os.path.join(os.getcwd(), 'data')
-        training_data = load_data(os.path.join(path, 'demo-rasa.json'))
-        trainer = Trainer(RasaNLUConfig(os.path.join(os.getcwd(),'project', 'config.json')))
-        trainer.train(training_data)
-        model_directory = trainer.persist('models')
+@nlu_blueprint.route('/train/<bot_guid>', methods=['GET'])
+def train(bot_guid):
+    #code,user_id = checkAuth(request)
+    code = 200
+    user_id = 16
+    if code == 200:
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        if bot:
+            if bot.user_id == user_id:
+                rasa_data = {
+                                "rasa_nlu_data": 
+                                    {   
+                                        "common_examples": [
+                                            {"text": "Nomnffl", "intent": "None", "entities": []}, 
+                                            {"text": "Nekdg", "intent": "None", "entities": []}, 
+                                            {"text": "Fesf", "intent": "None", "entities": []}, 
+                                            {"text": "this is the this", "intent": "None", "entities": []}, 
+                                            {"text": "likesdike mike", "intent": "None", "entities": []},
+                                            {
+                                                "text": "in the center of NYC",
+                                                "intent": "search",
+                                                "entities": [
+                                                {
+                                                    "start": 17,
+                                                    "end": 20,
+                                                    "value": "New York City",
+                                                    "entity": "city"
+                                                }
+                                                ]
+                                            },
+                                            {
+                                                "text": "in the centre of New York City",
+                                                "intent": "search",
+                                                "entities": [
+                                                    {
+                                                        "start": 17,
+                                                        "end": 30,
+                                                        "value": "New York City",
+                                                        "entity": "city"
+                                                    }
+                                                ]
+                                            }
+                                        ],
+                                        "entity_synonyms": [
+                                            {
+                                                "value": "New York City",
+                                                "synonyms": ["NYC", "nyc", "the big apple"]
+                                            }
+                                        ]
+                                    }
+                            }
+                intents = Intent.query.filter_by(bot_guid=bot_guid)
+                entities = Entity.query.filter_by(bot_guid=bot_guid)
+                for entity in entities:
+                    for example_key in entity.examples:
+                        rasa_data['rasa_nlu_data']['entity_synonyms'].append({"value":example_key,"synonyms":entity.examples[example_key]})
+                for intent in intents:
+                    if intent.has_entities == False:
+                        for utterance in intent.utterances:
+                            common_example = {}
+                            common_example['text'] = utterance.lower()
+                            common_example['intent'] = intent.name.lower()
+                            common_example['entities'] = []
+                            rasa_data['rasa_nlu_data']['common_examples'].append(common_example)
+                    else:
+                        for utterance in intent.utterances:
+                            common_example = {}
+                            common_example['text'] = utterance.lower()
+                            common_example['intent'] = intent.name.lower()
+                            common_example['entities'] = []
+                            new_examples = []
+                            for entity in entities:
+                                for example_key in entity.examples:
+                                    utterance = utterance.lower()
+                                    ent_examples = entity.examples[example_key]
+                                    remaining_examples = ent_examples
+                                    for example in ent_examples:
+                                        example = example.lower()
+                                        if example in utterance and example in utterance.split(' '):
+                                            start = utterance.find(example)
+                                            end = start + len(example)
+                                            value = example_key
+                                            ent_name = entity.name
+                                            common_example['entities'].append({"start":start,"end":end,"value":value,"entity":ent_name})
+                                            remaining_examples.remove(example)
+                                            new_values = generate(utterance,example,remaining_examples,intent.name,entities)
+                            rasa_data['rasa_nlu_data']['common_examples'].append(common_example)
+                            rasa_data['rasa_nlu_data']['common_examples'] += new_values 
+                try:
+                    # print(rasa_data)
+                    config = './project/config.json'
+                    user_path = os.path.join(os.getcwd(),'data',str(user_id))
+                    bot_path = os.path.join(user_path,bot_guid)
+                    
+                    training_data = load_train_data(rasa_data)
+                    trainer.train(training_data)
+                    model_directory = trainer.persist('models')
+                    print(model_directory)
 
-        with open(os.path.join(os.getcwd(),'project', 'config.json'),"r") as jsonFile:
-            data = json.load(jsonFile)
+                    current_model = bot.active_model
 
-        data["active_model"] = str(model_directory)
-        with open(os.path.join(os.getcwd(),'project', 'config.json'),"w") as jsonFile:
-            json.dump(data, jsonFile)
-    except:
-        return jsonify({"success":False})
+                    if current_model and current_model != "":
+                        global interpreters
+                        interpreters.pop(current_model,0)
+                        if os.path.exists(current_model):
+                            shutil.rmtree(current_model)
+
+                    bot.active_model = str(model_directory)
+                    interpreters[model_directory] = NLUParser(model_directory,config)
+                    db.session.commit()
+                except Exception as e:
+                    print(e)
+                    return jsonify({"success":False})
+            else:
+                return jsonify({"error":"Not Authorized"}),401
+        else:
+            return jsonify({"error":"Bot doesn't exist"}),404
+    elif code == 400:
+        return jsonify({"error":"Invalid Authorization Token"}),400
+    elif code == 401:
+        return jsonify({"error":"No Authorization Token Sent"}),401
     
     return jsonify({"success":True})
 
@@ -76,3 +195,68 @@ def retrain():
             json.dump(data, jsonFile)
     nlu.train()
     return jsonify({"success":True})
+
+
+@nlu_blueprint.route('/upload/<bot_guid>', methods=['GET','POST'])
+def upload(bot_guid):
+    if request.method == 'POST':
+        code,user_id = checkAuth(request)
+
+        if code == 200:
+            bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+            if bot:
+                if bot.user_id == user_id:
+                    # The folder for all the users data
+                    user_path = os.path.join(os.getcwd(),'data',str(user_id))
+
+                    # Create the folder if it doesn't exist
+                    if not os.path.exists(user_path):
+                        os.makedirs(user_path)
+
+                    # The folder for the bot's data for a given user
+                    bot_path = os.path.join(user_path,bot_guid)
+
+                    # Create the folder if it doesn't exist
+                    if not os.path.exists(bot_path):
+                        os.makedirs(bot_path)
+
+                    #Get the file information
+                    file = request.files['file']
+                    filename = secure_filename(file.filename)
+                    
+                    # Save the file
+                    file.save(os.path.join(bot_path,'data.json'))
+                    return jsonify({"filename":filename,"type":file.content_type})
+                else:
+                    return jsonify({"error":"Not Authorized"}),401
+            else:
+                return jsonify({"error":"Bot doesn't exist"}),404
+        elif code == 400:
+            return jsonify({"error":"Invalid Authorization Token"}),400
+        elif code == 401:
+            return jsonify({"error":"No Authorization Token Sent"}),401
+    return render_template('file.html')
+
+
+def generate(string,sub_string,values, intent_name, entities):
+    new_values = []
+    for value in values:
+        utterance = string.replace(sub_string,value)
+        common_example = {}
+        common_example['text'] = utterance.lower()
+        common_example['intent'] = intent_name
+        common_example['entities'] = []
+        for entity in entities:
+            for example_key in entity.examples:
+                utterance = utterance.lower()
+                ent_examples = entity.examples[example_key]
+                for example in ent_examples:
+                    example = example.lower()
+                    if example in utterance and example in utterance.split(' '):
+                        start = utterance.find(example)
+                        end = start + len(example)
+                        value = example_key
+                        ent_name = entity.name
+                        common_example['entities'].append({"start":start,"end":end,"value":value,"entity":ent_name})
+        new_values.append(common_example)
+    return new_values

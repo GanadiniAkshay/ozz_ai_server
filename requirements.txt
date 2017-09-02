@@ -31,3 +31,5 @@ spacy==1.9.0
 matplotlib==1.5.3
 tqdm==4.11.2
 numpy==1.12.1
+python3-memcached==1.51
+duckling==1.7.1
