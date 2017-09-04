@@ -8,6 +8,10 @@ WORKDIR /usr/src/app
 # add requirements (to leaverage Docker cache)
 ADD ./requirements.txt /usr/src/app/requirements.txt
 
+# install JVM
+RUN apt-get update
+RUN apt-get install -y default-jre
+
 # install requirements
 RUN pip install -r requirements.txt
 RUN pip install git+https://github.com/mit-nlp/MITIE.git
