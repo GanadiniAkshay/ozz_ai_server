@@ -2,4 +2,3 @@ __pycache__
 env/
 client/node_modules/
 data/total_word_feature_extractor.dat
-models/

@@ -1,0 +1,205 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nomnffl"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nekdg"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Fesf"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "this is the this"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "likesdike mike"
+      },
+      {
+        "intent": "search",
+        "entities": [
+          {
+            "start": 17,
+            "end": 20,
+            "value": "New York City",
+            "entity": "city"
+          }
+        ],
+        "text": "in the center of NYC"
+      },
+      {
+        "intent": "search",
+        "entities": [
+          {
+            "start": 17,
+            "end": 30,
+            "value": "New York City",
+            "entity": "city"
+          }
+        ],
+        "text": "in the centre of New York City"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hi"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hello"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hola"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hello today"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hello microsoft"
+      },
+      {
+        "intent": "set_appointment",
+        "entities": [],
+        "text": "can i schedule an appointment"
+      },
+      {
+        "intent": "set_appointment",
+        "entities": [],
+        "text": "set appointment"
+      },
+      {
+        "intent": "set_appointment",
+        "entities": [],
+        "text": "can i book an appointment"
+      },
+      {
+        "intent": "set_appointment",
+        "entities": [],
+        "text": "book apppointment"
+      },
+      {
+        "intent": "set_appointment",
+        "entities": [],
+        "text": "need an appointment"
+      },
+      {
+        "intent": "set_appointment",
+        "entities": [],
+        "text": "need an appointment from tomorrow to day after tomorrow"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [
+          {
+            "start": 18,
+            "end": 25,
+            "value": "chinese",
+            "entity": "cuisine"
+          }
+        ],
+        "text": "book a table at a chinese restaurant"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [
+          {
+            "start": 18,
+            "end": 25,
+            "value": "chinese",
+            "entity": "cuisine"
+          }
+        ],
+        "text": "book a table at a chineze restaurant"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [
+          {
+            "start": 18,
+            "end": 23,
+            "value": "chinese",
+            "entity": "cuisine"
+          }
+        ],
+        "text": "book a table at a china restaurant"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [
+          {
+            "start": 24,
+            "end": 30,
+            "value": "indian",
+            "entity": "cuisine"
+          }
+        ],
+        "text": "can i get a table at an indian restaurant"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [
+          {
+            "start": 24,
+            "end": 29,
+            "value": "indian",
+            "entity": "cuisine"
+          }
+        ],
+        "text": "can i get a table at an india restaurant"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [],
+        "text": "i need a table at an italian restaurant"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [
+          {
+            "start": 24,
+            "end": 29,
+            "value": "indian",
+            "entity": "cuisine"
+          }
+        ],
+        "text": "can i get a table at an india restaurant"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [],
+        "text": "can you make me a booking at a japanese place"
+      },
+      {
+        "intent": "cuisine",
+        "entities": [
+          {
+            "start": 24,
+            "end": 29,
+            "value": "indian",
+            "entity": "cuisine"
+          }
+        ],
+        "text": "can i get a table at an india restaurant"
+      }
+    ],
+    "regex_features": []
+  }
+}
