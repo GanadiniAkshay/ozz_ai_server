@@ -35,10 +35,12 @@ def intents(bot_guid):
                     for intent in intents:
                         intent_obj = {}
                         intent_obj['name'] = intent.name
-                        intent_obj['utterances'] = []
-                        for utterance in intent.utterances:
-                            int, entities = nlu.parse(utterance)
-                            intent_obj['utterances'].append({"utterance":utterance,"entities":entities})
+                        intent_obj['utterances'] = len(intent.utterances)
+                        intent_obj['responses'] = len(intent.responses)
+                        intent_obj['calls'] = intent.calls
+                        # for utterance in intent.utterances:
+                        #     int, entities = nlu.parse(utterance)
+                        #     intent_obj['utterances'].append({"utterance":utterance,"entities":entities})
                         intents_obj.append(intent_obj)
                     return jsonify({"intents":intents_obj})
                 elif request.method == 'POST':
@@ -52,18 +54,21 @@ def intents(bot_guid):
                     else:
                         name = post_data.get('name')
                         utterances = post_data.get('utterances')
+                        responses = post_data.get('responses')
                         has_entities = post_data.get('has_entities')
                         
                         intent = Intent.query.filter_by(name=name).first()
                         if intent:
                             intent.utterances = utterances
                             intent.has_entities = has_entities
+                            intent.responses = responses
                         else:
                             intent = Intent(
                                 name = name,
                                 bot_guid=bot_guid,
                                 utterances=utterances,
-                                has_entities=has_entities
+                                has_entities=has_entities,
+                                responses = responses
                             )
                             db.session.add(intent)
                         try:
