@@ -14,13 +14,17 @@ class Intent(db.Model):
     name = db.Column(db.String())
     utterances = db.Column(ARRAY(db.String()))
     has_entities = db.Column(Boolean, unique=False, default=False)
+    responses = db.Column(ARRAY(db.String()))
+    calls = db.Column(db.Integer,default=0)
     created = db.Column(db.DateTime(timezone=False))
 
-    def __init__(self,bot_guid, name, utterances, has_entities):
+    def __init__(self,bot_guid, name, has_entities, utterances=[],responses=[]):
         self.name = name
         self.bot_guid = bot_guid
         self.utterances = utterances
         self.has_entities = has_entities
+        self.responses = responses
+        self.calls = 0
         self.created = datetime.datetime.now()
 
     def __repr__(self):

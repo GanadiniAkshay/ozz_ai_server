@@ -23,4 +23,4 @@ RUN wget -P /usr/src/app/data/ https://s3-eu-west-1.amazonaws.com/mitie/total_wo
 ADD . /usr/src/app
 
 # run server
-CMD gunicorn -b 0.0.0.0:5000 manage:app
+CMD gunicorn -b 0.0.0.0:5000 manage:app --timeout 3000
