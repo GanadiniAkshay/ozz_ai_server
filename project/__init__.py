@@ -62,12 +62,16 @@ def create_app():
     from project.api.nlu   import nlu_blueprint
     from project.api.intents import intents_blueprint
     from project.api.entities import entities_blueprint
+    from project.api.utterances import utterances_blueprint
+    from project.api.responses import responses_blueprint
     
     app.register_blueprint(users_blueprint)
     app.register_blueprint(bots_blueprint)
     app.register_blueprint(nlu_blueprint)
     app.register_blueprint(intents_blueprint)
     app.register_blueprint(entities_blueprint)
+    app.register_blueprint(utterances_blueprint)
+    app.register_blueprint(responses_blueprint)
 
     # register default route
     @app.route('/', defaults={'path': ''})

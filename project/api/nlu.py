@@ -31,7 +31,7 @@ import time
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
 
-@nlu_blueprint.route('/parse/<bot_guid>', methods=['GET'])
+@nlu_blueprint.route('/api/parse/<bot_guid>', methods=['GET'])
 def parse(bot_guid):
     global interpreters
     nlus = interpreters
@@ -54,7 +54,7 @@ def parse(bot_guid):
     
 
 
-@nlu_blueprint.route('/train/<bot_guid>', methods=['GET'])
+@nlu_blueprint.route('/api/train/<bot_guid>', methods=['GET'])
 def train(bot_guid):
     #code,user_id = checkAuth(request)
     code = 200
@@ -178,7 +178,7 @@ def train(bot_guid):
     
     return jsonify({"success":True})
 
-@nlu_blueprint.route('/retrain',methods=['GET'])
+@nlu_blueprint.route('/api/retrain',methods=['GET'])
 def retrain():
     message = request.args.get('q')
     intent = request.args.get('i')
@@ -197,7 +197,7 @@ def retrain():
     return jsonify({"success":True})
 
 
-@nlu_blueprint.route('/upload/<bot_guid>', methods=['GET','POST'])
+@nlu_blueprint.route('/api/upload/<bot_guid>', methods=['GET','POST'])
 def upload(bot_guid):
     if request.method == 'POST':
         code,user_id = checkAuth(request)

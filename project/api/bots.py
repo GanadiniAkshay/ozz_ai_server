@@ -14,7 +14,7 @@ from project.shared.checkAuth import checkAuth
 
 bots_blueprint = Blueprint('bots', __name__, template_folder='./templates')
 
-@bots_blueprint.route('/bots/<int:id>', methods=['PUT'])
+@bots_blueprint.route('/api/bots/<int:id>', methods=['PUT'])
 def update_bots(id):
     code, user_id = checkAuth(request)
     if code == 200:
@@ -36,7 +36,7 @@ def update_bots(id):
     elif code == 401:
         return jsonify({"error":"No Authorization Token Sent"}),401
 
-@bots_blueprint.route('/bots', methods=['GET','POST'])
+@bots_blueprint.route('/api/bots', methods=['GET','POST'])
 def bots():
     if request.method == 'GET':
         code,user_id = checkAuth(request)

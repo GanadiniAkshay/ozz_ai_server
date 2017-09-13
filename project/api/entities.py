@@ -14,7 +14,7 @@ from project.shared.checkAuth import checkAuth
 
 entities_blueprint = Blueprint('entities', __name__, template_folder='./templates')
 
-@entities_blueprint.route('/entities/<bot_guid>', methods=['GET','POST'])
+@entities_blueprint.route('/api/entities/<bot_guid>', methods=['GET','POST'])
 def entities(bot_guid):
     # code,user_id = checkAuth(request)
     code = 200

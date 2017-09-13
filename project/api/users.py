@@ -13,7 +13,7 @@ from project.keys import super_secret
 
 users_blueprint = Blueprint('users', __name__, template_folder='./templates')
 
-@users_blueprint.route('/users', methods=['POST'])
+@users_blueprint.route('/api/users', methods=['POST'])
 def add_user():
     post_data = request.get_json()
     if not post_data:
@@ -58,7 +58,7 @@ def add_user():
         return jsonify(response_object), 400
 
 
-@users_blueprint.route('/auth',methods=['POST'])
+@users_blueprint.route('/api/auth',methods=['POST'])
 def auth():
     post_data = request.get_json()
     if not post_data:
@@ -84,7 +84,7 @@ def auth():
     else:
         return jsonify({"email":"No account exists for that email"}),404
 
-@users_blueprint.route('/users/<user_id>', methods=['GET'])
+@users_blueprint.route('/api/users/<user_id>', methods=['GET'])
 def get_single_user(user_id):
     """Get single user details"""
     response_object = {
