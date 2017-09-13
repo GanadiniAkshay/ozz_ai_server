@@ -4,7 +4,6 @@ MAINTAINER akshay "akshay@ozz.ai"
 # set working directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-Add a comment to this line
 
 # add requirements (to leaverage Docker cache)
 ADD ./requirements.txt /usr/src/app/requirements.txt
