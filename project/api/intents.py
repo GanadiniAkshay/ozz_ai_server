@@ -51,7 +51,7 @@ def intent(bot_guid,intent_name):
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 
-@intents_blueprint.route('/api/intents/<bot_guid>', methods=['GET','POST'])
+@intents_blueprint.route('/api/intents/<bot_guid>', methods=['GET','POST','PUT','DELETE'])
 def intents(bot_guid):
     code,user_id = checkAuth(request)
     if code == 200:
@@ -87,9 +87,7 @@ def intents(bot_guid):
                         
                         intent = Intent.query.filter_by(name=name).first()
                         if intent:
-                            intent.utterances = utterances
-                            intent.has_entities = has_entities
-                            intent.responses = responses
+                            return jsonify({"success":False,"error":"An intent with that name already exists"})
                         else:
                             intent = Intent(
                                 name = name,
@@ -104,6 +102,39 @@ def intents(bot_guid):
                         except Exception as e:
                             return jsonify({"success":False})
                         return jsonify({"success":"true"})
+                elif request.method == 'PUT':
+                    put_data = request.get_json()
+                    if not put_data:
+                        response_object = {
+                            'status': 'fail',
+                            'message': 'Invalid payload.'
+                        }
+                        return jsonify(response_object), 400
+                    else:
+                        old_name = put_data['old_name']
+                        new_name = put_data['new_name']
+                        intent = Intent.query.filter_by(name=old_name).first()
+                        if intent:
+                            intent.name = new_name
+                            try:
+                                db.session.commit()
+                            except Exception as e:
+                                return jsonify({"success":"false"})
+                            return jsonify({"success":"true"})
+                        else:
+                            return jsonify({"success":"false"})
+                elif request.method == 'DELETE':
+                    intent_name = request.args['intent']
+                    intent = Intent.query.filter_by(name=intent_name).first()
+                    if intent:
+                        db.session.delete(intent)
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            return jsonify({"success":"false"})
+                        return jsonify({"success":"true"})
+                    else:
+                        return jsonify({"success":"false"})
     elif code == 400:
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:

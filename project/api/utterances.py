@@ -41,7 +41,6 @@ def intent(bot_guid,intent_name):
                         else:
                             utts = [new_utterance] + intent.utterances
                             intent.utterances = [u for u in utts]
-                            print(intent.utterances)
                             int, entities = nlu.parse(new_utterance)
                             db.session.commit()
                             return jsonify({"utterance":new_utterance,"entities":entities})

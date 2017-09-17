@@ -15,6 +15,7 @@ from sqlalchemy import exc
 
 from project.shared.checkAuth import checkAuth
 from project.helpers.trainer import load_train_data
+from project.helpers.eliza import Eliza
 
 from rasa_nlu.config import RasaNLUConfig
 from rasa_nlu.model import Trainer, Metadata, Interpreter
@@ -27,6 +28,7 @@ import urllib
 import tarfile
 import shutil
 import time
+import random
 
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
@@ -40,17 +42,27 @@ def parse(bot_guid):
     if type(message) != str:
         message = message.decode('utf-8')
     
-    model = cache.get(bot_guid +'_model')
     
     bot = Bot.query.filter_by(bot_guid=bot_guid).first()
     if bot:
         model = bot.active_model
-        nlu = nlus[model]
-        cache.set(bot_guid+'_model', model)
+        if model:
+            nlu = nlus[model]
+        else:
+            return jsonify({"error":"Please train the bot before testing"})
     else:
         return jsonify({"error":"Bot doesn't exist"}),404
     intent, entities = nlu.parse(message)
-    return jsonify({"intent":intent,"entities":entities})
+    response = ""
+    if intent != 'None':
+        intent_obj = Intent.query.filter_by(name=intent).first()
+        if intent_obj:
+            response = random.choice(intent_obj.responses)
+    else:
+        print("here")
+        eliza = Eliza()
+        response = eliza.analyze(message)
+    return jsonify({"intent":intent,"entities":entities,"response":response})
     
 
 
@@ -71,38 +83,9 @@ def train(bot_guid):
                                             {"text": "Nekdg", "intent": "None", "entities": []}, 
                                             {"text": "Fesf", "intent": "None", "entities": []}, 
                                             {"text": "this is the this", "intent": "None", "entities": []}, 
-                                            {"text": "likesdike mike", "intent": "None", "entities": []},
-                                            {
-                                                "text": "in the center of NYC",
-                                                "intent": "search",
-                                                "entities": [
-                                                {
-                                                    "start": 17,
-                                                    "end": 20,
-                                                    "value": "New York City",
-                                                    "entity": "city"
-                                                }
-                                                ]
-                                            },
-                                            {
-                                                "text": "in the centre of New York City",
-                                                "intent": "search",
-                                                "entities": [
-                                                    {
-                                                        "start": 17,
-                                                        "end": 30,
-                                                        "value": "New York City",
-                                                        "entity": "city"
-                                                    }
-                                                ]
-                                            }
+                                            {"text": "likesdike mike", "intent": "None", "entities": []}
                                         ],
-                                        "entity_synonyms": [
-                                            {
-                                                "value": "New York City",
-                                                "synonyms": ["NYC", "nyc", "the big apple"]
-                                            }
-                                        ]
+                                        "entity_synonyms": []
                                     }
                             }
                 intents = Intent.query.filter_by(bot_guid=bot_guid)
@@ -125,10 +108,13 @@ def train(bot_guid):
                             common_example['intent'] = intent.name.lower()
                             common_example['entities'] = []
                             new_examples = []
+                            new_values = []
                             for entity in entities:
                                 for example_key in entity.examples:
                                     utterance = utterance.lower()
                                     ent_examples = entity.examples[example_key]
+                                    if example_key.lower() not in ent_examples:
+                                        ent_examples.append(example_key.lower())
                                     remaining_examples = ent_examples
                                     for example in ent_examples:
                                         example = example.lower()
