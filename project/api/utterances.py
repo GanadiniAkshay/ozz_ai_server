@@ -19,9 +19,9 @@ utterances_blueprint = Blueprint('utterances', __name__, template_folder='./temp
 
 @utterances_blueprint.route('/api/intents/<bot_guid>/<intent_name>/utterances', methods=['POST','PUT','DELETE'])
 def intent(bot_guid,intent_name):
-    # code,user_id = checkAuth(request)
-    code = 200
-    user_id = 16
+    code,user_id = checkAuth(request)
+    # code = 200
+    # user_id = 16
     if code == 200:
         global interpreters
         nlus = interpreters
@@ -31,7 +31,10 @@ def intent(bot_guid,intent_name):
                 intent = Intent.query.filter_by(name=intent_name).first()
                 if intent:
                     model = bot.active_model
-                    nlu = nlus[model]
+                    if model:
+                        nlu = nlus[model]
+                    else:
+                        nlu = None
                     if request.method == 'POST':
                         post_data = request.get_json()
                         new_utterance = post_data['value']
@@ -41,7 +44,10 @@ def intent(bot_guid,intent_name):
                         else:
                             utts = [new_utterance] + intent.utterances
                             intent.utterances = [u for u in utts]
-                            int, entities = nlu.parse(new_utterance)
+                            if nlu:
+                                int, entities = nlu.parse(new_utterance)
+                            else:
+                                entities = []
                             db.session.commit()
                             return jsonify({"utterance":new_utterance,"entities":entities})
                     elif request.method == 'PUT':

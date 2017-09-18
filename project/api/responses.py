@@ -19,9 +19,9 @@ responses_blueprint = Blueprint('responses', __name__, template_folder='./templa
 
 @responses_blueprint.route('/api/intents/<bot_guid>/<intent_name>/responses', methods=['POST','PUT','DELETE'])
 def response(bot_guid,intent_name):
-    # code,user_id = checkAuth(request)
-    code = 200
-    user_id = 16
+    code,user_id = checkAuth(request)
+    # code = 200
+    # user_id = 16
     if code == 200:
         global interpreters
         nlus = interpreters
@@ -30,8 +30,6 @@ def response(bot_guid,intent_name):
             if bot.user_id == user_id:
                 intent = Intent.query.filter_by(name=intent_name).first()
                 if intent:
-                    model = bot.active_model
-                    nlu = nlus[model]
                     if request.method == 'POST':
                         post_data = request.get_json()
                         new_response = post_data['value']

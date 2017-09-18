@@ -68,9 +68,9 @@ def parse(bot_guid):
 
 @nlu_blueprint.route('/api/train/<bot_guid>', methods=['GET'])
 def train(bot_guid):
-    #code,user_id = checkAuth(request)
-    code = 200
-    user_id = 16
+    code,user_id = checkAuth(request)
+    # code = 200
+    # user_id = 16
     if code == 200:
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if bot:
