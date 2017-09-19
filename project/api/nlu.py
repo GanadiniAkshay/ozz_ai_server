@@ -10,6 +10,7 @@ from project.api.models.users import User
 from project.api.models.bots import Bot
 from project.api.models.intents import Intent
 from project.api.models.entities import Entity
+from project.api.models.analytics import Analytics
 from project import db, cache, interpreters, trainer, nlp, d
 from sqlalchemy import exc
 
@@ -57,11 +58,21 @@ def parse(bot_guid):
     if intent != 'None':
         intent_obj = Intent.query.filter_by(name=intent).first()
         if intent_obj:
+            intent_obj.calls += 1
+            db.session.commit()
             response = random.choice(intent_obj.responses)
     else:
-        print("here")
         eliza = Eliza()
         response = eliza.analyze(message)
+    row = Analytics(
+                message = message,
+                bot_guid=bot_guid,
+                intent=intent,
+                confident=True,
+                entities= entities
+            )
+    db.session.add(row)
+    db.session.commit()
     return jsonify({"intent":intent,"entities":entities,"response":response})
     
 

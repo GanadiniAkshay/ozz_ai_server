@@ -8,6 +8,7 @@ from project.api.models.users import User
 from project.api.models.bots import Bot
 from project.api.models.intents import Intent
 from project.api.models.entities import Entity
+from project.api.models.analytics import Analytics
 
 from flask_migrate import MigrateCommand
 
