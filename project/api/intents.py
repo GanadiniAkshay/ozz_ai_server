@@ -90,7 +90,7 @@ def intents(bot_guid):
                             return jsonify({"success":False,"error":"An intent with that name already exists"})
                         else:
                             intent = Intent(
-                                name = name,
+                                name = name.lower(),
                                 bot_guid=bot_guid,
                                 utterances=utterances,
                                 has_entities=has_entities,

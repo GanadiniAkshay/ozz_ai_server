@@ -95,7 +95,7 @@ def entities(bot_guid):
                             entity.examples = examples
                         else:
                             entity = Entity(
-                                name = name,
+                                name = name.lower(),
                                 bot_guid=bot_guid,
                                 examples=examples
                             )

@@ -71,7 +71,7 @@ def bots():
         if code == 200:
             bot = Bot(
                     user_id=user_id,
-                    name=name
+                    name=name.lower()
                 )
             db.session.add(bot)
             db.session.commit()

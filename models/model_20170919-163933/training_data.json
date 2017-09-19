@@ -27,24 +27,14 @@
         "text": "likesdike mike"
       },
       {
-        "intent": "hello",
+        "intent": "valar morghulis",
         "entities": [],
-        "text": "heya"
+        "text": "valr morghulis"
       },
       {
-        "intent": "hello",
+        "intent": "valar morghulis",
         "entities": [],
-        "text": "hello"
-      },
-      {
-        "intent": "hello",
-        "entities": [],
-        "text": "hey there"
-      },
-      {
-        "intent": "hello",
-        "entities": [],
-        "text": "hi"
+        "text": "valar morghulis"
       },
       {
         "intent": "schedule appointment",
@@ -74,6 +64,26 @@
         "intent": "schedule appointment",
         "entities": [],
         "text": "schedule an appointment tomorrow"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "heya"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hello"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hey there"
+      },
+      {
+        "intent": "hello",
+        "entities": [],
+        "text": "hi"
       }
     ],
     "regex_features": []

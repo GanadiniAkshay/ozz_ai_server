@@ -59,8 +59,9 @@ def parse(bot_guid):
         intent_obj = Intent.query.filter_by(name=intent).first()
         if intent_obj:
             intent_obj.calls += 1
-            db.session.commit()
             response = random.choice(intent_obj.responses)
+            db.session.commit()
+            
     else:
         eliza = Eliza()
         response = eliza.analyze(message)
