@@ -53,13 +53,15 @@ def parse(bot_guid):
             return jsonify({"error":"Please train the bot before testing"})
     else:
         return jsonify({"error":"Bot doesn't exist"}),404
+    message = message.lower()
     intent, entities = nlu.parse(message)
     response = ""
     if intent != 'None':
         intent_obj = Intent.query.filter_by(name=intent).first()
         if intent_obj:
             intent_obj.calls += 1
-            response = random.choice(intent_obj.responses)
+            if (len(intent_obj.responses) > 0):
+                response = random.choice(intent_obj.responses)
             db.session.commit()
             
     else:
