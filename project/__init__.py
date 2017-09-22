@@ -65,6 +65,7 @@ def create_app():
     from project.api.utterances import utterances_blueprint
     from project.api.responses import responses_blueprint
     from project.api.synonyms import syn_blueprint
+    from project.api.scheduler import schedule_blueprint
     
     app.register_blueprint(users_blueprint)
     app.register_blueprint(bots_blueprint)
@@ -74,6 +75,7 @@ def create_app():
     app.register_blueprint(utterances_blueprint)
     app.register_blueprint(responses_blueprint)
     app.register_blueprint(syn_blueprint)
+    app.register_blueprint(schedule_blueprint)
 
     # register default route
     @app.route('/', defaults={'path': ''})
