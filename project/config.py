@@ -6,7 +6,7 @@ class BaseConfig:
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'my_precious'
-    CDN_URL = 'https://d1wi3kcd7kachl.cloudfront.net/v0.2.1'
+    CDN_URL = 'https://d1wi3kcd7kachl.cloudfront.net/v0.4.1'
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration"""

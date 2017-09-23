@@ -9,10 +9,11 @@ from rasa_nlu.model import Metadata, Interpreter
 from project import db, cache, interpreters, trainer, nlp, d
 
 class NLUParser(object):
-    def __init__(self, model, config, builder=None):
+    def __init__(self, model, config, builder=None, percentage=0.40):
         self.model = model
         self.metadata = Metadata.load(self.model)
         self.config = config
+        self.percentage = percentage
         if builder:
             self.interpreter = Interpreter.load(self.metadata, RasaNLUConfig(config),builder)
         else:
@@ -20,7 +21,8 @@ class NLUParser(object):
 
     def parse(self, message):
         parsed_data = self.interpreter.parse(message)
-        if parsed_data['intent']['confidence'] < 0.45:
+        print(parsed_data)
+        if parsed_data['intent']['confidence'] < self.percentage:
             intent = 'None'
         else:
             intent = parsed_data['intent']['name']

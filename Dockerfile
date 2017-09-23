@@ -1,5 +1,5 @@
 FROM python:3.6.1
-MAINTAINER akshay "akshay@ozz.ai"
+LABEL AUTHOR="akshay akshay@ozz.ai"
 
 # set working directory
 RUN mkdir -p /usr/src/app

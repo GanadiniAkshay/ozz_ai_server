@@ -34,12 +34,17 @@ import random
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
 
-@nlu_blueprint.route('/api/parse/<bot_guid>', methods=['GET'])
+@nlu_blueprint.route('/api/parse/<bot_guid>', methods=['GET','POST'])
 def parse(bot_guid):
     global interpreters
     nlus = interpreters
     config = './project/config.json'
-    message = request.args.get('q')
+
+    if request.method == 'GET':
+        message = request.args.get('q')
+    elif request.method == 'POST':
+        post_data = request.get_json()
+        message = post_data['q']
     if type(message) != str:
         message = message.decode('utf-8')
     
@@ -99,7 +104,17 @@ def train(bot_guid):
                                             {"text": "this is the this", "intent": "None", "entities": []}, 
                                             {"text": "likesdike mike", "intent": "None", "entities": []}
                                         ],
-                                        "entity_synonyms": []
+                                        "entity_synonyms": [],
+                                        "regex_features":[
+                                            {
+                                                "name": "zipcode",
+                                                "pattern": "[0-9]{5}"
+                                            },
+                                            {
+                                                "name": "greet",
+                                                "pattern": "hey[^\s]*"
+                                            },
+                                        ]
                                     }
                             }
                 intents = Intent.query.filter_by(bot_guid=bot_guid)
