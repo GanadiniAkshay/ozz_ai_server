@@ -2,6 +2,7 @@ import datetime
 import spacy
 import time
 import re
+import json
 
 from flask import Blueprint, jsonify, request, render_template
 
@@ -40,44 +41,59 @@ def pattern(bot_guid,intent_name):
                         patterns_obj = []
                         patterns = intent.patterns
                         for pattern in patterns:
+                            pattern = json.loads(pattern)
                             pat_obj = {}
-                            pat_obj["string"] = pattern.string
-                            pat_obj["regex"]  = pattern.regex
-                            pat_obj["len"] = pattern.len
-                            pat_obj["entities"] = pattern.entities
+                            pat_obj["string"] = pattern['string']
+                            pat_obj["regex"]  = pattern['regex']
+                            pat_obj["len"] = pattern['len']
+                            pat_obj["entities"] = pattern['entities']
                             patterns_obj.append(pat_obj)
+                        patterns_obj = sorted(patterns_obj, key=lambda k: k['len'],reverse=True)
                         return jsonify({"patterns":patterns_obj})
                     if request.method == 'POST':
                         post_data = request.get_json()
                         new_pattern = post_data['value']
 
                         for pattern in intent.patterns:
-                            if new_pattern == pattern.string:
+                            pattern = json.loads(pattern)
+                            if new_pattern == pattern["string"]:
                                 return jsonify({"success":False})
                         parameters,regex = get_regex(new_pattern)
                         new_obj = {}
                         new_obj['string'] = new_pattern
                         new_obj['regex']  = regex
-                        new_obj['entities'] = {}
+                        new_obj['entities'] = parameters
                         new_obj['len'] = len(new_pattern)
-                        print(new_obj)
-                        pats = [{}] + intent.patterns
+                        pats = [json.dumps(new_obj)] + intent.patterns
                         intent.patterns = [p for p in pats]
                         db.session.commit()
                         return jsonify({"success":True})
                     elif request.method == 'PUT':
                         put_data = request.get_json()
                         old_pattern = put_data['old_pattern']
-                        new_pattern = put_data['pattern']
-                        intent.patterns = [new_pattern if p == old_pattern else p for p in intent.patterns]
+                        new_pattern = put_data['new_pattern']
+                        parameters,regex = get_regex(new_pattern)
+
+                        new_patterns = []
+
+                        for pattern in intent.patterns:
+                            pattern = json.loads(pattern)
+                            if pattern["string"] == old_pattern:
+                                pattern["string"] = new_pattern
+                                pattern["regex"]  = regex
+                                pattern["entities"] = parameters
+                                pattern["len"] = len(new_pattern)
+                            new_patterns.append(json.dumps(pattern))
+                        intent.patterns = new_patterns
                         db.session.commit()
                         return jsonify({"success":True})
                     elif request.method == 'DELETE':
                         old_pattern = request.args['pattern']
                         new_patterns = []
                         for pattern in intent.patterns:
-                            if (pattern != old_pattern):
-                                new_patterns.append(pattern)
+                            pattern = json.loads(pattern)
+                            if (pattern['string'] != old_pattern):
+                                new_patterns.append(json.dumps(pattern))
                         intent.patterns = new_patterns
                         db.session.commit()
                         return jsonify({"success":True})

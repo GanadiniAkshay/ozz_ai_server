@@ -27,6 +27,16 @@
         "text": "likesdike mike"
       },
       {
+        "intent": "how_you",
+        "entities": [],
+        "text": "how is this going "
+      },
+      {
+        "intent": "how_you",
+        "entities": [],
+        "text": "how are you"
+      },
+      {
         "intent": "address",
         "entities": [],
         "text": "my zip is 678901"
@@ -40,6 +50,21 @@
         "intent": "address",
         "entities": [],
         "text": "i live in 500027"
+      },
+      {
+        "intent": "thanks",
+        "entities": [],
+        "text": "thanks a lot"
+      },
+      {
+        "intent": "thanks",
+        "entities": [],
+        "text": "thank you"
+      },
+      {
+        "intent": "thanks",
+        "entities": [],
+        "text": "thanks"
       },
       {
         "intent": "hi",
@@ -105,6 +130,26 @@
         "intent": "bye",
         "entities": [],
         "text": "bye"
+      },
+      {
+        "intent": "abuse",
+        "entities": [],
+        "text": "abusive shit"
+      },
+      {
+        "intent": "abuse",
+        "entities": [],
+        "text": "abusive stuff"
+      },
+      {
+        "intent": "abuse",
+        "entities": [],
+        "text": "i am saying offensive things"
+      },
+      {
+        "intent": "abuse",
+        "entities": [],
+        "text": "this is abusive"
       }
     ],
     "regex_features": [

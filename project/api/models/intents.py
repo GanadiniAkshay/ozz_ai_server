@@ -13,7 +13,7 @@ class Intent(db.Model):
     bot_guid = db.Column(db.String(), ForeignKey("bots.bot_guid"))
     name = db.Column(db.String())
     utterances = db.Column(ARRAY(db.String()))
-    patterns = db.Column(ARRAY(JSON))
+    patterns = db.Column(ARRAY(db.String()))
     has_entities = db.Column(Boolean, unique=False, default=False)
     responses = db.Column(ARRAY(db.String()))
     calls = db.Column(db.Integer,default=0)
