@@ -9,7 +9,7 @@ from rasa_nlu.model import Metadata, Interpreter
 from project import db, cache, interpreters, trainer, nlp, d
 
 class NLUParser(object):
-    def __init__(self, model, config, builder=None, percentage=0.40):
+    def __init__(self, model, config, builder=None, percentage=0.35):
         self.model = model
         self.metadata = Metadata.load(self.model)
         self.config = config

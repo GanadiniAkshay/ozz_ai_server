@@ -37,21 +37,6 @@
         "text": "how are you"
       },
       {
-        "intent": "address",
-        "entities": [],
-        "text": "my zip is 678901"
-      },
-      {
-        "intent": "address",
-        "entities": [],
-        "text": "i am at 564342"
-      },
-      {
-        "intent": "address",
-        "entities": [],
-        "text": "i live in 500027"
-      },
-      {
         "intent": "thanks",
         "entities": [],
         "text": "thanks a lot"
@@ -130,6 +115,16 @@
         "intent": "bye",
         "entities": [],
         "text": "bye"
+      },
+      {
+        "intent": "address",
+        "entities": [],
+        "text": "this is some random address"
+      },
+      {
+        "intent": "address",
+        "entities": [],
+        "text": "this is my address"
       },
       {
         "intent": "abuse",
