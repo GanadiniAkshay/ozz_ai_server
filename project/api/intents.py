@@ -94,7 +94,8 @@ def intents(bot_guid):
                                 bot_guid=bot_guid,
                                 utterances=utterances,
                                 has_entities=has_entities,
-                                responses = responses
+                                responses = responses,
+                                patterns=[]
                             )
                             db.session.add(intent)
                         try:

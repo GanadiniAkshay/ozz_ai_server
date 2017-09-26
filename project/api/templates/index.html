@@ -169,7 +169,20 @@
 
 			ga('create', 'UA-89032179-1', 'auto');
 			ga('send', 'pageview');
-	</script>
+  </script>
+  <script type="text/javascript">
+      var clevertap = {event:[], profile:[], account:[], onUserLogin:[], notifications:[]};
+      // replace with the CLEVERTAP_ACCOUNT_ID with the actual ACCOUNT ID value from your Dashboard -> Settings page
+      clevertap.account.push({"id": "86Z-7W4-6W5Z"});
+      (function () {
+          var wzrk = document.createElement('script');
+          wzrk.type = 'text/javascript';
+          wzrk.async = true;
+          wzrk.src = ('https:' == document.location.protocol ? 'https://d2r1yp2w7bby2u.cloudfront.net' : 'http://static.clevertap.com') + '/js/a.js';
+          var s = document.getElementsByTagName('script')[0];
+          s.parentNode.insertBefore(wzrk, s);
+      })();
+  </script>
 </head>
 <body>
   <div id="app"></div>
