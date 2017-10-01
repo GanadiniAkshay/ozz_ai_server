@@ -16,6 +16,7 @@ class Bot(db.Model):
     platforms = db.Column(JSON)
     active_model = db.Column(db.String())
     team = db.Column(JSON)
+    words = db.Column(db.String())
     created = db.Column(db.DateTime(timezone=False))
     used = db.Column(db.DateTime(timezone=False))
 
@@ -27,6 +28,7 @@ class Bot(db.Model):
         self.created = datetime.datetime.now()
         self.used = datetime.datetime.now()
         self.active_model = ""
+        self.words = ""
         self.team = {"admins":[{"user_id":user_id}],"developers":[]}
 
     def __repr__(self):

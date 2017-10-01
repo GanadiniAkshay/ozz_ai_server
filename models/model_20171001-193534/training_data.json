@@ -29,14 +29,43 @@
       {
         "intent": "hello",
         "entities": [],
-        "text": "hello"
+        "text": "hola amigo"
       },
       {
         "intent": "hello",
         "entities": [],
-        "text": "hi"
+        "text": "hey there the boy"
+      },
+      {
+        "intent": "abuses",
+        "entities": [],
+        "text": "this is shit"
+      },
+      {
+        "intent": "abuses",
+        "entities": [],
+        "text": "shit is this"
+      },
+      {
+        "intent": "abuses",
+        "entities": [],
+        "text": "fuck this shit"
+      },
+      {
+        "intent": "abuses",
+        "entities": [],
+        "text": "fuck you"
       }
     ],
-    "regex_features": []
+    "regex_features": [
+      {
+        "name": "zipcode",
+        "pattern": "[0-9]{5}"
+      },
+      {
+        "name": "greet",
+        "pattern": "hey[^\\s]*"
+      }
+    ]
   }
 }

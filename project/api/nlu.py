@@ -31,6 +31,7 @@ import shutil
 import time
 import random
 import re
+import operator
 
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
@@ -53,6 +54,10 @@ def parse(bot_guid):
     bot = Bot.query.filter_by(bot_guid=bot_guid).first()
     if bot:
         model = bot.active_model
+        words_json = json.loads(bot.words)
+
+        if type(words_json) == str:
+            words_json = {} 
         if model:
             nlu = nlus[model]
         else:
@@ -60,7 +65,7 @@ def parse(bot_guid):
     else:
         return jsonify({"error":"Bot doesn't exist"}),404
     message = message.lower()
-    intent, entities = nlu.parse(message)
+    intent, entities, confidence = nlu.parse(message)
     response = ""
     if intent != 'None':
         intent_obj = Intent.query.filter_by(name=intent).first()
@@ -71,52 +76,74 @@ def parse(bot_guid):
             db.session.commit()
             
     else:
-        regex_match = False
-        intents = Intent.query.filter_by(bot_guid=bot_guid)
-        
-        for intent_obj in intents:
-            patterns = intent_obj.patterns
-            for pattern in patterns:
-                pattern = json.loads(pattern)
-                regex = pattern["regex"]
-                express = re.compile(regex,re.IGNORECASE)  
-                match = express.match(message)
-                if match:
-                    intent = intent_obj.name
-                    print(intent)
-                    regex_match = True
-                    entity_start = 0
-                    entity_end = -1
-                    parameters = pattern['entities']
-                    for parameter in parameters:
-                        if parameter['first'] != -1:    
-                            entity_start = parameter['first']
-                            if parameter['post'] and parameter['post'] in message:
-                                entity_end = entity_start + message[entity_start:].index(parameter['post'])
-                            if entity_end == -1:
-                                entity_value = message[entity_start:]
-                            else:
-                                entity_value = message[entity_start:entity_end]
-                            entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
-                        else:
-                            mid_expression= message[entity_end:]
-                            if parameter['prior'] and parameter['prior'] in mid_expression:
-                                entity_start = mid_expression.index(parameter['prior']) + len(parameter['prior']) + 1
-                            if parameter['post'] and parameter['post'] in mid_expression:
-                                entity_end = mid_expression.index(parameter['post'])
-                            else:
-                                entity_end = -1
-                            if entity_end == -1:
-                                entity_value = mid_expression[entity_start:]
-                            else:
-                                entity_value = mid_expression[entity_start:entity_end]
-                            start = message.index(entity_value)
-                            entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
-                    break
+        message_words = message.split(" ")
+        scores = {}
+        for word in message_words:
+            if word in words_json:
+                intents = words_json[word]
+                for intent_key in intents:
+                    if intent_key in scores:
+                        scores[intent_key] += intents[intent_key]
+                    else:
+                        scores[intent_key] = intents[intent_key]
 
-        if not regex_match:
-            eliza = Eliza()
-            response = eliza.analyze(message)
+        scores = sorted(scores.items(),key = operator.itemgetter(1),reverse = True)
+
+        if len(scores) > 0:
+            intent = scores[0][0]
+            intent_obj = Intent.query.filter_by(name=intent).first()
+            if intent_obj:
+                intent_obj.calls += 1
+                if (len(intent_obj.responses) > 0):
+                    response = random.choice(intent_obj.responses)
+                db.session.commit()
+        else:
+            regex_match = False
+            intents = Intent.query.filter_by(bot_guid=bot_guid)
+            
+            for intent_obj in intents:
+                patterns = intent_obj.patterns
+                for pattern in patterns:
+                    pattern = json.loads(pattern)
+                    regex = pattern["regex"]
+                    express = re.compile(regex,re.IGNORECASE)  
+                    match = express.match(message)
+                    if match:
+                        intent = intent_obj.name
+                        print(intent)
+                        regex_match = True
+                        entity_start = 0
+                        entity_end = -1
+                        parameters = pattern['entities']
+                        for parameter in parameters:
+                            if parameter['first'] != -1:    
+                                entity_start = parameter['first']
+                                if parameter['post'] and parameter['post'] in message:
+                                    entity_end = entity_start + message[entity_start:].index(parameter['post'])
+                                if entity_end == -1:
+                                    entity_value = message[entity_start:]
+                                else:
+                                    entity_value = message[entity_start:entity_end]
+                                entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
+                            else:
+                                mid_expression= message[entity_end:]
+                                if parameter['prior'] and parameter['prior'] in mid_expression:
+                                    entity_start = mid_expression.index(parameter['prior']) + len(parameter['prior']) + 1
+                                if parameter['post'] and parameter['post'] in mid_expression:
+                                    entity_end = mid_expression.index(parameter['post'])
+                                else:
+                                    entity_end = -1
+                                if entity_end == -1:
+                                    entity_value = mid_expression[entity_start:]
+                                else:
+                                    entity_value = mid_expression[entity_start:entity_end]
+                                start = message.index(entity_value)
+                                entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
+                        break
+
+            if not regex_match:
+                eliza = Eliza()
+                response = eliza.analyze(message)
     
     row = Analytics(
                 message = message,

@@ -38,7 +38,7 @@ def intent(bot_guid,intent_name):
                         intent_obj['utterances'] = []
                         for utterance in intent.utterances:
                             if nlu:
-                                int, entities = nlu.parse(utterance)
+                                int, entities, confidence = nlu.parse(utterance)
                             else:
                                 entities = []
                             intent_obj['utterances'].append({"utterance":utterance,"entities":entities})
