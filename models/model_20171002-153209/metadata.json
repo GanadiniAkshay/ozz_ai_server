@@ -16,6 +16,6 @@
     "entity_synonyms": "entity_synonyms.json",
     "regex_featurizer": "regex_featurizer.json",
     "intent_classifier_sklearn": "intent_classifier.pkl",
-    "trained_at": "20171001-193534",
+    "trained_at": "20171002-153209",
     "rasa_nlu_version": "0.9.1"
 }

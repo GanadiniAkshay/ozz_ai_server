@@ -10,6 +10,7 @@ from project.api.models.intents import Intent
 from project.api.models.entities import Entity
 from project.api.models.analytics import Analytics
 from project.api.models.schedule import Schedule
+from project.api.models.logs import Logs
 
 from flask_migrate import MigrateCommand
 
