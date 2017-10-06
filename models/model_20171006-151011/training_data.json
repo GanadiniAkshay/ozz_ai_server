@@ -27,45 +27,36 @@
         "text": "likesdike mike"
       },
       {
-        "intent": "hello",
+        "intent": "find car",
         "entities": [],
-        "text": "hola amigo"
+        "text": "can you find a car"
       },
       {
-        "intent": "hello",
+        "intent": "find car",
         "entities": [],
-        "text": "hey there the boy"
-      },
-      {
-        "intent": "abuses",
-        "entities": [],
-        "text": "this is shit"
+        "text": "please find a ford"
       },
       {
         "intent": "abuses",
         "entities": [],
-        "text": "shit is this"
+        "text": "fuck off please"
       },
       {
-        "intent": "abuses",
+        "intent": "hi",
         "entities": [],
-        "text": "fuck this shit"
+        "text": "hola"
       },
       {
-        "intent": "abuses",
+        "intent": "hi",
         "entities": [],
-        "text": "fuck you"
+        "text": "hello"
+      },
+      {
+        "intent": "hi",
+        "entities": [],
+        "text": "hey"
       }
     ],
-    "regex_features": [
-      {
-        "name": "zipcode",
-        "pattern": "[0-9]{5}"
-      },
-      {
-        "name": "greet",
-        "pattern": "hey[^\\s]*"
-      }
-    ]
+    "regex_features": []
   }
 }

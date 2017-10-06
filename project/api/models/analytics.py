@@ -10,7 +10,7 @@ class Analytics(db.Model):
     __tablename__ = 'analytics'
 
     id = db.Column(db.Integer, primary_key=True)
-    bot_guid = db.Column(db.String(), ForeignKey("bots.bot_guid"))
+    bot_guid = db.Column(db.String(), ForeignKey("bots.bot_guid",ondelete="CASCADE"))
     message = db.Column(db.String())
     intent = db.Column(db.String())
     entities = db.Column(JSON)

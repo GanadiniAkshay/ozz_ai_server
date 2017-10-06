@@ -10,7 +10,7 @@ class Intent(db.Model):
     __tablename__ = 'intents'
 
     id = db.Column(db.Integer, primary_key=True)
-    bot_guid = db.Column(db.String(), ForeignKey("bots.bot_guid"))
+    bot_guid = db.Column(db.String(), ForeignKey("bots.bot_guid",ondelete="CASCADE"))
     name = db.Column(db.String())
     utterances = db.Column(ARRAY(db.String()))
     patterns = db.Column(ARRAY(db.String()))

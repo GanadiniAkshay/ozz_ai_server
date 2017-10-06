@@ -1,0 +1,40 @@
+{
+    "rasa_nlu_data": 
+        {   
+            "intents": [
+                {
+                    "name":"Find Car",
+                    "utterances":[
+                        "Can you find a car",
+                        "Please find a ford"
+                    ]
+                },
+                {
+                    "name":"abuses",
+                    "utterances":[
+                        "Fuck off please"
+                    ]
+                }
+            ],
+            "entities": [
+                {
+                    "name":"city",
+                    "values":[
+                        {
+                            "value": "New York City",
+                            "synonyms": ["NYC", "nyc", "the big apple"]
+                        }
+                    ]
+                },
+                {
+                    "name":"cuisine",
+                    "values":[
+                        {
+                            "value":"India",
+                            "synonyms":["Indian","Indy","Hindu"]
+                        }
+                    ]                
+                }
+            ]
+        }
+}

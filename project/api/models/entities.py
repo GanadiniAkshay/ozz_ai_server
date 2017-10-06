@@ -9,7 +9,7 @@ class Entity(db.Model):
     __tablename__ = 'entities'
 
     id = db.Column(db.Integer, primary_key=True)
-    bot_guid = db.Column(db.String(), ForeignKey("bots.bot_guid"))
+    bot_guid = db.Column(db.String(), ForeignKey("bots.bot_guid",ondelete="CASCADE"))
     name = db.Column(db.String())
     examples = db.Column(JSON)
     created = db.Column(db.DateTime(timezone=False))

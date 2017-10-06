@@ -1,5 +1,5 @@
 import datetime
-
+import json
 from flask import Blueprint, jsonify, request, render_template
 
 from project.api.models.users import User
@@ -14,21 +14,43 @@ from project.shared.checkAuth import checkAuth
 
 bots_blueprint = Blueprint('bots', __name__, template_folder='./templates')
 
-@bots_blueprint.route('/api/bots/<int:id>', methods=['PUT'])
-def update_bots(id):
-    code, user_id = checkAuth(request)
+@bots_blueprint.route('/api/bots/<string:bot_guid>', methods=['PUT','DELETE'])
+def update_bots(bot_guid):
+    # code, user_id = checkAuth(request)
+    code = 200
+    user_id = 16
     if code == 200:
-        bot = Bot.query.filter_by(user_id=user_id).first()
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if not bot:
             return jsonify({"error":"Bot Not Found"}),404
         if bot.user_id == user_id:
-            bot.used = datetime.datetime.now()
-            try:
-                db.session.commit()
-            except Exception as inst:
-                error = type(inst).__name__
-                return jsonify({'errors':error}),400
-            return jsonify({"success":True})
+            if request.method == 'PUT':
+                bot.used = datetime.datetime.now()
+                try:
+                    db.session.commit()
+                except Exception as inst:
+                    error = type(inst).__name__
+                    return jsonify({'errors':error}),400
+                return jsonify({"success":True})
+            elif request.method == 'DELETE':
+                try:
+                    db.session.delete(bot)
+                    db.session.commit()
+                except Exception as inst:
+                    error = type(inst).__name__
+                    return jsonify({'errors':error}),400
+                bots = Bot.query.filter_by(user_id=user_id)
+                bots_obj = []
+                for bot in bots:
+                    bot_obj = {}
+                    bot_obj['id'] = bot.id
+                    bot_obj['bot_guid'] = bot.bot_guid
+                    bot_obj['user_id'] = bot.user_id
+                    bot_obj['name'] = bot.name
+                    bot_obj['used'] = (bot.used - datetime.datetime(1970, 1, 1)).total_seconds()
+
+                    bots_obj.append(bot_obj)
+                return jsonify({"bots":bots_obj})
         else:
             return jsonify({"error":"Unauthorized"}),401
     elif code == 400:
@@ -71,7 +93,8 @@ def bots():
         if code == 200:
             bot = Bot(
                     user_id=user_id,
-                    name=name.lower()
+                    name=name.lower(),
+                    words = json.dumps({})
                 )
             db.session.add(bot)
             db.session.commit()

@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from flask import Blueprint, jsonify, request, render_template
 
@@ -34,6 +35,8 @@ def syn(bot_guid,entity_name,example_name):
                         entity= Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=entity_name).first()
                         if entity:
                             synonym = post_data['synonym']
+                            if type(entity.examples) == str:
+                                entity.examples = json.loads(entity.examples)
                             if example_name in entity.examples:
                                 entity.examples[example_name].append(synonym)
                                 flag_modified(entity, "examples")
@@ -43,10 +46,11 @@ def syn(bot_guid,entity_name,example_name):
                                 return jsonify({"success":"false"})
                             return jsonify({"success":"true"})
                 elif request.method == 'DELETE':
-                    print('here')
                     entity= Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=entity_name).first()
                     if entity:
                         synonym = request.args['synonym']
+                        if type(entity.examples) == str:
+                            entity.examples = json.loads(entity.examples)
                         if example_name in entity.examples:
                             entity.examples[example_name].remove(synonym)
                             flag_modified(entity, "examples")

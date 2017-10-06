@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from flask import Blueprint, jsonify, request, render_template
 
@@ -25,6 +26,8 @@ def entity(bot_guid,entity_name):
                 if request.method == 'GET':
                     entity= Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=entity_name).first()
                     if entity:
+                        if type(entity.examples) == str:
+                            entity.examples = json.loads(entity.examples)
                         return jsonify({"examples":entity.examples})
                 elif request.method == 'POST':
                     post_data = request.get_json()
@@ -37,6 +40,8 @@ def entity(bot_guid,entity_name):
                     else:
                         entity= Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=entity_name).first()
                         if entity:
+                            if type(entity.examples) == str:
+                                entity.examples = json.loads(entity.examples)
                             new_example = post_data['new_example']
                             entity.examples[new_example] = []
                             flag_modified(entity, "examples")
@@ -72,6 +77,8 @@ def entities(bot_guid):
                     entities = Entity.query.filter_by(bot_guid=bot_guid)
                     entities_obj = []
                     for entity in entities:
+                        if type(entity.examples) == str:
+                            entity.examples = json.loads(entity.examples)
                         entity_obj = {}
                         entity_obj['name'] = entity.name
                         entity_obj['examples'] = entity.examples

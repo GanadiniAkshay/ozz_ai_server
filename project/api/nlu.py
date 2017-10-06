@@ -13,6 +13,7 @@ from project.api.models.entities import Entity
 from project.api.models.analytics import Analytics
 from project import db, cache, interpreters, trainer, nlp, d
 from sqlalchemy import exc
+from sqlalchemy.orm.attributes import flag_modified
 
 from project.shared.checkAuth import checkAuth
 from project.helpers.trainer import load_train_data
@@ -178,21 +179,14 @@ def train(bot_guid):
                                             {"text": "likesdike mike", "intent": "None", "entities": []}
                                         ],
                                         "entity_synonyms": [],
-                                        "regex_features":[
-                                            {
-                                                "name": "zipcode",
-                                                "pattern": "[0-9]{5}"
-                                            },
-                                            {
-                                                "name": "greet",
-                                                "pattern": "hey[^\s]*"
-                                            },
-                                        ]
+                                        "regex_features":[]
                                     }
                             }
                 intents = Intent.query.filter_by(bot_guid=bot_guid)
                 entities = Entity.query.filter_by(bot_guid=bot_guid)
                 for entity in entities:
+                    if type(entity.examples) == str:
+                        entity.examples = json.loads(entity.examples)
                     for example_key in entity.examples:
                         rasa_data['rasa_nlu_data']['entity_synonyms'].append({"value":example_key,"synonyms":entity.examples[example_key]})
                 for intent in intents:
@@ -212,6 +206,8 @@ def train(bot_guid):
                             new_examples = []
                             new_values = []
                             for entity in entities:
+                                if type(entity.examples) == str:
+                                    entity.examples = json.loads(entity.examples)
                                 for example_key in entity.examples:
                                     utterance = utterance.lower()
                                     ent_examples = entity.examples[example_key]
@@ -312,8 +308,77 @@ def upload(bot_guid):
                     file = request.files['file']
                     filename = secure_filename(file.filename)
                     
-                    # Save the file
-                    file.save(os.path.join(bot_path,'data.json'))
+                    data = json.load(file)
+                    
+                    intent_data = {}
+                    intents = data['rasa_nlu_data']['intents']
+
+                    for intent_obj in intents:
+                        intent_name = intent_obj["name"]
+                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
+                        
+                        stop_words = [" a "," an "," the "," is "]
+                        for utt_copy in intent_obj["utterances"]:
+                            for word in stop_words:
+                                utt_copy = utt_copy.replace(word," ")
+                            
+                            utt_words = utt_copy.split(" ")
+
+                            words_json = json.loads(bot.words) 
+                            if type(words_json) == str:
+                                words_json = {}
+                            for word in utt_words:
+                                if word in words_json:
+                                    if intent_name in words_json[word]:
+                                        words_json[word][intent_name] += 1
+                                    else:
+                                        words_json[word][intent_name] = 1
+                                else:
+                                    words_json[word] = {intent_name:1}
+                        
+                        if intent:
+                            intent.utterances = intent_obj["utterances"]
+                            flag_modified(intent, "utterances")
+                            db.session.commit()
+                        else:
+                            name = intent_name
+                            utterances = intent_obj["utterances"]
+                            responses = []
+                            has_entities = False
+                            intent = Intent(
+                                name = name,
+                                bot_guid=bot_guid,
+                                utterances=utterances,
+                                has_entities=has_entities,
+                                responses = responses,
+                                patterns=[]
+                            )
+                            db.session.add(intent)
+                            db.session.commit()
+
+                    entities = data['rasa_nlu_data']['entities']
+
+                    for entity_obj in entities:
+                        name = entity_obj['name']
+                        
+                        new_examples = {}
+                        for value in entity_obj['values']:
+                            new_examples[value["value"]] = value["synonyms"]
+
+                        entity = Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
+                        
+                        if entity:
+                            entity.examples = json.dumps(new_examples)
+                        else:
+                            entity = Entity(
+                                name = name.lower(),
+                                bot_guid=bot_guid,
+                                examples=json.dumps(new_examples)
+                            )
+                            db.session.add(entity)
+                        db.session.commit()
+
+                    
                     return jsonify({"filename":filename,"type":file.content_type})
                 else:
                     return jsonify({"error":"Not Authorized"}),401

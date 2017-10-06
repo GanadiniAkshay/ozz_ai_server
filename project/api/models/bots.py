@@ -11,7 +11,7 @@ class Bot(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     bot_guid = db.Column(db.String(), unique=True)
-    user_id = db.Column(db.Integer, ForeignKey("users.id"))
+    user_id = db.Column(db.Integer, ForeignKey("users.id", ondelete="CASCADE"))
     name = db.Column(db.String())
     platforms = db.Column(JSON)
     active_model = db.Column(db.String())
@@ -20,7 +20,7 @@ class Bot(db.Model):
     created = db.Column(db.DateTime(timezone=False))
     used = db.Column(db.DateTime(timezone=False))
 
-    def __init__(self, user_id, name, platforms={}):
+    def __init__(self, user_id, name, words={},platforms={}):
         self.bot_guid = str(uuid.uuid1())
         self.user_id = user_id
         self.name = name
@@ -28,7 +28,7 @@ class Bot(db.Model):
         self.created = datetime.datetime.now()
         self.used = datetime.datetime.now()
         self.active_model = ""
-        self.words = ""
+        self.words = words
         self.team = {"admins":[{"user_id":user_id}],"developers":[]}
 
     def __repr__(self):

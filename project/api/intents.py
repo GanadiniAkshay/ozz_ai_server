@@ -85,12 +85,12 @@ def intents(bot_guid):
                         responses = post_data.get('responses')
                         has_entities = post_data.get('has_entities')
                         
-                        intent = Intent.query.filter_by(name=name).first()
+                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
                         if intent:
                             return jsonify({"success":False,"error":"An intent with that name already exists"})
                         else:
                             intent = Intent(
-                                name = name.lower(),
+                                name = name,
                                 bot_guid=bot_guid,
                                 utterances=utterances,
                                 has_entities=has_entities,
@@ -114,7 +114,7 @@ def intents(bot_guid):
                     else:
                         old_name = put_data['old_name']
                         new_name = put_data['new_name']
-                        intent = Intent.query.filter_by(name=old_name).first()
+                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=old_name).first()
                         if intent:
                             intent.name = new_name
                             try:

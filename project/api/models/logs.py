@@ -9,7 +9,7 @@ class Logs(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.String())
-    bot_guid = db.Column(db.String())
+    bot_guid = db.Column(db.String(),ForeignKey("bots.bot_guid",ondelete="CASCADE"))
     url = db.Column(db.String())
     pat = db.Column(db.String())
     pid = db.Column(db.String())
