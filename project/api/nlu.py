@@ -69,7 +69,7 @@ def parse(bot_guid):
     intent, entities, confidence = nlu.parse(message)
     response = ""
     if intent != 'None':
-        intent_obj = Intent.query.filter_by(name=intent).first()
+        intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
         if intent_obj:
             intent_obj.calls += 1
             if (len(intent_obj.responses) > 0):
@@ -92,7 +92,7 @@ def parse(bot_guid):
 
         if len(scores) > 0:
             intent = scores[0][0]
-            intent_obj = Intent.query.filter_by(name=intent).first()
+            intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
             if intent_obj:
                 intent_obj.calls += 1
                 if (len(intent_obj.responses) > 0):

@@ -114,7 +114,7 @@ def entities(bot_guid):
                         return jsonify({"success":"true"})
                 elif request.method == 'DELETE':
                     entity_name = request.args['entity']
-                    entity = Entity.query.filter_by(name=entity_name).first()
+                    entity = Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=entity_name).first()
                     if entity:
                         db.session.delete(entity)
                         try:

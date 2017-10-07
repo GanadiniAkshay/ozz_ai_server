@@ -1,0 +1,47 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nomnffl"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nekdg"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Fesf"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "this is the this"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "likesdike mike"
+      },
+      {
+        "intent": "hi",
+        "entities": [],
+        "text": "hello"
+      },
+      {
+        "intent": "hi",
+        "entities": [],
+        "text": "hey"
+      },
+      {
+        "intent": "hi",
+        "entities": [],
+        "text": "hi"
+      }
+    ],
+    "regex_features": []
+  }
+}

@@ -30,7 +30,7 @@ def intent(bot_guid,intent_name):
             bot = Bot.query.filter_by(bot_guid=bot_guid).first()
             if bot:
                 if bot.user_id == user_id:
-                    intent = Intent.query.filter_by(name=intent_name).first()
+                    intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                     if intent:
                         model = bot.active_model
                         if model:
