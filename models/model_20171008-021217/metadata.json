@@ -16,6 +16,6 @@
     "entity_synonyms": null,
     "regex_featurizer": null,
     "intent_classifier_sklearn": "intent_classifier.pkl",
-    "trained_at": "20171007-144016",
+    "trained_at": "20171008-021217",
     "rasa_nlu_version": "0.9.1"
 }
