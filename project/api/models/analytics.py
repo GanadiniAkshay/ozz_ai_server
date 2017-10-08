@@ -15,13 +15,15 @@ class Analytics(db.Model):
     intent = db.Column(db.String())
     entities = db.Column(JSON)
     confident = db.Column(Boolean, unique=False, default=False)
+    response_time = db.Column(db.String(),unique=False, default="0")
     created = db.Column(db.DateTime(timezone=False))
 
-    def __init__(self,bot_guid, message="", intent=None, entities={}, confident=False):
+    def __init__(self,bot_guid, message="", intent=None, entities={}, confident=False, response_time="0"):
         self.bot_guid = bot_guid
         self.message = message
         self.intent = intent
         self.entities = entities
+        self.response_time = response_time
         self.confident = confident
         self.created = datetime.datetime.now()
 

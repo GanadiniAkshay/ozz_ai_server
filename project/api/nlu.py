@@ -39,6 +39,7 @@ nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
 @nlu_blueprint.route('/api/parse/<bot_guid>', methods=['GET','POST'])
 def parse(bot_guid):
+    start_time = time.time()
     global interpreters
     nlus = interpreters
     config = './project/config.json'
@@ -145,12 +146,18 @@ def parse(bot_guid):
             if not regex_match:
                 eliza = Eliza()
                 response = eliza.analyze(message)
-    
+    end_time = time.time()
+    runtime = str(end_time - start_time)
+    if intent == 'None':
+        confident = False
+    else:
+        confident = True
     row = Analytics(
                 message = message,
                 bot_guid=bot_guid,
                 intent=intent,
-                confident=True,
+                response_time = runtime,
+                confident=confident,
                 entities= entities
             )
     db.session.add(row)
@@ -227,7 +234,7 @@ def train(bot_guid):
                             rasa_data['rasa_nlu_data']['common_examples'].append(common_example)
                             rasa_data['rasa_nlu_data']['common_examples'] += new_values 
                 try:
-                    # print(rasa_data)
+                    print(rasa_data['rasa_nlu_data']['common_examples'])
                     config = './project/config.json'
                     user_path = os.path.join(os.getcwd(),'data',str(user_id))
                     bot_path = os.path.join(user_path,bot_guid)
@@ -311,7 +318,7 @@ def upload(bot_guid):
                     data = json.load(file)
                     
                     intent_data = {}
-                    intents = data['rasa_nlu_data']['intents']
+                    intents = data['ozz_data']['intents']
 
                     for intent_obj in intents:
                         intent_name = intent_obj["name"]
@@ -356,7 +363,7 @@ def upload(bot_guid):
                             db.session.add(intent)
                             db.session.commit()
 
-                    entities = data['rasa_nlu_data']['entities']
+                    entities = data['ozz_data']['entities']
 
                     for entity_obj in entities:
                         name = entity_obj['name']
