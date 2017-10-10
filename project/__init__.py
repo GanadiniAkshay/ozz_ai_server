@@ -68,6 +68,7 @@ def create_app():
     from project.api.scheduler import schedule_blueprint
     from project.api.patterns import patterns_blueprint
     from project.api.logs import logs_blueprint
+    from project.api.analytics import analytics_blueprint
     
     app.register_blueprint(users_blueprint)
     app.register_blueprint(bots_blueprint)
@@ -80,6 +81,7 @@ def create_app():
     app.register_blueprint(schedule_blueprint)
     app.register_blueprint(patterns_blueprint)
     app.register_blueprint(logs_blueprint)
+    app.register_blueprint(analytics_blueprint)
 
     # register default route
     @app.route('/', defaults={'path': ''})

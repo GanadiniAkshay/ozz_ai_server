@@ -288,7 +288,7 @@ def retrain():
     return jsonify({"success":True})
 
 
-@nlu_blueprint.route('/api/upload/<bot_guid>', methods=['GET','POST'])
+@nlu_blueprint.route('/api/upload/<bot_guid>', methods=['POST'])
 def upload(bot_guid):
     if request.method == 'POST':
         code,user_id = checkAuth(request)
@@ -385,6 +385,44 @@ def upload(bot_guid):
                             db.session.add(entity)
                         db.session.commit()
 
+                    
+                    return jsonify({"filename":filename,"type":file.content_type})
+                else:
+                    return jsonify({"error":"Not Authorized"}),401
+            else:
+                return jsonify({"error":"Bot doesn't exist"}),404
+        elif code == 400:
+            return jsonify({"error":"Invalid Authorization Token"}),400
+        elif code == 401:
+            return jsonify({"error":"No Authorization Token Sent"}),401
+
+
+@nlu_blueprint.route('/api/upload/excel/<bot_guid>', methods=['POST'])
+def uploadexcel(bot_guid):
+    if request.method == 'POST':
+        code,user_id = checkAuth(request)
+
+        if code == 200:
+            bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+            if bot:
+                if bot.user_id == user_id:
+                    # The folder for all the users data
+                    user_path = os.path.join(os.getcwd(),'data',str(user_id))
+
+                    # Create the folder if it doesn't exist
+                    if not os.path.exists(user_path):
+                        os.makedirs(user_path)
+
+                    # The folder for the bot's data for a given user
+                    bot_path = os.path.join(user_path,bot_guid)
+
+                    # Create the folder if it doesn't exist
+                    if not os.path.exists(bot_path):
+                        os.makedirs(bot_path)
+
+                    #Get the file information
+                    file = request.files['file']
+                    filename = secure_filename(file.filename)
                     
                     return jsonify({"filename":filename,"type":file.content_type})
                 else:

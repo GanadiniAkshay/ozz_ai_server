@@ -45,6 +45,10 @@ def intent(bot_guid,intent_name):
                         return jsonify(intent_obj)
                 else:
                    return jsonify({"error":"Intent Doesn't exist"}),404 
+            else:
+                return jsonify({"error":"Not Authorized"}),401
+        else:
+            return jsonify({"error":"Bot Doesn't exist"}),404
     elif code == 400:
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
