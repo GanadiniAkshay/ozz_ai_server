@@ -83,6 +83,10 @@ def create_app():
     app.register_blueprint(logs_blueprint)
     app.register_blueprint(analytics_blueprint)
 
+    @app.route('/demo/steve')
+    def steve():
+        return render_template('steve.html')
+
     # register default route
     @app.route('/', defaults={'path': ''})
     @app.route('/<path:path>')
