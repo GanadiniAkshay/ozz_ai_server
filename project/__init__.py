@@ -69,6 +69,7 @@ def create_app():
     from project.api.patterns import patterns_blueprint
     from project.api.logs import logs_blueprint
     from project.api.analytics import analytics_blueprint
+    from project.api.knowledge import knowledge_blueprint
     
     app.register_blueprint(users_blueprint)
     app.register_blueprint(bots_blueprint)
@@ -82,6 +83,7 @@ def create_app():
     app.register_blueprint(patterns_blueprint)
     app.register_blueprint(logs_blueprint)
     app.register_blueprint(analytics_blueprint)
+    app.register_blueprint(knowledge_blueprint)
 
     @app.route('/demo/steve')
     def steve():

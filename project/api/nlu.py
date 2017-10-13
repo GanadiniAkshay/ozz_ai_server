@@ -11,6 +11,7 @@ from project.api.models.bots import Bot
 from project.api.models.intents import Intent
 from project.api.models.entities import Entity
 from project.api.models.analytics import Analytics
+from project.api.models.knowledge import Knowledge
 from project import db, cache, interpreters, trainer, nlp, d
 from sqlalchemy import exc
 from sqlalchemy.orm.attributes import flag_modified
@@ -69,7 +70,7 @@ def parse(bot_guid):
     message = message.lower()
     intent, entities, confidence = nlu.parse(message)
     response = ""
-    if intent != 'None':
+    if intent != 'None' and confidence>0.65:
         intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
         if intent_obj:
             intent_obj.calls += 1
@@ -144,8 +145,53 @@ def parse(bot_guid):
                         break
 
             if not regex_match:
-                eliza = Eliza()
-                response = eliza.analyze(message)
+                knowledges = Knowledge.query.filter_by(bot_guid=bot_guid).all()
+                k_flag = False
+                for knowledge in knowledges:
+                    if knowledge.kid == 'cardealership_1507914955':
+                        k_flag = True
+                if k_flag == True:
+                    with open('./data/data.json','r') as f:
+                        data = json.load(f)
+                    with open('./data/invindex_new.json') as f:
+                        inv_index = json.load(f)
+                    query = message
+
+                    #remove ? symbol
+                    query = query.replace("?","")
+
+                    #turn to lowercase
+                    query = query.lower()
+
+                    #result set as a dictionary of key-value
+                    res_set = {}
+
+                    #get list of words to query over
+                    words = query.split(" ")
+                    words = list(set(words))
+
+                    #get top 10 documents for each word
+                    for word in words:
+                        if not word in inv_index:
+                            continue
+                        else:
+                            responses = inv_index[word][:10]
+
+                            for response in responses:
+                                file,score = response
+
+                                if file in res_set:
+                                    res_set[file] += score
+                                else:
+                                    res_set[file] = score
+
+                                
+                    sorted_results = sorted(res_set.items(), key=operator.itemgetter(1), reverse=True)
+                    print(sorted_results[:5])
+                    response = random.choice(data[sorted_results[0][0]])
+                else:
+                    eliza = Eliza()
+                    response = eliza.analyze(message)
     end_time = time.time()
     runtime = str(end_time - start_time)
     if intent == 'None':
