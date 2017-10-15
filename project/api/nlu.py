@@ -175,6 +175,7 @@ def train(bot_guid):
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if bot:
             if bot.user_id == user_id:
+                print('training')
                 rasa_data = {
                                 "rasa_nlu_data": 
                                     {   
@@ -191,50 +192,73 @@ def train(bot_guid):
                             }
                 intents = Intent.query.filter_by(bot_guid=bot_guid)
                 entities = Entity.query.filter_by(bot_guid=bot_guid)
+                ent_data = {}
                 for entity in entities:
+                    ent_data[entity.name] = []
                     if type(entity.examples) == str:
                         entity.examples = json.loads(entity.examples)
                     for example_key in entity.examples:
+                        ent_data[entity.name].extend(entity.examples[example_key])
                         rasa_data['rasa_nlu_data']['entity_synonyms'].append({"value":example_key,"synonyms":entity.examples[example_key]})
                 for intent in intents:
-                    if intent.has_entities == False:
-                        for utterance in intent.utterances:
-                            common_example = {}
-                            common_example['text'] = utterance.lower()
-                            common_example['intent'] = intent.name.lower()
-                            common_example['entities'] = []
-                            rasa_data['rasa_nlu_data']['common_examples'].append(common_example)
-                    else:
-                        for utterance in intent.utterances:
-                            common_example = {}
-                            common_example['text'] = utterance.lower()
-                            common_example['intent'] = intent.name.lower()
-                            common_example['entities'] = []
-                            new_examples = []
-                            new_values = []
-                            for entity in entities:
-                                if type(entity.examples) == str:
-                                    entity.examples = json.loads(entity.examples)
-                                for example_key in entity.examples:
-                                    utterance = utterance.lower()
-                                    ent_examples = entity.examples[example_key]
-                                    if example_key.lower() not in ent_examples:
-                                        ent_examples.append(example_key.lower())
-                                    remaining_examples = ent_examples
-                                    for example in ent_examples:
-                                        example = example.lower()
-                                        if example in utterance and example in utterance.split(' '):
-                                            start = utterance.find(example)
-                                            end = start + len(example)
-                                            value = example_key
-                                            ent_name = entity.name
-                                            common_example['entities'].append({"start":start,"end":end,"value":value,"entity":ent_name})
-                                            remaining_examples.remove(example)
-                                            new_values = generate(utterance,example,remaining_examples,intent.name,entities)
-                            rasa_data['rasa_nlu_data']['common_examples'].append(common_example)
-                            rasa_data['rasa_nlu_data']['common_examples'] += new_values 
+                    for utterance in intent.utterances:
+                        terminals = [] 
+                        common_example = {}
+                        common_example['text'] = utterance.lower()
+                        common_example['intent'] = intent.name.lower()
+                        common_example['entities'] = []
+                        new_examples = []
+                        new_values = []
+                        for entity in entities:
+                            if type(entity.examples) == str:
+                                entity.examples = json.loads(entity.examples)
+                            for example_key in entity.examples:
+                                utterance = utterance.lower()
+                                ent_examples = entity.examples[example_key]
+                                # Used to consider key as well - but key is automatically added (not verified) when retreiving so these steps are not needed 
+                                # if example_key.lower() not in ent_examples:
+                                #     if example_key in ent_examples:
+                                #         ent_examples.remove(example_key)
+                                #     ent_examples.append(example_key.lower())
+                                for example in ent_examples:
+                                    example = example.lower()
+                                    test_utterance = ' ' + utterance + ' '
+                                    test_example  =' ' + example + ' '
+                                    if test_example in test_utterance:
+                                        start = utterance.find(example)
+                                        end = start + len(example)
+                                        is_valid = True
+                                        if len(terminals) > 0:
+                                            mod_terminals = [x for x in terminals]
+                                            for term_start, term_end, name, value in terminals:
+                                                if term_start <= start and term_end >= end:
+                                                    is_valid = False
+                                                    continue
+                                                
+                                                if start <= term_start and end >= term_end:
+                                                    mod_terminals.remove((term_start,term_end, name, value))
+                                                    continue
+                                            terminals = [x for x in terminals]
+                                        if is_valid:
+                                            terminals.append((start,end,entity.name,example))
+                        for terminal in terminals:
+                            common_example['entities'].append({"start":terminal[0],"end":terminal[1],"entity":terminal[2],"value":terminal[3]})
+                            remaining_examples = ent_data[terminal[2]]
+                            if terminal[3] in remaining_examples:
+                                remaining_examples.remove(terminal[3])
+                            values = generate(utterance,terminal[3],remaining_examples,intent.name,entities)
+                            new_values += values
+                        rasa_data['rasa_nlu_data']['common_examples'].append(common_example)
+                        # rasa_data['rasa_nlu_data']['common_examples'] += new_values
+                        # print(type(new_values))
+                        # print(len(new_values))
+                        # child_count = 0
+                        # for val in new_values:
+                        #     if type(val) == dict:
+                        #         child_count += 1
+                        # print(child_count)
                 try:
-                    print(rasa_data['rasa_nlu_data']['common_examples'])
+                    # print(rasa_data['rasa_nlu_data']['common_examples'])
                     config = './project/config.json'
                     user_path = os.path.join(os.getcwd(),'data',str(user_id))
                     bot_path = os.path.join(user_path,bot_guid)

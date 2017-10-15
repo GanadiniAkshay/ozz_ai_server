@@ -1,0 +1,152 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nomnffl"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nekdg"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Fesf"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "this is the this"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "likesdike mike"
+      },
+      {
+        "intent": "fiind",
+        "entities": [
+          {
+            "start": 0,
+            "end": 5,
+            "entity": "make",
+            "value": "tesla"
+          }
+        ],
+        "text": "tesla"
+      },
+      {
+        "intent": "fiind",
+        "entities": [
+          {
+            "start": 7,
+            "end": 10,
+            "entity": "color",
+            "value": "red"
+          },
+          {
+            "start": 11,
+            "end": 16,
+            "entity": "make",
+            "value": "tesla"
+          }
+        ],
+        "text": "find a red tesla"
+      },
+      {
+        "intent": "fiind",
+        "entities": [
+          {
+            "start": 7,
+            "end": 10,
+            "entity": "color",
+            "value": "red"
+          }
+        ],
+        "text": "find a red tesal"
+      },
+      {
+        "intent": "fiind",
+        "entities": [
+          {
+            "start": 7,
+            "end": 10,
+            "entity": "condition",
+            "value": "new"
+          },
+          {
+            "start": 11,
+            "end": 14,
+            "entity": "color",
+            "value": "red"
+          },
+          {
+            "start": 15,
+            "end": 20,
+            "entity": "make",
+            "value": "tesla"
+          }
+        ],
+        "text": "find a new red tesla"
+      },
+      {
+        "intent": "fiind",
+        "entities": [
+          {
+            "start": 7,
+            "end": 12,
+            "entity": "color",
+            "value": "white"
+          },
+          {
+            "start": 13,
+            "end": 18,
+            "entity": "make",
+            "value": "tesla"
+          }
+        ],
+        "text": "find a white tesla"
+      },
+      {
+        "intent": "fiind",
+        "entities": [
+          {
+            "start": 14,
+            "end": 24,
+            "entity": "bodystyle",
+            "value": "camper van"
+          },
+          {
+            "start": 10,
+            "end": 13,
+            "entity": "color",
+            "value": "red"
+          }
+        ],
+        "text": "find me a red camper van"
+      },
+      {
+        "intent": "fiind",
+        "entities": [
+          {
+            "start": 11,
+            "end": 16,
+            "entity": "color",
+            "value": "white"
+          },
+          {
+            "start": 17,
+            "end": 21,
+            "entity": "make",
+            "value": "jeep"
+          }
+        ],
+        "text": "fiind me a white jeep"
+      }
+    ],
+    "regex_features": []
+  }
+}
