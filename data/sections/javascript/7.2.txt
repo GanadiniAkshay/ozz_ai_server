@@ -1,0 +1,54 @@
+7.2. Object construction and prototypes
+The simplest way to create a new object is with a statement like this:
+const warrior = {};
+This creates a new and empty object, which we can then populate with properties via assignment statements:
+const warrior = {};
+warrior.name = 'Saito';
+warrior.occupation = 'marksman';
+But those coming from an object-oriented background might miss the encapsulation and structuring that comes with a class constructor, a function that serves to initialize an object to a known initial state. After all, if we’re going to create multiple instances of the same type of object, assigning the properties individually isn’t only tedious but also highly error-prone. We’d like to be able to consolidate the set of properties and methods for a class of objects in one place.
+JavaScript provides such a mechanism, though in a different form than most other languages. Like object-oriented languages such as Java and C++, JavaScript employs the new operator to instantiate new objects via constructors, but there’s no true class definition in JavaScript. Instead, the new operator, applied to a constructor function (as you saw in chapter 3), triggers the creation of a newly allocated object.
+What we didn’t learn in the previous chapters was that every function has a prototype object that’s automatically set as the prototype of the objects created with that function. Let’s see how that works in the following listing.
+Listing 7.2. Creating a new instance with a prototyped method
+function Ninja(){}
+#A
+Ninja.prototype.swingSword = function(){
+#B
+return true;
+#B
+};
+#B
+const ninja1 = Ninja();
+#C
+assert(ninja1 === undefined,
+#C
+"No instance of Ninja created.");
+#C
+const ninja2 = new Ninja();
+#D
+assert(ninja2 &&
+#D
+ninja2.swingSword &&
+#D
+ninja2.swingSword(),
+#D
+"Instance exists and method is callable." );
+#D
+#A - Defines a function that does nothing and returns nothing
+#B - Every function has a built-in prototype object, which we can freely modify.
+#C - Calls the function as a function. Testing confirms that nothing at all seems to happen.
+#D - Calls the function as a constructor. Testing confirms that not only is a new object instance created, but it possesses the method from the prototype of the function.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":9,\"ch\":15},{\"line\":9,\"ch\":18}],[{\"line\":18,\"ch\":78},{\"line\":18,\"ch\":81}]]"}
+!@%STYLE%@!
+In this code, we define a seemingly do-nothing function named Ninja that we’ll invoke in two ways: as a “normal” function, const ninja1 = Ninja(); and as a constructor, const ninja2 = new Ninja();.
+When the function is created, it immediately gets a new object assigned to its prototype object, an object that we can extend just like any other object. In this case, we add a swingSword method to it:
+Ninja.prototype.swingSword = function(){
+return true;
+};
+Then we put the function through its paces. First we call the function normally and store its result in variable ninja1. Looking at the function body, we see that it returns no value, so we’d expect ninja1 to test as undefined, which we assert to be true. As a simple function, Ninja doesn’t appear to be all that useful.
+Then we call the function via the new operator, invoking it as a constructor, and something completely different happens. The function is once again called, but this time a newly allocated object has been created and set as the context of the function (and is accessible through the this keyword). The result returned from the new operator is a reference to this new object. We then test that ninja2 has a reference to the newly created object, and that that object has a swingSword method that we can call. See figure 7.4 for a glimpse of the current application state.
+Figure 7.4. Every function, when created, gets a new prototype object. When we use a function as a constructor, the constructed object’s prototype is set to the function’s prototype.
+As you can see, a function, when created, gets a new object that’s assigned to its prototype property. The prototype object initially has only one property, constructor, that references back to the function (we’ll revisit the constructor property later).
+When we use a function as a constructor (for example, by calling new Ninja()), the prototype of the newly constructed object is set to the object referenced by the constructor function’s prototype.
+In this example, we’ve extended the Ninja.prototype with the swingSword method, and when the ninja2 object is created, its prototype property is set to Ninja’s prototype. Therefore, when we try to access the swingSword property on ninja2, the search for that property is delegated to the Ninja prototype object. Notice that all objects created with the Ninja constructor will have access to the swingSword method. Now that’s code reuse!
+The swingSword method is a property of the Ninja’s prototype, and not a property of ninja instances. Let’s explore this difference between instance properties and prototype properties.

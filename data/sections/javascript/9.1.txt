@@ -1,0 +1,4 @@
+9.1. Arrays
+Arrays are one of the most common data types. Using them, you can handle collections of items. If your programming background is in a strongly typed language such as C, you probably think of arrays as sequential chunks of memory that house items of the same type, where each chunk of memory is of fixed size and has an associated index through which you can easily access it.
+But as with many things in JavaScript, arrays come with a twist: They’re just objects. Although this leads to some unfortunate side effects, primarily in terms of performance, it also has some benefits. For example, arrays can access methods, like other objects—methods that will make our lives a lot easier.
+In this section, we’ll first look at ways to create arrays. Then we’ll explore how to add items to and remove items from different positions in an array. Finally, we’ll examine the built-in array methods that will make our array-handling code much more elegant.

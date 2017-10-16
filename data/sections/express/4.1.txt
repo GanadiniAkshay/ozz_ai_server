@@ -1,0 +1,25 @@
+
+At the end of the day, web servers listen for requests, parse those requests, and send responses.
+
+The Node runtime will get these requests first. It'll turn those requests from raw bytes into two JavaScript objects that you can handle: one object for the request and one object for the response. Conventionally, the request object is called req and the response object is called res.
+
+Figure 4.1: When working with node.js by itself, we have one function that gives us a request object representing the incoming request and a response object representing the response node should send back to the client.
+
+These two objects will be sent to a JavaScript function that you'll write. You'll parse req to see what the user wants and manipulate res to prepare your response.
+
+After awhile, you're done writing to the response. When that's happened, you'll call res.end. This signals to Node that the response is all done and ready to be sent over the wire. The Node runtime will see what you've done to the response object, turn it into another bundle of bytes, and send it over the Internet to whoever requested it.
+
+In Node, these two objects are passed through just one function. In Express, however, these objects are passed through an array of functions, called the middleware stack. Express will start at the first function in the stack and continue in order down the stack.
+
+Figure 4.2 : When working in Express, the one request handler function is replaced with a stack of middleware functions instead.
+
+Every function in this stack takes three arguments. The first two are the request and the response objects from before. They're given to us by Node, although Express decorates them with a few extra convenience features that we discussed in the previous chapter.
+
+The third argument to each of these functions is itself a function (conventionally called next). When next is called, Express will go on to the next function in the stack.
+
+Figure 4-3 : All middleware functions have the same signature with three functions: response, request and next.
+
+Eventually, one of these functions in the stack must call res.end, which will end the request. (In Express, you can also call some other methods like res.send or res.sendFile, but these call res.end internally.) You can call res.end in any of the functions in the middleware stack, but you must only do it once or you'll get an error.
+
+This might be a little abstract and foggy. Let's see an example of how this works by building ourselves a static file server.
+Middleware and the middleware stack

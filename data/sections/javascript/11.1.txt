@@ -1,0 +1,242 @@
+11.1. Modularizing code in pre-ES6 JavaScript
+Pre-ES6 JavaScript has only two types of scopes: global scope and function scope. It doesn’t have something in between, a namespace or a module that would allow us to group certain functionality together. To write modular code, JavaScript developers are forced to be creative with existing JavaScript language features.
+When deciding which features to use, we have to keep in mind that, at a bare minimum, each module system should be able to do the following:
+Define an interface through which we can access the functionality offered by the module.
+Hide module internals so that the users of our modules aren’t burdened with a whole host of unimportant implementation details. In addition, by hiding module internals, we protect those internals from the outside world, thereby preventing unwanted modifications that can lead to all sorts of side effects and bugs.
+In this section, we’ll first see how to create modules by using standard JavaScript features that we’ve explored so far in the book, features such as objects, closures, and immediate functions. We’ll continue this modularization vein by exploring Asynchronous Module Definition (AMD) and CommonJS, the two most popular module specification standards, built on slightly different foundations. You’ll learn how to define modules using these standards, as well as their pros and cons.
+But let’s start with something for which we’ve already set the stage in previous chapters.
+11.1.1. Using objects, closures, and immediate functions to specify modules
+Let’s go back to our minimal module system requirements, hiding implementation details and defining module interfaces. Now think about which JavaScript language features we can take advantage of in order to implement these minimal requirements:
+Hiding module internals— As we already know, calling a JavaScript function creates a new scope in which we can define variables that are visible only within the current function. So, one option for hiding module internals is using functions as modules. In this way, all function variables become internal module variables that are hidden from the outside world.
+Defining module interfaces— Implementing module internals through function variables means that those variables are accessible from only within the module. But if our modules are to be used from other code, we have to be able to define a clean interface through which we can expose the functionality offered by the module. One way of achieving this is by taking advantage of objects and closures. The idea is that, from our function module, we return an object that represents the public interface of our module. That object should contain methods offered by the module, methods that will, through closures, keep alive our internal module variables, even after our module function has finished its execution.
+Now that we’ve given a high-level description of how to implement modules in JavaScript, let’s go through it slowly, step by step, starting with using functions for hiding module internals.
+Functions as modules
+Calling a function creates a new scope that we can use to define variables that won’t be visible from outside the current function. Let’s take a look at the following code snippet that counts the number of clicks on a web page:
+(function countClicks(){
+let numClicks = 0;
+#A
+document.addEventListener("click", () => {
+alert( ++numClicks );
+#B
+});
+})();
+#A - Defines a local variable that will store click counts
+#B - Whenever a user clicks, the counter is incremented and the current value reported.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we create a function called countClicks that creates a variable numClicks and registers a click event handler on the entire document. Whenever a click is made, the numClicks variable gets incremented and the result is displayed to the user via an alert box. There are two important things to notice here:
+The numClicks variable, internal to the countClicks function, is kept alive through the closure of the click handler function. The variable can be referenced only within the handler, and nowhere else! We’ve shielded the numClicks variable from the code outside the countClicks function. At the same time, we haven’t polluted the global namespace of our program with a variable that’s probably not that important for the rest of our code.
+Our countClicks function is called only in this one place, so instead of defining a function and then calling it in a separate statement, we’ve used an immediate function, or an IIFE (presented in chapter 3), to define and immediately invoke the countClicks function.
+We can also take a look at the current application state, with respect to how our internal function (or module) variable is kept alive through closures, as shown in figure 11.1.
+Figure 11.1. The click event handler, through closures, keeps alive the local numClicks variable.
+Now that we understand how to hide internal module details, and how closures can keep those internal details alive as long as necessary, let’s move on to our second minimal requirement for modules: defining module interfaces.
+The module pattern: augmenting functions as modules with objects as interfaces
+The module interface is usually composed of a set of variables and functions that our module provides to the outside world. The easiest way to create such an interface is to use the humble JavaScript object.
+For example, let’s create an interface for our module that counts the clicks on our web page, as shown in the following listing.
+Listing 11.1. The module pattern
+const MouseCounterModule = function() {
+#A
+let numClicks = 0;
+#B
+const handleClick = () => {
+#C
+alert(++numClicks);
+#C
+};
+#C
+return {
+#D
+countClicks: () => {
+#D
+document.addEventListener("click", handleClick);
+#D
+}
+#D
+};
+#D
+}();
+assert(typeof MouseCounterModule.countClicks === "function",
+#E
+"We can access module functionality");
+#E
+assert(typeof MouseCounterModule.numClicks === "undefined"
+#F
+&& typeof MouseCounterModule.handleClick === "undefined" ,
+#F
+"We cannot access internal module details");
+#F
+#A - Creates a global module variable and assigns the result of immediately invoking a function
+#B - Creates a “private” module variable
+#C - Creates a “private” module function
+#D - Returns an object that represents the module’s interface. Through closures, we can access “private” module variables and functions.
+#E - From outside, we can access the properties exposed through the interface.
+#F - But we can’t access module internals.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we use an immediate function to implement a module. Within the immediate function, we define our internal module implementation details: one local variable, numClicks, and one local function, handleClick, that are accessible only within the module. Next we create and immediately return an object that will serve as the module’s “public interface.” This interface contains a countClicks method that we can use from outside the module to access module functionality.
+At the same time, because we’ve exposed a module interface, our internal module details are kept alive through closures created by the interface. For example, in this case, the countClicks method of the interface keeps alive internal module variables numClicks and handleClick, as shown in figure 11.2.
+Figure 11.2. Expose the public interface of a module through a returned object. The internal module implementation (“private” variables and functions) is kept alive through closures created by public interface methods.
+Finally, we store the object that represents the module interface, returned by the immediate function, into a variable named MouseCounterModule, through which we can easily consume module functionality, by writing the following code:
+MouseCounterModule.countClicks()
+And that’s basically it.
+By taking advantage of immediate functions, we can hide certain module implementation details. Then by adding objects and closures into the mix, we can specify a module interface that exposes the functionality provided by our module to the outside world.
+This pattern of using immediate functions, objects, and closures to create modules in JavaScript is called the module pattern. It was popularized by Douglas Crockford, and was one of the first massively popular ways of modularizing JavaScript code.
+Once we have the ability to define modules, it’s always nice to be able to split them across multiple files (in order to more easily manage them), or to be able to define additional functionality on existing modules, without modifying their source code.
+Let’s see how this can be done.
+Augmenting modules
+Let’s augment our MouseCounterModule from the previous example with an additional feature of counting the number of mouse scrolls, but without modifying the original MouseCounterModule code. See the following listing.
+Listing 11.2. Augmenting modules
+const MouseCounterModule = function(){
+#A
+let numClicks = 0;
+const handleClick = () => {
+alert(++numClicks);
+};
+return {
+countClicks: () => {
+document.addEventListener("click", handleClick);
+}
+};
+}();
+(function(module) {
+#B
+let numScrolls = 0;
+#C
+const handleScroll = () => {
+#C
+alert(++numScrolls);
+#C
+}
+#C
+module.countScrolls = () => {
+#D
+document.addEventListener("wheel", handleScroll);
+#D
+};
+#D
+})(MouseCounterModule);
+#E
+assert(typeof MouseCounterModule.countClicks === "function",
+"We can access initial module functionality");
+assert(typeof MouseCounterModule.countScrolls === "function",
+"We can access augmented module functionality");
+#A - The original MouseCounterModule
+#B - Immediately invokes a function that accepts the module we want to extend as an argument
+#C - Defines new private variables and functions
+#D - Extends the module interface
+#E - Passes in the module as an argument
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+When augmenting a module, we usually follow a procedure similar to creating a new module. We immediately call a function, but this time, we pass to it the module we want to extend as an argument:
+(function(module){
+...
+return module;
+})(MouseCounterModule);
+Within the function, we then go about our work and create all the necessary private variables and functions. In this case, we’ve defined a private variable and a private function for counting and reporting the number of scrolls:
+let numScrolls = 0;
+const handleScroll = () => {
+alert(++numScrolls);
+}
+Finally, we extend our module, available through the immediate function’s module parameter, just as we would extend any other object:
+module.countScrolls = ()=> {
+document.addEventListener("wheel", handleScroll);
+};
+After we’ve performed this simple operation, our MouseCounterModule can also countScrolls.
+Our public module interface now has two methods, and we can use the module in the following ways:
+MouseCounterModule.countClicks();
+#A
+MouseCounterModule.countScrolls();
+#B
+#A - A method that’s part of the module’s interface from the beginning
+#B - A new module method that we’ve added by extending the module
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+As we’ve already mentioned, we’ve extended the module in a way that’s similar to the creation of a new module, through an immediately invoked function that extends the module. This has some interesting side effects in terms of closures, so let’s take a closer look at the application state after we’ve augmented the module, as shown in figure 11.3.
+Figure 11.3. When augmenting a module, we extend its external interface with new functionality, usually by passing the module to another immediate function. In this example, we add the ability to countScrolls to our MouseCounterModule. Notice that two separate functions are defined in different environments, and they can’t access each other’s internal variables.
+If you look closely, figure 11.3 also shows one of the shortcomings of the module pattern: the inability to share private module variables across module extensions. For example, the countClicks function keeps a closure around the numClicks and handleClick variables, and we could access these private module internals through the countClicks method.
+Unfortunately, our extension, the countScrolls function, is created in a completely separate scope, with a completely new set of private variables: numScrolls and handleScroll. The countScrolls function creates a closure only around numScrolls and handleScroll variables, and therefore can’t access the numClicks and handleClick variables.
+Note
+Module extensions, when performed through separate immediate functions, can’t share private module internals, because every function invocation creates a new scope. Although this is a shortcoming, it’s not a showstopper, and we can still use the module pattern to keep our JavaScript applications modular.
+Note that, in the module pattern, modules are objects just like any other, and we can extend them in any way we find appropriate. For example, we can add new functionality by extending the module object with new properties:
+MouseCounterModule.newMethod = ()=> {...}
+We can also use the same principle to easily create submodules:
+MouseCounterModule.newSubmodule = () => {
+return {...};
+}();
+Notice that all of these approaches suffer from the same fundamental shortcoming of the module pattern: Subsequent extensions of the module can’t access previously defined internal module details.
+Unfortunately, there are more problems with the module pattern. When we start building modular applications, the modules themselves will often depend on other modules for their functionality. Unfortunately, the module pattern doesn’t cover the management of these dependencies. We, as developers, have to take care of the right dependency order so that our module code has all it needs to execute. Although this isn’t a problem in small and medium applications, it can introduce serious issues in large applications that use a lot of interdependent modules.
+To deal with these issues, a couple of competing standards have arisen, namely Asynchronous Module Definition (AMD) and CommonJS.
+11.1.2. Modularizing JavaScript applications with AMD and CommonJS
+AMD and CommonJS are competing module specification standards that allow us to specify JavaScript modules. Besides some differences in syntax and philosophy, the main difference is that AMD was designed explicitly with the browser in mind, whereas CommonJS was designed for a general-purpose JavaScript environment (such as servers, with Node.js), without being bound to the limitations of the browser. This section provides a relatively short overview of these module specifications; setting them up and including them in your projects is beyond the scope of this book. For more information, we recommend JavaScript Application Design by Nicolas G. Bevacqua (Manning, 2015).
+AMD
+AMD grew out of the Dojo toolkit (https://dojotoolkit.org/), one of the popular JavaScript toolkits for building client-side web applications. AMD allows us to easily specify modules and their dependencies. At the same time, it was built from the ground up for the browser. Currently, the most popular AMD implementation is RequireJS (http://requirejs.org/).
+Let’s see an example of defining a small module that has a dependency to jQuery.
+Listing 11.3. Using AMD to specify a module dependent on jQuery
+define('MouseCounterModule',['jQuery'], $ => {
+#A
+let numClicks = 0;
+const handleClick = () => {
+alert(++numClicks);
+};
+return {
+#B
+countClicks: () => {
+$(document).on("click", handleClick);
+}
+};
+});
+#A - Uses the define function to specify a module, its dependencies, and the module factory function that will create the module
+#B - The public interface of our module
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":0},{\"line\":0,\"ch\":6}],[{\"line\":13,\"ch\":14},{\"line\":13,\"ch\":20}]]"}
+!@%STYLE%@!
+AMD provides a function called define that accepts the following:
+The ID of the newly created module. This ID can later be used to require the module from other parts of our system.
+A list of module IDs on which our current module depends (the required modules).
+A factory function that will initialize the module and that accepts the required modules as arguments.
+In this example, we use AMD’s define function to create a module with an ID MouseCounterModule that depends on jQuery. Because of this dependency, AMD first requests the jQuery module, which can take some time if the file has to be requested from a server. This action is performed asynchronously, in order to avoid blocking. After all dependencies have been downloaded and evaluated, the module factory function is called with one argument for each requested module. In this case, there will be one argument, because our new module requires only jQuery. Within the factory function, we create our module just as we would with the standard module pattern: by returning an object that exposes the public interface of the module.
+As you can see, AMD offers several interesting benefits, such as these:
+Automatic resolving of dependencies, so that we don’t have to think about the order in which we include our modules.
+Modules can by asynchronously loaded, thereby avoiding blocking.
+Multiple modules can be defined within one file.
+Now that you have the basic idea of how AMD works, let’s take a look at another, massively popular module definition standard.
+CommonJS
+Whereas AMD was built explicitly for the browser, CommonJS is a module specification designed for a general-purpose JavaScript environment. Currently it has the biggest following in the Node.js community.
+CommonJS uses file-based modules, so we can specify one module per file. To each module, CommonJS exposes a variable, module, with a property, exports, which we can easily extend with additional properties. In the end, the content of module.exports is exposed as the module’s public interface.
+If we want to use a module from other parts of the application, we can require it. The file will be synchronously loaded, and we’ll have access to its public interface. This is the reason that CommonJS is much more popular on the server, where module fetching is relatively quick because it requires only a file-system read, than on the client, where the module has to be downloaded from a remote server, and where synchronous loading usually means blocking.
+Let’s look at an example that defines our reoccurring MouseCounterModule, this time in CommonJS.
+Listing 11.4. Using CommonJS to define a module
+//MouseCounterModule.js
+const $ = require("jQuery");
+#A
+let numClicks = 0;
+const handleClick = () => {
+alert(++numClicks);
+};
+module.exports = {
+#B
+countClicks: () => {
+$(document).on("click", handleClick);
+}
+};
+#A - Synchronously requires a jQuery module
+#B - Modifies the module.exports property to specify the public interface of a module
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+To include our module within a different file, we can write this:
+const MouseCounterModule = require("MouseCounterModule.js");
+MouseCounterModule.countClicks();
+See how simple this is?
+Because the philosophy of CommonJS dictates one module per file, any code that we put in a file module will be a part of that module. Therefore, there’s no need for wrapping variables up in immediate functions. All variables defined within a module are safely contained within the scope of the current module and don’t leak out to the global scope. For example, all three of our module variables ($, numClicks, and handleClick) are module scoped, even though they’re defined in top-level code (outside all functions and blocks), which would technically make them global variables in standard JavaScript files.
+Once again, it’s important to note that only variables and functions exposed through the module.exports object are available from outside the module. The procedure is similar to the module pattern, only instead of returning a completely new object, the environment already provides one that we can extend with our interface methods and properties.
+CommonJS has a couple of advantages:
+It has simple syntax. We need to specify only the module.exports properties, while the rest of the module code stays pretty much the same as if we were writing standard JavaScript. Requiring modules is also simple; we just use the require function.
+CommonJS is the default module format for Node.js, so we have access to thousands of packages that are available through npm, node’s package manager.
+CommonJS’s biggest disadvantage is that it wasn’t explicitly built with the browser in mind. Within JavaScript in the browser, there’s no support for the module variable and the export property; we have to package our CommonJS modules into a browser-readable format. We can achieve this with either Browserify (http://browserify.org/) or RequireJS (http://requirejs.org/docs/commonjs.html).
+Having two competing standards for specifying modules, AMD and CommonJS, has led to one of those situations in which people tend to divide themselves into two, sometimes even opposing, camps. If you work on relatively closed projects, this might not be an issue; you choose the standard that suits you better. Problems can arise, however, when we need to reuse code from the opposing camp and are forced to jump through all sorts of hoops. One solution is to use Universal Module Definition, or UMD (https://github.com/umdjs/umd), a pattern with a somewhat convoluted syntax that allows the same file to be used by both AMD and CommonJS. This is beyond the scope of this book, but if you’re interested, many quality resources are available online.
+Luckily, the ECMAScript committee has recognized the need for a unified module syntax supported in all JavaScript environments, so ES6 defines a new module standard that should finally put these differences to rest.

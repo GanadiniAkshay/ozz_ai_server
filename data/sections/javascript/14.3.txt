@@ -1,0 +1,118 @@
+14.3. Implementation strategies
+Knowing which issues to be aware of is only half the battle. Figuring out effective solutions and using them to implement robust cross-browser code is another matter.
+A wide range of strategies are available, and although not every strategy will work in every situation, the range presented in this section covers most of the concerns that we’ll need to address within our robust code bases. Let’s start with something that’s easy and almost trouble free.
+14.3.1. Safe cross-browser fixes
+The simplest (and safest) classes of cross-browser fixes are those that exhibit two important traits:
+They have no negative effects or side effects on other browsers.
+They use no form of browser or feature detection.
+The instances for applying these fixes may be rare, but they’re a tactic that we should always strive for in our applications.
+Let’s look at an example. The following code snippet represents a change (plucked from jQuery) that came about when working with Internet Explorer:
+// ignore negative width and height values
+if ((key == 'width' || key == 'height') && parseFloat(value) < 0)
+value = undefined;
+Some versions of IE throw an exception when a negative value is set on the height or width style properties. All other browsers ignore negative input. This work-around ignores all negative values in all browsers. This change prevents an exception from being thrown in Internet Explorer and has no effect on any other browser. This is a painless change that provides a unified API to the user (because throwing unexpected exceptions is never desired).
+Another example of this type of fix (also from jQuery) appears in the attribute manipulation code. Consider this:
+if (name == "type" &&
+elem.nodeName.toLowerCase()== "input" &&
+elem.parentNode)
+throw "type attribute can't be changed";
+Internet Explorer doesn’t allow us to manipulate the type attribute of input elements that are already part of the DOM; attempts to change this attribute result in a proprietary exception being thrown. jQuery came to a middle-ground solution: It disallows all attempts to manipulate the type attribute on injected input elements in all browsers, throwing a uniform informational exception.
+This change to the jQuery code base requires no browser or feature detection; it unifies the API across all browsers. The action still results in an exception, but that exception is uniform across all browser types.
+This particular approach could be considered controversial. It purposefully limits the features of the library in all browsers because of a bug that exists in only one. The jQuery team weighed this decision carefully and decided that it was better to have a unified API that works consistently than an API that would break unexpectedly when developing cross-browser code. You might come across situations like this when developing your own reusable code bases, and you’ll need to carefully consider whether a limiting approach such as this is appropriate for your audience.
+The important thing to remember for these types of code changes is that they provide a solution that works seamlessly across browsers without the need for browser or feature detection, effectively making them immune to changes going forward. You should always strive for solutions that work in this manner, even if the applicable instances are few and far between.
+14.3.2. Feature detection and polyfills
+As we’ve previously discussed, feature detection is a commonly used approach when writing cross-browser code. This approach isn’t only simple but also generally effective. It works by determining whether a certain object or object property exists, and if so, assuming that it provides the implied functionality. (In the next section, we’ll see what to do about cases where this assumption fails.)
+Most commonly, feature detection is used to choose between multiple APIs that provide duplicate pieces of functionality. For example, chapter 10 explored the find method, accessible to all arrays, a method that we can use to find the first array item that satisfies a certain condition. Unfortunately, the method is accessible only in browsers that fully support ES6. So what do we do when we’re stuck with browsers that still don’t support this feature? In general, how do we deal with missing features in the browsers?
+The answer is polyfilling! A polyfill is a browser fallback. If a browser doesn’t support a particular functionality, we provide our own implementation. For example, the Mozilla Developer Network (MDN) provides polyfills for a wide range of ES6 functionality. Among other things, this includes the JavaScript implementation of the Array.prototype.find method (http://mng.bz/d9lU), as shown in the following listing.
+Listing 14.2. A polyfill for the Array.prototype.find method
+if (!Array.prototype.find) {
+#A
+Array.prototype.find = function(predicate) {
+#B
+if (this === null) {
+throw new TypeError('find called on null or undefined');
+}
+if (typeof predicate !== 'function') {
+throw new TypeError('predicate must be a function');
+}
+var list = Object(this);
+var length = list.length >>> 0;
+#C
+var thisArg = arguments[1];
+var value;
+for (var i = 0; i < length; i++) {
+#D
+value = list[i];
+#D
+if (predicate.call(thisArg, value, i, list)) {
+#D
+return value;
+#D
+}
+#D
+}
+#D
+return undefined;
+};
+}
+#A - Provides a polyfill only if the current browser doesn’t implement the method
+#B - Specifies our own implementation
+#C - Makes sure that length is a non-negative integer
+#D - Finds the first array item that satisfies a predicate
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we first use feature detection to check whether the current browser has built-in support for the find method:
+if (!Array.prototype.find) {
+...
+}
+Whenever possible, we should default to the standard way of performing any action. As mentioned before, this will help make our code as future-proof as possible. For this reason, if the browser already supports the method, we do nothing. If we’re dealing with a browser that hasn’t yet caught up with ES6, we provide our own implementation.
+It turns out that the core of the method is straightforward. We loop through the array, calling the passed-in predicate function, which checks whether an array item satisfies our criteria. If it does, we return it.
+One interesting technique is presented in this listing:
+var length = list.length >>> 0;
+The >>> operator is the zero-fill right-shift operator, which shifts the first operand the specified number of bits to the right, while discarding the excess bits. In this case, this operator is used to convert the length property to a non-negative integer. This is done because array indexes in JavaScript should be unsigned integers.
+An important use of feature detection is discovering the facilities provided by the browser environment in which the code is executing. This allows us to provide features that use those facilities in our code, or to determine whether we need to provide a fallback.
+The following code snippet shows a basic example of detecting the presence of a browser feature by using feature detection, to determine whether we should provide full application functionality or a reduced-experience fallback:
+if (typeof document !== "undefined" &&
+document.addEventListener &&
+document.querySelector &&
+document.querySelectorAll) {
+// We have enough of an API to work with to build our application
+}
+else {
+// Provide Fallback
+}
+Here, we test whether
+The browser has a document loaded
+The browser provides a means to bind event handlers
+The browser can find elements based on a selector
+Failing any of these tests causes us to resort to a fallback position. What is done in the fallback is up to the expectations of the consumers of the code, and the requirements placed on the code. A few options can be considered:
+We could perform further feature detection to figure out how to provide a reduced experience that still uses some JavaScript.
+We could opt to not execute any JavaScript, falling back to the unscripted HTML on the page.
+We could redirect the user to a plainer version of the site. Google does this with Gmail, for example.
+Because feature detection has little overhead (it’s just a property/object lookup) and is relatively simple in its implementation, it’s a good way to provide basic levels of fallback, both at the API and application levels. It’s a good choice for the first line of defense in your reusable code authoring.
+14.3.3. Untestable browser issues
+Unfortunately, JavaScript and the DOM have several possible problem areas that are either impossible or prohibitively expensive to test for. These situations are fortunately rare, but when we encounter them, it always pays to spend time investigating to see whether there’s something we can do about it.
+The following sections discuss some known issues that are impossible to test using any conventional JavaScript interactions.
+Event handler bindings
+One of the infuriating lapses in browsers is the inability to programmatically determine whether an event handler has been bound. The browsers don’t provide any way of determining whether any functions have been bound to an event listener on an element. There’s no way to remove all bound event handlers from an element unless we’ve maintained references to all bound handlers as we create them.
+Event firing
+Another aggravation is determining whether an event will fire. Although it’s possible to determine whether a browser supports a means of binding an event, it’s not possible to know whether a browser will fire an event. This becomes problematic in a couple of places.
+First, if a script is loaded dynamically after the page has already loaded, the script may try to bind a listener to wait for the window to load when, in fact, that event already happened. Because there’s no way to determine whether the event has already occurred, the code may wind up waiting forever to execute.
+The second situation occurs if a script wants to use custom events provided by a browser as an alternative. For example, Internet Explorer provides mouseenter and mouseleave events, which simplify the process of determining when a user’s mouse enters or leaves an element’s boundaries. These are frequently used as alternatives to the mouseover and mouseout events, because they act slightly more intuitively than the standard events. But because there’s no way of determining whether these events will fire without first binding the events and waiting for a user interaction against them, it’s hard to use them in reusable code.
+CSS property effects
+Yet another pain point is determining whether changing certain CSS properties affects the presentation. Some CSS properties affect only the visual representation of the display and nothing else; they don’t change surrounding elements or affect other properties on the element. Examples are color, backgroundColor, and opacity.
+There’s no way to programmatically determine whether changing these style properties will generate the effects desired. The only way to verify the impact is through a visual examination of the page.
+Browser crashes
+Testing script that causes the browser to crash is another annoyance. Code that causes a browser to crash is especially problematic, because unlike exceptions that can be easily caught and handled, these will always cause the browser to break.
+For example, in older versions of Safari (see http://bugs.jquery.com/ticket/1331), creating a regular expression that used Unicode-character ranges would always cause the browser to crash, as in the following example:
+new RegExp("[\\w\u0128-\uFFFF*_-]+");
+The problem with this is that it’s not possible to test whether this problem exists, because the test itself will always produce a crash in that older browser.
+Additionally, bugs that cause crashes to occur forever become embroiled in difficulty, because although it may be acceptable for JavaScript to be disabled in some segment of the population using your browser, it’s never acceptable to outright crash the browser of those users.
+Incongruous APIs
+A while back, we saw that jQuery decided to disallow the ability to change the type attribute in all browsers because of a bug in Internet Explorer. We could test this feature and disable it only in IE, but that would set up an incongruity, as the API would work differently from browser to browser. In these situations, when a bug is so bad that it causes an API to break, the only option is to work around the affected area and provide a different solution.
+In addition to impossible-to-test problems, some issues are possible to test but are prohibitively difficult to test effectively. Let’s look at some of them.
+API performance
+Sometimes specific APIs are faster or slower in different browsers. When writing reusable and robust code, it’s important to try to use the APIs that provide good performance. But it’s not always obvious which API that is.
+Effectively conducting performance analysis of a feature usually entails throwing a large amount of data at it, and that typically takes a relatively long time. Therefore, it’s not something we can do whenever our page is loaded.
+Untestable features are a significant hassle that hinder writing reusable JavaScript, but frequently we can work around them with a bit of effort and cleverness. By using alternative techniques, or constructing our APIs so as to obviate these issues in the first place, we’ll likely be able to build effective code despite the odds stacked against us.

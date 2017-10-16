@@ -1,0 +1,12 @@
+5.7. Summary
+Closures allow a function to access all variables that are in scope when the function itself was defined. They create a “safety bubble” of the function and the variables that are in scope at the point of the function’s definition. This way, the function has all it needs to execute, even if the scope in which the function was created is long gone.
+We can use function closures for these advanced uses:
+Mimic private object variables, by closing over constructor variables through method closures
+Deal with callbacks, in a way that significantly simplifies our code
+JavaScript engines track function execution through an execution context stack (or a call stack). Every time a function is called, a new function execution context is created and placed on the stack. When a function is done executing, the matching execution context is popped from the stack.
+JavaScript engines track identifiers with lexical environments (or colloquially, scopes).
+In JavaScript, we can define globally-scoped, function-scoped, and even-block scoped variables.
+To define variables, we use var, let, and const keywords:
+The var keyword defines a variable in the closest function or global scope (while ignoring blocks).
+let and const keywords define a variable in the closest scope (including blocks), allowing us to create block-scoped variables, something that wasn’t possible in pre-ES6 JavaScript. In addition, the keyword const allows us to define “variables” whose value can be assigned only once.
+Closures are merely a side effect of JavaScript scoping rules. A function can be called even when the scope in which it was created is long gone.

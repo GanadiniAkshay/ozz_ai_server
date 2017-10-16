@@ -1,0 +1,83 @@
+5.5.1. Variable mutability
+If we were to divide variable declaration keywords by mutability, we’d put const on one side and var and let on the other side. All variables defined with const are immutable, meaning that their value can be set only once. On the other hand, variables defined with keywords var and let are typical run-of-the-mill variables, whose value we can change as many times as necessary.
+Now, let’s delve into how const variables work and behave.
+const variables
+A const “variable” is similar to a normal variable, with the exception that we have to provide an initialization value when it’s declared, and we can’t assign a completely new value to it afterward. Hmmm, not very variable, is it?
+Const variables are often used for two slightly different purposes:
+Specifying variables that shouldn’t be reassigned (and in the rest of the book, we use them mostly in this regard).
+Referencing a fixed value, for example, the maximum number of ronin in a squad, MAX_RONIN_COUNT, by name, instead of using a literal number such as 234. This makes our programs easier to understand and maintain. Our code isn’t filled with seemingly arbitrary literals (234), but with meaningful names (MAX_RONIN_COUNT) whose values are specified in only one place.
+In either case, because const variables aren’t meant to be reassigned during program execution, we’ve safeguarded our code against unwanted or accidental modifications and we’ve even made it possible for the JavaScript engine to do some performance optimizations.
+The following listing illustrates the behavior of const variables.
+Listing 5.6. The behavior of const variables
+const firstConst = "samurai";
+#A
+assert(firstConst === "samurai", "firstConst is a samurai");
+#A
+try{
+#B
+firstConst = "ninja";
+#B
+fail("Shouldn't be here");
+#B
+} catch(e){
+#B
+pass("An exception has occurred");
+#B
+}
+#B
+#B
+assert(firstConst === "samurai",
+#B
+"firstConst is still a samurai!");
+#B
+const secondConst = {};
+#C
+secondConst.weapon = "wakizashi";
+#D
+assert(secondConst.weapon === "wakizashi",
+#D
+"We can add new properties");
+#D
+const thirdConst = [];
+#E
+assert(thirdConst.length === 0, "No items in our array");
+#E
+#E
+thirdConst.push("Yoshi");
+#E
+#E
+assert(thirdConst.length === 1, "The array has changed");
+#E
+#A - Defines a const variable and verifies that the value was assigned
+#B - Attempting to assign a new value to a const variable throws an exception.
+#C - Creates a new const variable and assigns a new object to it
+#D - We can’t assign a completely new object to the secondConst variable, but there’s nothing stopping us from modifying the one we already have.
+#E - The exact same thing holds for arrays.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we first define a const variable named firstConst with a value samurai and test that the variable has been initialized, as expected:
+const firstConst = "samurai";
+assert(firstConst === "samurai", "firstConst is a samurai");
+We continue by trying to assign a completely new value, ninja, to our firstConst variable:
+try{
+firstConst = "ninja";
+fail("Shouldn't be here");
+} catch(e){
+pass("An exception has occurred");
+}
+Because the firstConst variable is, well, a constant, we can’t assign a new value to it, so the JavaScript engine throws an exception without modifying the variable’s value. Notice that we’re using two functions that we haven’t used so far: fail and pass. These two methods behave similarly to the assert method, except fail always fails and pass always passes. Here we use them to check whether an exception has occurred: If an exception occurs, the catch statement is activated and the pass method is executed. If there’s no exception, the fail method is executed, and we’ll be notified that something isn’t as it should be. We can check to verify that the exception happens, as shown in figure 5.10.
+Figure 5.10. Checking the behavior of const variables. An exception occurs when we try to assign a completely new value to a const variable.
+Next, we define another const variable, this time initializing it to an empty object:
+const secondConst = {};
+Now we’ll discuss an important feature of const variables. As you’ve already seen, we can’t assign a completely new value to a const variable. But there’s nothing stopping us from modifying the current one. For example, we can add new properites to the current object:
+secondConst.weapon = "wakizashi";
+assert(secondConst.weapon === "wakizashi",
+"We can add new properties");
+Or, if our const variable refers to an array, we can modify that array to any degree:
+const thirdConst = [];
+assert(thirdConst.length === 0, "No items in our array");
+thirdConst.push("Yoshi");
+assert(thirdConst.length === 1, "The array has changed");
+And that’s about it. const variables aren’t that complicated to begin with. You only have to remember that a value of a const variable can be set only on initialization and that we can’t assign a completely new value later. We can still modify the existing value; we just can’t completely override it.
+Now that we’ve explored variable mutability, let’s consider the details of the relationships between various types of variables and lexical environments.

@@ -1,0 +1,58 @@
+5.2.2. Using closures with callbacks
+Another common use of closures occurs when dealing with callbacks—when a function is called at an unspecified later time. Often, within such functions, we frequently need to access outside data. The following listing shows an example that creates a simple animation with callback timers.
+Listing 5.4. Using a closure in a timer interval callback
+<div id="box1">First Box</div>
+#A
+<script>
+function animateIt(elementId) {
+var elem = document.getElementById(elementId);
+#B
+var tick = 0;
+#C
+var timer = setInterval(function(){
+#D
+if (tick < 100) {
+#E
+elem.style.left = elem.style.top = tick + "px";
+#E
+tick++;
+#E
+}
+#E
+else {
+clearInterval(timer);
+assert(tick === 100,
+#F
+"Tick accessed via a closure.");
+assert(elem,
+"Element also accessed via a closure.");
+assert(timer,
+"Timer reference also obtained via a closure." );
+}
+}, 10);
+#G
+}
+animateIt("box1");
+#H
+</script>
+#A - Creates the element that we’re going to animate
+#B - Inside the animateIt function, we get a reference to that element.
+#C - Establishes a counter to keep track of animation ticks (steps)
+#D - A built-in function that creates and starts an interval timer, given a callback
+#E - The timer callback is invoked every 10 milliseconds. For 100 ticks, it adjusts the position of the element.
+#F - After 100 ticks, we stop the timer and perform tests to assert that we can see all relevant variables needed to perform the animation.
+#G - The setInterval duration—the callback will be called every 10ms.
+#H - Now that it’s all set up, we set it in motion!
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":2,\"ch\":21},{\"line\":2,\"ch\":25}],[{\"line\":3,\"ch\":8},{\"line\":3,\"ch\":12}],[{\"line\":7,\"ch\":8},{\"line\":7,\"ch\":12}],[{\"line\":16,\"ch\":15},{\"line\":16,\"ch\":19}],[{\"line\":26,\"ch\":17},{\"line\":26,\"ch\":21}],[{\"line\":27,\"ch\":63},{\"line\":27,\"ch\":67}],[{\"line\":30,\"ch\":104},{\"line\":30,\"ch\":108}],[{\"line\":4,\"ch\":8},{\"line\":4,\"ch\":12}],[{\"line\":6,\"ch\":10},{\"line\":6,\"ch\":14}],[{\"line\":7,\"ch\":43},{\"line\":7,\"ch\":47}],[{\"line\":8,\"ch\":8},{\"line\":8,\"ch\":12}],[{\"line\":14,\"ch\":15},{\"line\":14,\"ch\":19}],[{\"line\":28,\"ch\":54},{\"line\":28,\"ch\":58}],[{\"line\":30,\"ch\":66},{\"line\":30,\"ch\":70}],[{\"line\":31,\"ch\":15},{\"line\":31,\"ch\":19}],[{\"line\":5,\"ch\":8},{\"line\":5,\"ch\":13}],[{\"line\":11,\"ch\":22},{\"line\":11,\"ch\":27}],[{\"line\":18,\"ch\":15},{\"line\":18,\"ch\":20}],[{\"line\":29,\"ch\":61},{\"line\":29,\"ch\":66}],[{\"line\":30,\"ch\":9},{\"line\":30,\"ch\":14}],[{\"line\":31,\"ch\":34},{\"line\":31,\"ch\":39}]]"}
+!@%STYLE%@!
+What’s especially important about this code is that it uses a single anonymous function, placed as a setInterval argument, to accomplish the animation of the target div element. That function accesses three variables: elem, tick, and timer, via a closure, to control the animation process. The three variables (the reference to the DOM element, elem; the tick counter, tick; and the timer reference, timer) all must be maintained across the steps of the animation. And we need to keep them out of the global scope.
+But the example will still work fine if we move the variables out of the animateIt function and into the global scope. So why all the arm flailing about not polluting the global scope?
+Go ahead and move the variables into the global scope and verify that the example still works. Now modify the example to animate two elements: Add another element with a unique ID, and call the animateIt function with that ID right after the original call.
+The problem immediately becomes obvious. If we keep the variables in the global scope, we need a set of three variables for each animation. Otherwise, they’ll step all over each other, trying to use the same set of variables to keep track of multiple states.
+By defining the variables inside the function, and by relying on closures to make them available to the timer callback invocations, each animation gets its own private “bubble” of variables, as shown in figure 5.5.
+Figure 5.5. By keeping the variables for multiple instances of the function separate, we can do many things at once.
+Without closures, doing multiple things at once, whether event handling, animations, or even server requests, would be incredibly difficult. If you’ve been waiting for a reason to care about closures, this is it!
+This example is a particularly good one for demonstrating how closures are capable of producing some surprisingly intuitive and concise code. By including the variables in the animateIt function, we create an implied closure without needing any complex syntax.
+There’s another important concept that this example makes clear. Not only can we see the values that these variables had at the time the closure was created, but we can update them within the closure while the function within the closure executes. The closure isn’t just a snapshot of the state of the scope at the time of creation, but an active encapsulation of that state that we can modify as long as the closure exists.
+Closures are closely related to scopes, so we’ll spend a good deal of this chapter exploring scoping rules in JavaScript. But first, we’ll start with the details of how code execution is tracked in JavaScript.

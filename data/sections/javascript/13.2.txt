@@ -1,0 +1,199 @@
+13.2. Taming timers: time-outs and intervals
+Timers, an often misused and poorly understood feature in JavaScript, can enhance the development of complex applications if used properly. Timers enable us to delay the execution of a piece of code by at least a certain number of milliseconds. We’ll use this capability to break long-running tasks into smaller tasks that won’t clog the event loop, thereby stopping the browser from rendering, and in the process making our web applications slow and unresponsive.
+But first, we’ll start by examining the functions we can use to construct and manipulate timers. The browser provides two methods for creating timers: setTimeout and setInterval. The browser also provides two corresponding methods to clear (or remove) them: clearTimeout and clearInterval. All are methods of the window (global context) object. Similarly to the event loop, timers aren’t defined within JavaScript itself; instead they’re provided by the host environment (such as the browser on the client, or Node.js on the server). Table 13.1 lists the methods for creating and clearing timers.
+Table 13.1. JavaScript’s timer-manipulation methods (methods of the global window object)
+Method
+Format
+Description
+setTimeout
+id = setTimeout(fn,delay)
+Initiates a timer that will execute the passed callback once after the specified delay has elapsed. A value that uniquely identifies the timer is returned.
+clearTimeout
+clearTimeout(id)
+Cancels (clears) the timer identified by the passed value if the timer hasn’t yet fired.
+setInterval
+id = setInterval(fn,delay)
+Initiates a timer that will continually try to execute the passed callback at the specified delay interval, until canceled. A value that uniquely identifies the timer is returned.
+clearInterval
+clearInterval(id)
+Cancels (clears) the interval timer identified by the passed value.
+These methods allow us to set and clear timers that either fire a single time or fire periodically at a specified interval. In practice, most browsers allow you to use both clearTimeout and clearInterval to cancel both kinds of timers, but it’s recommended that the methods be used in matched pairs, if for nothing other than clarity.
+Note
+It’s important to understand that a timer’s delay isn’t guaranteed. This has a great deal to do with the event loop, as we’ll see in the next section.
+13.2.1. Timer execution within the event loop
+You’ve already examined exactly what happens when an event occurs. But timers are different from standard events, so let’s explore an example similar to the ones you’ve seen so far. The following listing shows the code used for this example.
+Listing 13.3. Pseudocode for our time-out and interval demo
+<button id="myButton"></button>
+<script>
+setTimeout(function timeoutHandler(){
+#A
+/*Some timeout handle code that runs for 6ms*/
+#A
+}, 10);
+#A
+setInterval(function intervalHandler(){
+#B
+/*Some interval handle code that runs for 8ms*/
+#B
+}, 10);
+#B
+const myButton = document.getElementById("myButton");
+myButton.addEventListener("click", function clickHandler(){
+#C
+/*Some click handle code that runs for 10ms*/
+#C
+});
+#C
+/*Code that runs for 18ms*/
+</script>
+#A - Registers a time-out that expires after 10 ms
+#B - Registers an interval that expires every 10 ms
+#C - Registers an event handler for a button-click event
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":2,\"ch\":2},{\"line\":2,\"ch\":39}],[{\"line\":3,\"ch\":4},{\"line\":3,\"ch\":50}],[{\"line\":4,\"ch\":2},{\"line\":4,\"ch\":9}],[{\"line\":8,\"ch\":2},{\"line\":8,\"ch\":9}],[{\"line\":6,\"ch\":68},{\"line\":6,\"ch\":70}],[{\"line\":7,\"ch\":68},{\"line\":7,\"ch\":70}],[{\"line\":8,\"ch\":68},{\"line\":8,\"ch\":70}],[{\"line\":19,\"ch\":0},{\"line\":19,\"ch\":2}]]"}
+!@%STYLE%@!
+This time we have only one button, but we also register two timers. First, we register a time-out that expires after 10 ms:
+setTimeout(function timeoutHandler(){
+/*Some timeout handler code that runs for 6ms*/
+}, 10);
+As a handler, that time-out has a function that takes 6 ms to execute. Next, we also register an interval that expires every 10 ms:
+setInterval(function intervalHandler(){
+/*Some interval handler code that runs for 8ms*/
+}, 10);
+The interval has a handler that takes 8 ms to execute. We continue by registering a button-click event handler that takes 10 ms to execute:
+const myButton = document.getElementById("myButton");
+myButton.addEventListener("click", function clickHandler(){
+/*Some click handler code that runs for 10ms*/
+});
+This example ends with a code block that runs for about 18 ms (again, humor us a bit and imagine some complex code here).
+Now, let’s say we again have a quick and impatient user who clicks the button 6 ms into the application execution. Figure 13.10 shows a timing diagram of the first 18 ms of execution.
+Figure 13.10. A timing diagram that shows 18 ms of execution in the example program. The first, currently running task is to evaluate mainline JavaScript code. It takes 18 ms to execute. During that execution, three events occur: a mouse click, a timer expiry, and an interval firing.
+As in the previous examples, the first task in the queue is to execute mainline JavaScript code. During that execution, which roughly takes 18 ms to complete, three important things occur:
+At 0 ms, a time-out timer is initiated with a 10 ms delay, and an interval timer is also initiated with a 10 ms delay. Their references are kept by the browser.
+At 6 ms, the mouse is clicked.
+At 10 ms, the time-out timer expires and the first interval fires.
+As we already know from our event-loop exploration, a task always runs to completion and can’t be interrupted by another task. Instead, all newly created tasks are placed in a queue, where they patiently wait their turn to be processed. When the user clicks the button 6 ms into application execution, that task is added to the task queue. A similar thing happens at around 10 ms, when the timer expires and the interval fires. Timer events, just like input events (such as mouse events), are placed in the task queue. Note that both the timer and interval are initiated with a 10 ms delay, and that after this period, their matching tasks are placed in the task queue. We’ll come back to this later, but for now it’s enough that you notice that the tasks are added to the queue in the order in which the handlers are registered: first the time-out handler and then the interval handler.
+The initial block of code completes executing after 18 ms, and because there are no microtasks in this execution, the browser can re-render the page (again, left out from our timing discussions, due to simplicity) and move onto the second iteration of the event loop. The state of the task queue at this time is shown in figure 13.11.
+Figure 13.11. Timer events are placed into the task queue as they expire.
+When the initial block of code ends execution at 18 ms, three code blocks are queued up for execution: the click handler, the time-out handler, and the first invocation of the interval handler. This means that the waiting click handler (which we assume takes 10 ms to execute) begins execution. Figure 13.12 shows another timing diagram.
+Figure 13.12. If an interval event fires, and a task is already associated with that interval waiting in the queue, a new task isn’t added. Instead, nothing happens, as is shown for the queues at 20 ms and 30 ms.
+Unlike the setTimeout function, which expires only once, the setInterval function fires until we explicitly clear it. So, at around 20 ms, another interval fires. Normally, this would create a new task and add it to the task queue. But this time, because an instance of an interval task is already queued and awaiting execution, this invocation is dropped. The browser won’t queue up more than one instance of a specific interval handler.
+The click handler completes at 28 ms, and the browser is again allowed to re-render the page before the event loop goes into another iteration. In the next iteration of the event loop, at 28 ms, the time-out task is processed. But think back to the beginning of this example. We used the following function call to set a time-out that should expire after 10 ms:
+setTimeout(function timeoutHandler(){
+/*Some timeout handle code that runs for 6ms*/
+}, 10);
+Because this is the first task in our application, it’s not weird to expect that the time-out handler will be executed exactly after 10 ms. But as you see in figure 13.11, the time-out starts at the 28 ms mark!
+That’s why we were extra careful when saying that a timer provides the capability to asynchronously delay the execution of a piece of code by at least a certain number of milliseconds. Because of the single-threaded nature of JavaScript, we can control only when the timer task is added to the queue, and not when it’s finally executed! Now that we cleared up this little conundrum, let’s continue with the remainder of the application execution.
+The time-out task takes 6 ms to execute, so it should be finished 34 ms into the application execution. During this time period, at 30 ms another interval fires, because we’ve scheduled it to be executed every 10 ms. Once more, no additional task is queued, because a matching task for interval handler execution is already waiting in the queue. At 34 ms, the time-out handler finishes, and the browser again has a chance to re-render the page and enter another iteration of the event loop.
+Finally, the interval handler starts its execution at 34 ms, 24 ms after the 10 ms mark at which it was added to the event queue. This again emphasizes that the delay we pass in as an argument to the functions setTimeout(fn, delay) and setInterval(fn, delay) specifies only the delay after which the matching task is added to the queue, and not the exact time of execution.
+The interval handler takes 8 ms to execute, so while it’s executing, another interval expires at the 40 ms mark. This time, because the interval handler is being executed (and not waiting in the queue), a new interval task is finally added to the task queue, and the execution of our application continues, as shown in figure 13.13. Setting a setInterval delay to 10 ms doesn’t mean that we’ll end up with our handler executing every 10 ms. For example, because tasks are queued and the duration of a single task execution can vary, intervals can be executed one right after another, as is the case with intervals at the 42 and 50 ms marks.
+Figure 13.13. Because of the setbacks caused by the mouse click and time-out handler, it takes some time for the interval handlers to start executing every 10 ms.
+Finally, after 50 ms our intervals stabilize and are executed every 10 ms. The important concept to take away is that the event loop can process only one task at a time, and that we can never be certain that timer handlers will execute exactly when we expect them to. This is especially true of interval handlers. We saw in this example that even though we scheduled an interval expected to fire at 10, 20, 30, 40, 50, 60, and 70 ms marks, the callbacks were executed at 34, 42, 50, 60, and 70 ms marks. In this case, we completely lost two of them along the way, and some weren’t executed at the expected time.
+As we can see, intervals have special considerations that don’t apply to time-outs. Let’s look at those more closely.
+Differences between time-outs and intervals
+At first glance, an interval may look like a time-out that periodically repeats itself. But the differences run a little deeper. Let’s look at an example to better illustrate the differences between setTimeout and setInterval:
+setTimeout(function repeatMe(){
+#A
+/* Some long block of code... */
+#A
+setTimeout(repeatMe, 10);
+#A
+}, 10);
+#A
+setInterval(() => {
+#B
+/* Some long block of code... */
+#B
+}, 10);
+#B
+#A - Sets up a time-out that reschedules itself every 10 milliseconds
+#B - Sets up an interval that triggers every 10 milliseconds
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+The two pieces of code may appear to be functionally equivalent, but they aren’t. Notably, the setTimeout variant of the code will always have at least a 10 ms delay after the previous callback execution (depending on the state of the event queue, it may end up being more, but never less), whereas setInterval will attempt to execute a callback every 10 ms regardless of when the last callback was executed. And, as you saw in the example from the previous section, intervals can be fired immediately one after another, regardless of the delay.
+We know that the time-out callback is never guaranteed to execute exactly when it’s fired. Rather than being fired every 10 ms, as the interval is, it will reschedule itself for 10 ms after it gets around to executing.
+All of this is incredibly important knowledge. Knowing how a JavaScript engine handles asynchronous code, especially with the large number of asynchronous events that typically occur in the average page, creates a great foundation for building advanced pieces of application code.
+With all that under our belts, let’s see how our understanding of timers and the event loop can help avoid some performance pitfalls.
+13.2.2. Dealing with computationally expensive processing
+The single-threaded nature of JavaScript is probably the largest gotcha in complex JavaScript application development. While JavaScript is busy executing, user interaction in the browser can become, at best, sluggish, and, at worst, unresponsive. The browser may stutter or seem to hang, because all updates to the rendering of a page are suspended while JavaScript is executing.
+Reducing all complex operations that take any more than a few hundred milliseconds into manageable portions becomes a necessity if we want to keep the interface responsive. Additionally, most browsers will produce a dialog box warning the user that a script has become “unresponsive” if it has run nonstop for at least 5 seconds, while some other browsers will even silently kill any script running for more than 5 seconds.
+You may have been to a family reunion where a garrulous uncle won’t stop talking and insists on telling the same stories over and over again. If no one else gets a chance to break in and get a word in edgewise, the conversation’s not going to be pleasant for anyone (except for Uncle Bruce). Likewise, code that hogs all the processing time results in an outcome that’s less than desirable; producing an unresponsive user interface is never good. But situations will almost certainly arise that require us to process a significant amount of data, situations such as manipulating a couple of thousand DOM elements, for example.
+On these occasions, timers can come to the rescue and become especially useful. Because timers are capable of effectively suspending the execution of a piece of JavaScript until a later time, they can also break individual pieces of code into fragments that aren’t long enough to cause the browser to hang. Taking this into account, we can convert intensive loops and operations into nonblocking operations.
+Let’s look at the following example of a task that’s likely to take a long time.
+Listing 13.4. A long-running task
+<table><tbody></tbody></table>
+<script>
+const tbody = document.querySelector("tbody");
+#A
+for (let i = 0; i < 20000; i++) {
+#B
+const tr = document.createElement("tr");
+#C
+for (let t = 0; t < 6; t++) {
+#D
+const td = document.createElement("td");
+td.appendChild(document.createTextNode(i + "," + t));
+tr.appendChild(td);
+}
+tbody.appendChild(tr);
+#E
+}
+</script>
+#A - Finds the tbody element that we’re going to create a boatload of rows for
+#B - Makes 20,000 rows, which should qualify as a “boatload”
+#C - Creates an individual row
+#D - For each row, creates 6 cells, each with a text node
+#E - Attaches the new row to its parent
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we’re creating a total of 240,000 DOM nodes, populating a table with 20,000 rows of 6 cells, each containing a text node. This is incredibly expensive and will likely hang the browser for a noticeable period while executing, preventing the user from performing normal interactions (much in the same way that Uncle Bruce dominates the conversation at the family get-together).
+What we need to do is shut up Uncle Bruce at regular intervals so that other people can get a chance to join the conversation. In code, we can introduce timers to create just such “breaks in the conversation,” as shown in the next listing.
+Listing 13.5. Using a timer to break up a long-running task
+const rowCount = 20000;
+#A
+const divideInto = 4;
+const chunkSize = rowCount/divideInto;
+let iteration = 0;
+const table = document.getElementsByTagName("tbody")[0];
+setTimeout(function generateRows(){
+const base = chunkSize * iteration;
+#B
+for (let i = 0; i < chunkSize; i++) {
+const tr = document.createElement("tr");
+for (let t = 0; t < 6; t++) {
+const td = document.createElement("td");
+td.appendChild(
+document.createTextNode((i + base) + "," + t +
+"," + iteration));
+tr.appendChild(td);
+}
+table.appendChild(tr);
+}
+iteration++;
+if (iteration < divideInto)
+#C
+setTimeout(generateRows, 0);
+#C
+},0);
+#D
+#A - Sets up the data
+#B - Computes where we left off last time
+#C - Schedules the next phase
+#D - Sets time-out delay to 0 to indicate that the next iteration should execute “as soon as possible,” but after the UI has been updated
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this modification to the example, we’ve broken up the lengthy operation into four smaller operations, each creating its own share of DOM nodes. These smaller operations are much less likely to interrupt the flow of the browser, as shown in figure 13.14. Note that we’ve set it up so that the data values controlling the operation are collected into easily tweakable variables (rowCount, divideInto, and chunkSize), should we need to break the operations into, let’s say, ten parts instead of four.
+Figure 13.14. Use timers to break long-running tasks into smaller tasks that won’t clog the event loop.
+Also important to note is the little bit of math needed to keep track of where we left off in the previous iteration, base = chunkSize * iteration, and how we automatically schedule the next iterations until we determine that we’re done:
+if (iteration < divideInto)
+setTimeout(generateRows, 0);
+What’s impressive is just how little the code has to change in order to accommodate this new, asynchronous approach. We have to do a little more work to keep track of what’s going on, to ensure that the operation is correctly conducted, and to schedule the execution parts. But beyond that, the core of the code looks similar to what we started with.
+Note
+In this case, we’ve used 0 for our time-out delay. If you’ve paid close attention to how the event loop works, you know that this doesn’t mean that the callback will be executed in 0 ms. Instead, it’s a way of telling the browser, please execute this callback as soon as possible; but unlike with microtasks, you’re allowed to do page rendering in between. This allows the browser to update the UI and make our web applications more responsive.
+The most perceptible change resulting from this technique, from the user’s perspective, is that a long browser hang is replaced with four (or however many we choose) visual updates of the page. Although the browser will attempt to execute the code segments as quickly as possible, it will also render the DOM changes after each step of the timer. In the original version of the code, it needed to wait for one large bulk update.
+Much of the time, these types of updates are imperceptible to the user, but it’s important to remember that they do occur. We should strive to ensure that any code we introduce into the page doesn’t perceptibly interrupt the normal operation of the browser.
+It’s often surprising just how useful this technique can be. By understanding how the event loop works, we can work around the restrictions of the single-threaded browser environment, while still providing a pleasant experience to the user.
+Now that we understand the event loop and the roles timers can play in dealing with complex operations, let’s take a closer look at how the events themselves work.

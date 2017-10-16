@@ -1,0 +1,19 @@
+
+Browserify, in its wisdom, has Grunt integration, so we can automate the process of compiling our client-side JavaScript. Browserify...what an amazing piece of technology.
+
+Start by installing grunt-browserify, a Grunt task for Browserify. Install it by running npm install grunt-browserify --save-dev, and then fill in Gruntfile.js with this:
+
+Listing 11.22 A Gruntfile with Browserify
+
+#A Note that we can keep our LESS configuration in here; typical Gruntfiles often have many bits of configuration.
+
+#B Start configuring Browserify...
+
+#C Compile any .js file from my_javascripts into tmp/serve/app.js.
+
+#D Load the grunt-browserify task.
+
+#E When we run “grunt” at the command line, run both Browserify and LESS.
+
+Now, when you run Grunt with npm run grunt, this will compile all of the JavaScript files anywhere in a folder called my_javascripts into tmp/serve/app.js. If you've followed the steps from the LESS guide above, this should already be served!
+Using Browserify with Grunt

@@ -1,0 +1,17 @@
+
+Languages like HTML are nested. There's a root element (<html>) and then various sub-elements (like <head> and <body>), which each have their own sub-elements...and so on. HTML and XML choose to have an open (<a>) and a close (</a>) for each element.
+
+Jade takes a different approach by using indentation and a different syntax for HTML. Here's a very simple webpage that uses Jade:
+
+Listing 7.15 A simple Jade example
+
+#A Adding attributes to elements looks like function calls. (They look a lot like keyworded method calls in Python, if you're familiar with that!)
+
+#B No element is specified, so this is a div.
+
+This turns into the following HTML:
+
+Listing 7.16 Listing 7.15 rendered as HTML
+
+You can play around with Jade on the project's homepage at http://jade-lang.com/HYPERLINK ""—try experimenting to see what happens!
+The syntax of Jade

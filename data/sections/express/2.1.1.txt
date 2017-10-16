@@ -1,0 +1,3 @@
+
+How ever you chose to install Node, it's time to run something! Let's built a "hello world".
+Running your first Node script

@@ -1,0 +1,35 @@
+
+We've been using other peoples' modules for this whole chapter—now let's learn how to define our own.
+
+Let's say we want a function that returns a random integer between 0 and 100.  Without any module magic, that function might look like this:
+
+Listing 2.7 A function that returns a random integer between 0 and 100
+
+This shouldn't be too earth-shattering; this might be how you'd write that function in a browser context. But in Node, we can't just save this into a file and call it a day; we need to choose a variable to export, so that when other files require this one, they know what to grab. In this case, we'll be exporting randomInteger.
+
+Try saving this into a file called random-integer.js:
+
+Listing 2.8 random-integer.js
+
+#A This line does the actual "exporting" of the module for other files.
+
+The last line is the only thing that might be foreign to someone new to Node. You can only export one variable, and you'll choose that variable by setting module.exports to it. In this case, the variable we're exporting is a function. In this module, MAX is not exported, so that variable won't be available to anyone who requires this file. Nobody will be able to require it--it'll stay private to the module.
+
+REMEMBER module.exports can be anything you want. Anything to which you can assign a variable can be assigned to module.exports. It's a function in this example, but is often an object. It could even be a string or a number or an array if you'd like!
+
+Now, let's say we wanted to use our new module. In the same directory as random-integer.js, save a new file. It doesn't matter what you call it (so long as it's not random-integer.js), but let's call it print-three-random-integers.js.
+
+Listing 2.9 Using our module from another file
+
+#A Note that this is a relative path.
+
+We can now require it just like any other module, but we have to specify the path using the dot syntax. Other than that, it's exactly the same! You can use it as you would another module.
+
+You can run this code just like any other, by running node print-three-random-integers.js. If you did everything correctly, it'll print three random numbers between 0 and 100!
+
+You might try running node random-integer.js, and you'll notice that it doesn't appear do anything. It exports a module, but defining a function doesn't mean the function will run and print anything to the screen!
+
+NOTE This book only covers making local modules within a project. If you're interested in publishing open source packages for everyone to use, check out the guide on my website at http://evanhahn.com/make-an-npm-baby.
+
+That's a quick intro to Node's module system!
+Defining your own modules

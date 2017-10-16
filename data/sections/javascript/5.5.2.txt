@@ -1,0 +1,96 @@
+5.5.2. Variable definition keywords and lexical environments
+The three types of variable definitions—var, let, and const—can also be categorized by their relationship with the lexical environment (in other words, by their scope). In that case, we can put var on one side, and let and const on the other.
+Using the var keyword
+When we use the var keyword, the variable is defined in the closest function or global lexical environment. (Note that blocks are ignored!) This is a long-standing detail of JavaScript that has tripped up many developers coming from other languages.
+Consider the following listing.
+Listing 5.7. Using the var keyword
+var globalNinja = "Yoshi";
+#A
+function reportActivity(){
+var functionActivity = "jumping";
+#B
+for(var i = 1; i < 3; i++) {
+#C
+var forMessage = globalNinja + " " + functionActivity;
+#C
+assert(forMessage === "Yoshi jumping",
+#D
+"Yoshi is jumping within the for block");
+#D
+assert(i, "Current loop counter:" + i);
+}
+assert(i === 3 && forMessage === "Yoshi jumping",
+#E
+"Loop variables accessible outside of the loop");
+#E
+}
+reportActivity();
+assert(typeof functionActivity === "undefined"
+#F
+&& typeof i === "undefined" && typeof forMessage === "undefined",
+#F
+"We cannot see function variables outside of a function");
+#F
+#A - Defines a global variable, using var
+#B - Defines a function local variable, using var
+#C - Defines two variables in the for loop, using var
+#D - Within the for loop, we can access the block variables, function variables, and global variables—nothing surprising there.
+#E - But the variables of the for loop are also accessible outside the for loop.
+#F - Normally, none of the function variables are accessible outside of the function.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":25},{\"line\":0,\"ch\":26}],[{\"line\":3,\"ch\":34},{\"line\":3,\"ch\":35}],[{\"line\":5,\"ch\":15},{\"line\":5,\"ch\":16}],[{\"line\":6,\"ch\":59},{\"line\":6,\"ch\":60}],[{\"line\":8,\"ch\":53},{\"line\":8,\"ch\":54}],[{\"line\":9,\"ch\":44},{\"line\":9,\"ch\":45}],[{\"line\":13,\"ch\":56},{\"line\":13,\"ch\":57}],[{\"line\":16,\"ch\":16},{\"line\":16,\"ch\":17}],[{\"line\":19,\"ch\":61},{\"line\":19,\"ch\":62}]]"}
+!@%STYLE%@!
+We start by defining a global variable, globalNinja, which is followed by defining a reportActivity function that loops two times and notifies us about the jumping activity of our globalNinja. As you can see, within the body of the for loop, we can normally access both the block variables (i and forMessage), the function variables (functionActivity), and the global variables (globalNinja).
+But what’s strange with JavaScript, and what confuses a lot of developers coming from other languages, is that we can access the variables defined with code blocks even outside those blocks:
+assert(i === 3 && forMessage === "Yoshi jumping",
+"Loop variables accessible outside of the loop");
+This stems from the fact that variables declared with the keyword var are always registered in the closest function or global lexical environment, without paying any attention to blocks. Figure 5.11 depicts this situation, by showing the state of lexical environments after the second iteration of the for loop in the reportActivity function.
+Figure 5.11. When defining variables with the keyword var, a variable is defined in the closest function or global environment (while ignoring block environments). In our case, the variables forMessage and i are registered in the reportActivity environment (the closest functional environment), even though they’re contained within a for loop.
+Here we have three lexical environments:
+The global environment in which the globalNinja variable is registered (because this is the closest function or global lexical environment)
+The reportActivity environment, created on the reportActivity function invocation, which contains the functionActivity, i, and forMessage variables, because they’re defined with the keyword var, and this is their closest function environment
+The for block environment, which is empty, because var-defined variables ignore blocks (even when contained within them)
+Because this behavior is a bit strange, the ES6 version of JavaScript offers two new variable declaration keywords: let and const.
+Using let and const to specify block-scoped variables
+Unlike var, which defines the variable in the closest function or global lexical environment, the let and const keywords are more straightforward. They define variables in the closest lexical environment (which can be a block environment, a loop environment, a function environment, or even the global environment). We can use let and const to define block-scoped, function-scoped, and global-scoped variables.
+Let’s rewrite our previous example to use const and let.
+Listing 5.8. Using const and let keywords
+const GLOBAL_NINJA = "Yoshi";
+#A
+function reportActivity(){
+const functionActivity = "jumping";
+#B
+for(let i = 1; i < 3; i++) {
+#C
+let forMessage = GLOBAL_NINJA + " " + functionActivity;
+#C
+assert(forMessage === "Yoshi jumping",
+#D
+"Yoshi is jumping within the for block");
+#D
+assert(i, "Current loop counter:" + i);
+#D
+}
+assert(typeof i === "undefined" && typeof forMessage === "undefined", #E
+"Loop variables not accessible outside the loop");
+#E
+}
+reportActivity();
+assert(typeof functionActivity === "undefined"
+#F
+&& typeof i === "undefined" && typeof forMessage === "undefined", #F
+"We cannot see function variables outside of a function");
+#F
+#A - Defines a global variable, using const. Global const variables are usually written in uppercase.
+#B - Defines a function local variable, using const
+#C - Defines two variables in the for loop, using let
+#D - Within the for loop, we can access the block variables, function variables, and global variables—nothing surprising there.
+#E - Now, the variables of the for loop aren’t accessible outside the for loop.
+#F - Normally, none of the function variables are accessible outside the function.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":0},{\"line\":0,\"ch\":29}]]"}
+!@%STYLE%@!
+Figure 5.12 illustrates the current situation, when finishing the execution of the second iteration of the for loop in the reportActivity function. We again have three lexical environments: the global environment (for global code outside all functions and blocks), the reportActivity environment bound to the reportActivity function, and the block environment for the for loop body. But because we’re using let and const keywords, the variables are defined in their closest lexical environment; the GLOBAL_NINJA variable is defined in the global environment, the functionActivity variable in the reportActivity environment, and the i and forMessage variables in the for block environment.
+Figure 5.12. When defining variables with keywords let and const, a variable is defined in the closest environment. In our case, variables forMessage and i are registered in the for block environment, the variable functionActivity in the reportActivity environment, and the GLOBAL_NINJA variable in the global environment (in every case, the closest environment to the respective variable).
+Now that const and let have been introduced, scores of new JavaScript developers who have recently come from other programming languages can be at peace. JavaScript finally supports the same scoping rules as other C-like languages. For this reason, from this point in this book, we almost always use const and let instead of var.
+Now that we understand how identifier mappings are kept within lexical environments and how lexical environments are linked to program execution, let’s discuss the exact process by which identifiers are defined within lexical environments. This will help us better understand some commonly occurring bugs.

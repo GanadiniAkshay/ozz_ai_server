@@ -1,0 +1,41 @@
+
+Imagine you're writing a little JavaScript that resizes images to proper dimensions; this is a common task in web applications. When passed an image and dimensions, your function will return the image resized to those dimensions. Perhaps your boss has assigned this task, or perhaps it's your own impetus, but in any case, the specifications are pretty clear.
+
+Let's say that I've convinced you to write automated tests for this; the paragraphs above have moved you. When do you write the tests? You could write the image resizer and then write the tests, but you could also switch things up and write the tests first.
+
+Writing tests first has a number of advantages.
+
+When you write tests first, you're literally codifying your specification. When you're finished writing your tests, you've told the computer how to ask the question: is my code finished yet? If you have any failing tests, then your code isn't conforming to the specification. If all of your tests pass, then you know that your code works as you specified. Writing the code first might mislead you and you'll write incomplete tests.
+
+You've probably used an API that's really pleasant to work with. The code is simple and intuitive. When you write tests first, you're forced to think about how your code should work before you've even written it. This can help you design what some people call "dream code"; the easiest interface to your code. TDD can help you see the big picture about how your code should work and make for a more elegant design.
+
+This "write tests first" philosophy is called Test-Driven Development, shortened to TDD. It's so named because your tests dictate how your code forms.
+
+TDD can really help you, but there are a few times where it can slow you down. If your specifications are unclear, you could spend a bunch of time writing tests, only to realize that you don't actually want to implement what you set out to! Now you have all of these useless tests and some wasted time. TDD can limit your flexibility, especially if your specifications are a little foggy.
+
+And if you're not writing tests at all, then TDD is contrary to your very philosophy and you won’t write tests at all!
+
+Some folks are TDD for all their development—test first or go home. Others are hugely against it. It's not a silver bullet nor is it a deadly poison; decide whether TDD is right for you and your code. We'll be using some TDD in this chapter, but don't take that as an unconditional endorsement; it's good for some situations and not so good for others.
+
+How TDD works: red, green, refactor
+
+The TDD cycle usually works in three repeating steps, called red, green, refactor, as shown in Figure 1.
+
+Figure 9.1 The repeating red-green-refactor cycle of TDD.
+
+1. Step 1 is the “red” step. Because it’s TDD, you write your tests first. When you write these tests before you write any of the real code, none of your tests will pass—how could they when no real code has been written? During the red step, you write all of your tests and run them to watch them all fail. This step is so named for the red color that you usually see when you have a failing test.
+
+2. Step 2 is the “green” step. Now that you’ve written all of your tests, you begin to “fill in” the real code to satisfy all the tests. As you make progress, your tests will slowly go from red (failing) to green (passing). Like the previous step, it’s called the “green” step because you typically see green for a passing test. Once you’re all green (all of your tests pass), you’re ready for the final step.
+
+3. Step 3 is the “refactor” step. If all of your tests are green, that means all of your code works, but it might not be perfect. Perhaps one of your functions is slow or you’ve chosen bad variable names. Like a writer cleaning up a draft of a book, you go back and clean up the code. Because you have all of your tests, you can refactor without worrying that you’re breaking some unforeseen part of your code.
+
+4. Step 4 is to repeat the process. You probably haven’t written all of your code for the project, so go back to step 1 and write some tests for the next part.
+
+Here’s how we might use red-green-refactor for our image resizer:
+
+·   First, the “red” step. We’d write some of our tests. For example: if we pass it a JPEG image, our function should return a JPEG image; if we pass it a PNG image, our function should return a PNG image. These tests aren’t complete, but it’s a good starting point.
+
+·   Next, the “green” step. Now that we have some of our tests, we’ll fill in the code to make our tests pass. Note that we haven’t written any tests that say that we should resize the image, only that we should return the same file type. So we don’t write the image resizing yet! We simply return the image and all of our tests can pass.
+
+·   Now for the refactor step.
+Test-driven development

@@ -1,0 +1,17 @@
+
+It should come as no surprise that there is often a disconnect between how you envision your code behaving and how it actually behaves. No programmer has ever written bug-free code 100% of the time; this is part of our profession.
+
+If we were writing a simple calculator, for example, we know in our heads that we want it to do addition, subtraction, multiplication, and division. We can test these by hand every time we make a change—dafter making this change, does 1 plus 1 still equal 2? Does 12 divided by 3 still equal 4?—but this can be tedious and error-prone.
+
+We can write automated tests, which effectively puts these desires into code. We write code that says "make sure, with our calculator, that 1 + 1 = 2, and that 12 ÷ 3 = 4". This is effectively a specification for your program, but it's not written in English—it's written in code for the computer, which means that you can automatically verify it. "Testing" is usually short for "automated testing", and it's simply when test code is run that verifies your "real" code.
+
+This automatic verification has a number of advantages.
+
+Most importantly, you can be much more confident about your code's reliability. If you've written a rigorous specification that a computer can automatically run against your program, you can be much more confident about its correctness once you've written it.
+
+It's also really helpful when you want to change your code. A common problem is that you have a functioning program, but you want some part of it to be rewritten (perhaps to be optimized or cleaned up). Without tests, you'll have to manually verify that your old code behaves like the new code. With automated tests, you can be confident that this refactoring doesn't break anything.
+
+Automated testing is also a lot less tedious. Imagine if, every time you wanted to test your calculator, you had to make sure that 1 + 1 = 2, 1 – 1 = 0, 1 – 3 = -2...et cetera. It'd get old pretty fast! Computers are fantastic at handling tedium like this.
+
+In short: we write tests so we can automatically verify that our code (probably) works.
+What is testing and why is it important?

@@ -1,0 +1,91 @@
+9.1.3. Adding and removing items at any array location
+The previous example removed items from the beginning and end of the array. But this is too constraining—in general, we should be able to remove items from any array location. One straightforward approach for doing this is shown in the following listing.
+Listing 9.3. Naïve way to remove an array item
+const ninjas = ["Yagyu", "Kuma", "Hattori", "Fuma"];
+delete ninjas[1];
+#A
+assert(ninjas.length === 4,
+#B
+"Length still reports that there are 4 items");
+#B
+#B
+assert(ninjas[0] === "Yagyu", "First item is Yagyu");
+#B
+assert(ninjas[1] === undefined, "We've simply created a hole");
+#B
+assert(ninjas[2] === "Hattori", "Hattori is still the third item");
+#B
+assert(ninjas[3] === "Fuma", "And Fuma is the last item");
+#B
+#A - Uses the delete command to delete an item
+#B - We deleted an item, but the array still reports that it has 4 items. We’ve only created a hole in the array.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This approach to deleting an item from an array doesn’t work. We effectively only create a hole in the array. The array still reports that it has four items, but one of them—the one we wanted to delete—is undefined (see figure 9.3).
+Figure 9.3. Deleting an item from an array creates a hole in the array.
+Similarly, if we wanted to insert an item at an arbitrary position, where would we even start? As an answer to these problems, all JavaScript arrays have access to the splice method: Starting from a given index, this method removes and inserts items. Check out the following example.
+Listing 9.4. Removing and adding items at arbitrary positions
+const ninjas = ["Yagyu", "Kuma", "Hattori", "Fuma"];
+#A
+var removedItems = ninjas.splice(1, 1);
+#B
+assert(removedItems.length === 1, "One item was removed");
+#C
+assert(removedItems[0] === "Kuma");
+#C
+assert(ninjas.length === 3,
+#D
+"There are now three items in the array");
+#D
+assert(ninjas[0] === "Yagyu",
+#D
+"The first item is still Yagyu");
+#D
+assert(ninjas[1] === "Hattori",
+#D
+"Hattori is now in the second place");
+#D
+assert(ninjas[2] === "Fuma",
+#D
+"And Fuma is in the third place");
+#D
+removedItems = ninjas.splice(1, 2, "Mochizuki", "Yoshi", "Momochi");
+#E
+assert(removedItems.length === 2, "Now, we've removed two items");
+#E
+assert(removedItems[0] === "Hattori", "Hattori was removed");
+#E
+assert(removedItems[1] === "Fuma", "Fuma was removed");
+#E
+assert(ninjas.length === 4, "We've inserted some new items");
+#E
+assert(ninjas[0] === "Yagyu", "Yagyu is still here");
+#E
+assert(ninjas[1] === "Mochizuki", "Mochizuki also");
+#E
+assert(ninjas[2] === "Yoshi", "Yoshi also");
+#E
+assert(ninjas[3] === "Momochi", "and Momochi");
+#E
+#A - Creates a new array with four items
+#B - Uses the built-in splice method to remove one element, starting at index 1
+#C - splice returns an array of the removed items. In this case, we removed one item.
+#D - The ninja array no longer contains Kuma; subsequent items were automatically shifted.
+#E - We can insert an element at a position by adding arguments to the splice call.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We begin by creating a new array with four items:
+var ninjas = ["Yagyu", "Kuma", "Hattori", "Fuma"];
+Then we call the built-in splice method:
+var removedItems = ninjas.splice(1,1);//ninjas:["Yagyu","Hattori", "Fuma"];
+//removedItems: ["Kuma"]
+In this case, splice takes two arguments: the index from which the splicing starts, and the number of elements to be removed (if we leave out this argument, all elements to the end of the array are removed). In this case, the element with index 1 is removed from the array, and all subsequent elements are shifted accordingly.
+In addition, the splice method returns an array of items that have been removed. In this case, the result is an array with a single item: "Kuma".
+Using the splice method, we can also insert items into arbitrary positions in an array. For example, consider the following code:
+removedItems = ninjas.splice(1, 2, "Mochizuki", "Yoshi", "Momochi");
+//ninjas: ["Yagyu", "Mochizuki", "Yoshi", "Momochi"]
+//removedItems: ["Hattori", "Fuma"]
+Starting from index 1, it first removes two items and then adds three items: "Mochizuki", "Yoshi", and "Momochi".
+Now that we’ve given you a refresher on how arrays work, let’s continue by studying some common operations that are often performed on arrays. These will help you write more elegant array-handling code.

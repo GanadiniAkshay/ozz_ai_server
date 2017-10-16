@@ -1,0 +1,10 @@
+
+If you've used Node.js, you've heard that it's got a number of powerful features. It's JavaScript, so you have a language familiar to many. 
+Google’s V8 JavaScript engine makes sure your JavaScript runs fast. 
+Node.js's asynchronous mindset keeps your code from doing a lot of waiting. 
+It's also got a huge amount of third-party libraries; there are database tools, testing frameworks, security modules, and utility libraries. Large companies are even getting behind Node.js; the list includes Walmart, the BBC, LinkedIn, and PayPal.
+
+Express is a relatively small framework that sits on top of Node.js's web server functionality to simplify its APIs and add helpful new features. It makes it easier to organize your application’s functionality with 
+middleware and routing; it adds helpful utilities to Node.js’s HTTP objects; it facilitates the rendering of dynamic HTML views; it defines an easily-implemented extensibility standard. This book explores those features in a lot more depth, so all of that lingo will be demystified soon.
+
+What is Express?

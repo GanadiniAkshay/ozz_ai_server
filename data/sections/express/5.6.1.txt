@@ -1,0 +1,15 @@
+
+For this application, we'll use four Node packages: Express (obviously), Reckon (for grabbing weather data), Zippity-do-dah (for turning ZIP codes into latitude/longitude), and EJS (for rendering HTML views). (These are some pretty good names, right? Especially "zippity-do-dah".)
+
+Make a new Express application. You'll want to make sure the package.json looks something like this when it's time to start:
+
+Listing 5.19 package.json for this application
+
+Make sure you have all of these dependencies installed by running npm install in your application's directory.
+
+On the client, we'll depend on jQuery and a minimal CSS framework called Pure (more information at http://purecss.io/). It's likely that you already know about jQuery, but Pure is a bit more obscure (though most everything is more obscure than jQuery). Pure gives us a little bit of styling for text and forms, similar to Twitter's Bootstrap. The difference with Pure is that it's far lighter-weight, which better suits this kind of application.
+
+Make two directories: one called public and one called views.
+
+We're ready to get started!
+Getting set up

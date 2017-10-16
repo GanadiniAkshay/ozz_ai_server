@@ -1,0 +1,4 @@
+9.2. Maps
+Imagine that you’re a developer at freelanceninja.com, a site that wants to cater to a more international audience. For each piece of text on the website—for example, “Ninjas for hire”—you’d like to create a mapping to each targeted language, such as “” in Japanese, “” in Chinese, or “” in Korean (let’s hope Google Translate has done an adequate job). These collections, which map a key to a specific value, are called by different names in different programming languages, but most often they’re known as dictionaries or maps.
+But how do you efficiently manage this localization in JavaScript? One traditional approach is to take advantage of the fact that objects are collections of named properties and values, and create something like the following dictionary:
+At first glance, this may seem like a perfectly fine approach to this problem, and for this example, it isn’t half bad. But unfortunately, in general, you can’t rely on it.

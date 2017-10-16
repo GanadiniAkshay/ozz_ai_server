@@ -1,0 +1,5 @@
+1.1.2. Transpilers give us access to tomorrow’s JavaScript today
+Because of the rapid release cycles of browsers, we usually don’t have to wait long for a JavaScript feature to be supported. But what happens if we want to take advantage of all the benefits of the newest JavaScript features but are taken hostage by a harsh reality: The users of our web applications may still be using older browsers?
+One answer to this problem is to use transpilers (“transformation + compiling”), tools that take cutting-edge JavaScript code and transform it into equivalent (or, if that’s not possible, similar) code that works properly in most current browsers.
+Today’s most popular transpilers are Traceur (https://github.com/google/traceur-compiler) and Babel (https://babeljs.io/). Setting them up is easy; just follow one of the tutorials, such as https://github.com/google/traceur-compiler/wiki/Getting-Started or http://babeljs.io/docs/setup/.
+In this book, we put a special focus on running JavaScript code in the browser. To effectively use the browser platform, you have to get your hands dirty and study the inner workings of browsers. Let’s get started!

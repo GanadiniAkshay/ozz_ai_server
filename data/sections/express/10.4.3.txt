@@ -1,0 +1,15 @@
+
+Sometimes, modules have security issues. Some nice folks set up the Node Security Project, an ambitious undertaking to audit every module in the npm registry. If they find an insecure module, they post an advisory at http://nodesecurity.io/advisories.
+
+The Node Security Project also comes with a command-line tool, called nsp. It's a simple but powerful tool that scans your package.json for insecure dependencies (by comparing them against their database).
+
+To install it, run npm install –g nsp to install the module globally. Now, in the same directory as your package.json, type:
+
+Most of the time, you'll get a nice message that tells you that your packages are known to be secure. But sometimes, one of your dependencies (or, more often, one of your dependencies' dependencies) has a security hole.
+
+For example, Express depends on a module called serve-static; this is express.static, the static file middleware. In early 2015, a vulnerability was found in serve-static.  If you're using a version of Express that depended on serve-static, run nsp audit-package and you'll see something like this:
+
+There are basically two important things here. The leftmost column tells you the name of the problematic dependency. The rightmost column shows you the chain of dependencies that lead to the problem. In this example, your project (called "myproject") is the first issue, which depends on Express, which then depends on serve-static. This means that Express needs to update in order to get the latest version of serve-static.  If you depended on serve-static directly, you'd only see your project name in the list, like this:
+
+Note that modules can still be insecure; there are so many modules on npm that the Node Security Project can't possibly audit all of them. But it's another helpful tool to help keep your apps secure.
+Check against the Node Security Project

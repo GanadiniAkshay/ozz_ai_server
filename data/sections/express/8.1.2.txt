@@ -1,0 +1,13 @@
+
+If you come from a relational/SQL background, many of Mongo's structures map one-to-one with structures from the SQL world. (If you're not familiar with SQL, you can skip this section!)
+
+Documents in Mongo correspond with rows or records in SQL. In an application with users, each user would correspond to one document in Mongo or one row in SQL. In contrast to SQL, Mongo doesn't enforce any schema, so it's not invalid to have a user without a last name or an email address that's a number.
+
+Collections in Mongo correspond to SQL's tables. Mongo's collections contain many documents, where SQL's tables contain many rows. Once again, Mongo's collections don't enforce a schema, which is unlike SQL. In addition, these documents can embed other documents, unlike in SQL—blog posts could contain the comments, which would likely be two tables in SQL. In a blog application, there would be one Mongo collection for blog posts or one SQL table. Each Mongo collection contains many documents, where each SQL table contains many rows or records.
+
+Databases in Mongo are very similar to databases in SQL. Generally, there is one database per application. Mongo databases can contain many collections, where SQL databases can contain many tables. A social networking site would likely have one database in either SQL or Mongo.
+
+For a full list of "translations" from SQL terminology to MongoDB terminology (queries, too!), check out the official SQL to MongoDB Mapping Chart at http://docs.mongodb.org/manual/reference/sql-comparison/index.html.
+
+If you're looking for a helpful SQL tool for Node, check out Sequelize at http://sequelizejs.com/. It interfaces with many SQL databases and has a number of helpful features. In this chapter, we'll deal heavily with a module called Mongoose; for your reference as you read, Mongoose is to MongoDB as Sequelize is to SQL. Keep that in mind if you want to use SQL!
+For you SQL users out there...

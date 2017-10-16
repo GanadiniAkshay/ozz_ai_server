@@ -1,0 +1,7 @@
+
+So we've just looked at a simple example of routing. Conceptually, it's not too crazy: it maps an HTTP verb + URI combo to a request handler. This lets you map things like GET /about or POST /new/sword to a specific bit of code. This is great!
+
+But we're greedy. If Express were a vat of ice cream, we wouldn't be satisfied with one scoop. We want more scoops. We want sprinkles. We want chocolate sauce. We want more routing features.
+
+NOTE Some other frameworks (Ruby on Rails, for example) have a centralized routing file where all routes are defined in one place. Express is not this way—they can be defined in a lot of places.
+The features of routing

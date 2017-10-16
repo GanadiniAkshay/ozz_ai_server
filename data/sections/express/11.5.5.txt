@@ -1,0 +1,25 @@
+
+No offense, but your server might just crash.
+
+It could be that you run out of memory, or that you have an uncaught exception, or that a user has found a way to break your server. If you've ever had this happen while you're developing, you've probably seen that an error sends your server process screeching to a halt. While you're developing, this is pretty helpful—you want to be aware that your app doesn't work! In production, however, it's much more likely that you want your app to work at all costs. If you have a crash, you'll want your app to be resilient and restart.
+
+We've already seen Forever in our chapter about security, but a refresher: it is a tool to keep your server up and running, even in the face of crashes. Instead of typing node app.js, you'll just type forever app.js. Then, if your app crashes, Forever will restart it.
+
+First, run npm install forever --save to install Forever as a dependency. Now, we need to run forever app.js to start our server. We could add this to the Procfile or change our npm start script, but I like to add a new script to package.json.
+
+Open up your scripts in package.json and add the following:
+
+Listing 11.34 Defining a script for running your server in production
+
+#A When you run “npm run production”, your app will start running forever.
+
+Now, when you run npm run production, your app will start with Forever. The next step is to get Heroku to run this script, and that's just a simple matter of changing your Procfile:
+
+Listing 11.35 Updating your Procfile to use Forever
+
+Now, when Heroku starts, it'll run your app with Forever and keep your app restarting after crashes!
+
+As always with Heroku, commit these changes into Git and deploy them to Heroku with git push heroku master.
+
+You can use Forever in any kind of deployment, not just Heroku. While Heroku uses Procfiles and some of that will have to change depending on your server setup, you can use Forever wherever you choose to deploy.
+Making your server more crash-resistant

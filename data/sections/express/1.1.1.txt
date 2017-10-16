@@ -1,0 +1,21 @@
+
+When you're creating a web application (or to be more precise, a web server) in Node.js, you write a single JavaScript function for your entire application. This function listens to a web browser’s requests, or the requests from a mobile application consuming your API, or any other client talking to your server. When a request comes in, this function will look at the request and determine how to respond. For example, if you visit the homepage in a web browser, this function could determine that you want the homepage and it will send back some HTML. If you send a message to an API endpoint, this function could determine what you want and respond with JSON (for example).
+
+Imagine we're writing a web application that tells users the time and time zone on the server. It will work like this:
+
+·   If the client requests the homepage, our application will return an HTML page showing the time.
+
+·   If the client requests anything else, our application will return an HTTP 404 “Not Found” error and some accompanying text.
+
+If you were building your application on top of Node.js without Express, a client hitting your server might look like Figure 1.1.
+
+Figure 1.1 The flow of a request through a Node.js web application. Circles are written by you as the developer; squares are out of your domain.
+
+The JavaScript function that processes browser requests in your application is called a request handler. There’s nothing too special about this; it is just a JavaScript function that takes the request, figures out what to do, and responds; that's it! Node's HTTP server handles the connection between the client and your JavaScript function so that you don't have to handle tricky network protocols.
+
+In code, it's a function that takes two arguments: an object that represents the request and an object that represents the response. In our time/timezone application, the request handler function might check for the URL that the client is requesting. If they’re requesting the homepage, the request handler function should respond with the current time in an HTML page. Otherwise, it should respond with a 404. Every Node.js application is just like this: it's a single request handler function responding to requests. Conceptually, it's pretty simple!
+
+The problem is that the Node APIs can get complex. Want to send a single JPEG file? That’ll be 45 lines of code. Want to create reusable HTML templates? Figure out how to do it yourself. Node.js's HTTP server is powerful, but it's missing a lot of features that you might want if you were building a real application.
+
+Express was born to make it easier to write web applications with Node.js.
+The functionality in Node.js

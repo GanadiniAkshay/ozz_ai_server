@@ -1,0 +1,21 @@
+
+As we saw in the previous chapter, Node.js comes with a number of built-in modules, one of which is called http. Node's HTTP module allows you to build an HTTP server that responds to HTTP requests from browsers (and more). In short, the HTTP module lets you build websites with Node!
+
+While you can build full web servers with nothing but Node's built-in HTTP module, you might not want to. As we discussed in Chapter 1 and saw in Chapter 2, the API exposed by the HTTP module is pretty minimal and doesn't do a lot of heavy lifting for you.
+
+That's where Express comes in: it's a helpful third-party module (that is, not bundled with Node.js). When you get right down to it, Express is really just an abstraction layer on top of Node's built-in HTTP server. You could, in theory, write everything with "vanilla" Node and never touch Express. But as we'll see, Express smooths out a lot of the difficult parts and says "don't worry, you don't need to deal with this ugly part. I'll handle this!" In other words, it's magic!
+
+In this chapter, we'll spring off of our Node knowledge and make an effort to really understand Express. We'll talk about its relationship to bare Node, the concepts of middleware and routing, and learn the other nice features Express gives us. In future chapters, we'll go more in depth; this chapter will give a code-heavy overview of the framework.
+
+At a high level, Express really just gives us four major features, which we'll be learning about in this chapter:
+
+1. In contrast to "vanilla" Node, where your requests only flow through one function, Express has a "middleware stack", which is effectively an array of functions.
+
+2. Routing is a lot like middleware, but the functions are only called when you visit a specific URL with a specific HTTP method. For example, you could only run a request handler when the browser visits yourwebsite.com/about.
+
+3. Express also extends request and response with a bunch of extra methods and properties for developer convenience.
+
+4. Views allow you to dynamically render HTML. This both allows you to change the HTML on the fly and allows you to write the HTML in other languages.
+
+We'll build a simple guestbook in this chapter to get a feel for these four features.
+ Foundations of Express

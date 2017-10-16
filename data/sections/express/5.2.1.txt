@@ -1,0 +1,43 @@
+
+The routes we've seen above could really be expressed in code with a strict equality operator (===); is the user visiting /olivia? That's very useful, but it doesn't give us all the expressive power we might want.
+
+Imagine you've been tasked to make a website that has user profiles, and imagine that every user has a numeric ID. You want the URL for user #1 to be /users/1. User #2 should be found at /users/2 (and so on). Rather than define, in code, a new route for every single new user (which would be crazy), you can define one route for everything that starts with /users/ and then has an ID.
+
+The Simplest Way
+
+The absolutely simplest way to grab a parameter is by simply putting it in your route with a colon in front of it. To grab the value, you'll look inside the params property of the request.
+
+Listing 5.3 The simplest parameter
+
+#A This will match requests coming into /users/123 and /users/horse_ebooks too.
+
+#B The userid property is always a string in this case, so we have to convert it to an integer. If we visit /users/olivia, though, this will return NaN, which we'll need to handle.
+
+In the above example, we see how to grab parameters from a more dynamic route. The code above will match what we want; things like /users/123 and /users/8. But while it won't match a parameter-less /users/ or /users/123/posts, it probably still matches more than what we want. For example, it'll also match /users/cake and /users/horse_ebooks. If we want to be more specific, we have a few options.
+
+NOTE While it's often that you'll want to be more specific with your parameter definitions, it might very well be that this is fine for your purposes! You might want to allow /users/123 and /users/count_dracula. Even if you only want to allow numeric parameters, you might prefer to have validation logic right in the route. As we'll see, there are other ways to do it, but that might be just fine for you.
+
+PRE-DEFINING A PARAMETER
+
+In previous examples, we'd be able to extract the user ID, but what if we wanted to extract an entire user? Express allows you to define a parameter which can then be used elegantly in as many routes as you'd like.
+
+The code for this looks a lot like a route, or middleware, but it's ever so slightly different.
+
+Listing 5.4 Defining a user ID parameter
+
+#A  First, we'll define a parameter called "userid". After this is done, we'll be able to put :userid in any route and it'll run this code. This function looks like the request handlers that we've seen so many of, but it's got one more argument: the value of the user ID for that given request. In the examples above, this might be "123" or "horse_ebooks".
+
+#C Like before, we have to parse the value because it comes in as a string.
+
+#D This if makes sure the ID isn't zero, or NaN, or something else bad.
+
+#E Now, we'll add a new field to the request object user. Now, for every route that has :userid in it, we should (hopefully) have a user parameter. findUserById is just pseudocode for now; we'll be able to implement something similar in later chapters.
+
+#F Like middleware, we call next when it's time to continue onto the next routes and middleware functions.
+
+#G Now we can use the userid parameter in as many routes as we like, and req.user will be the user! #H There's a chance it's undefined, but we can handle that in a number of different ways.
+
+#I Because we don't have userid in the route, req.user is undefined here.
+
+This looks a lot like middleware but it's a bit more specific to paramaterized routes. Notice that we can use it in multiple places, and now instead of a simple string, we can get an entire user object! This will be super important in later chapters when we want to elegantly integrate parameters.
+Grabbing parameters to routes

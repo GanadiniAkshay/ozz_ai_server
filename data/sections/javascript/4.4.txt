@@ -1,0 +1,16 @@
+4.4. Summary
+When invoking a function, in addition to the parameters explicitly stated in the function definition, function invocations are passed in two implicit parameters: arguments and this:
+The arguments parameter is a collection of arguments passed to the function. It has a length property that indicates how many arguments were passed in, and it enables us to access the values of arguments that don’t have matching parameters. In nonstrict mode, the arguments object aliases the function parameters (changing the argument changes the value of the parameter, and vice versa). This can be avoided by using strict mode.
+The this parameter represents the function context, an object to which the function invocation is associated. How this is determined can depend on the way a function is defined as well as on how it’s invoked.
+A function can be invoked in four ways:
+As a function: skulk()
+As a method: ninja.skulk()
+As a constructor: new Ninja()
+Via its apply and call methods: skulk.call(ninja) or skulk.apply(ninja)
+The way a function is invoked influences the value of the this parameter:
+If a function is invoked as a function, the value of the this parameter is usually the global window object in nonstrict mode, and undefined in strict mode.
+If a function is invoked as a method, the value of the this parameter is usually the object on which the function was invoked.
+If a function is invoked as a constructor, the value of the this parameter is the newly constructed object.
+If a function is invoked through call and apply, the value of the this parameter is the first argument supplied to call and apply.
+Arrow functions don’t have their own value of the this parameter. Instead, they pick it up at the moment of their creation.
+Use the bind method, available to all functions, to create a new function that’s always bound to the argument of the bind method. In all other aspects, the bound function behaves as the original function.

@@ -1,0 +1,9 @@
+
+We've taken a look at LESS and Browserify, but we haven't found an elegant way to wire them into our Express apps yet.
+
+We'll look at two ways to handle this, the first of which is with the use of a tool called Grunt. Grunt (at http://gruntjs.com/) calls itself "The JavaScript Task Runner", which is exactly what it sounds like: it runs tasks. If you've ever used Make or Rake, Grunt will seem familiar.
+
+Grunt defines a framework onto which you define tasks. Like Express, Grunt is a minimal framework. It can't do much alone; you'll need to install and configure other tasks for Grunt to run. These tasks include compiling CoffeeScript or LESS or SASS, concatenating JavaScript and CSS, running tests, and plenty more. You can find a full list of tasks at http://gruntjs.com/plugins, but we'll be using four today: compiling and concatenating JavaScript with Browserify, compiling LESS into CSS, minifying JavaScript and CSS, and using "watch" to keep us from typing the same commands over and over again.
+
+Let's start by installing Grunt.
+Using Grunt to compile, minify, and more

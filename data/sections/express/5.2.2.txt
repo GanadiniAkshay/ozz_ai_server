@@ -1,0 +1,37 @@
+
+Express allows you to specify your routes as strings, but it also allows you to specify them as regular expressions. This gives you more control over the routes you specify. You can also use regular expressions to match parameters, as we'll see.
+
+NOTE Regular expressions can get a little hairy. They scared me when I first started working with them, but I found that fear greatly reduced by the entry on the Mozilla Developer Network. If you need help, I strongly recommend checking it out at http://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Glob
+
+Let's imagine that we want to match things like /users/123 or /users/456, but not /users/olivia. We can code this into a regular expression and grab the number to boot.
+
+Listing 5.5 Using regular expressions for numeric routes
+
+#A This both defines the route (starts with /users/ and ends with one or more digits)
+
+      and captures the digits, which is used on the next line. If this regular expression looks daunting, that's because all regular expressions look daunting.
+
+#B The parameters aren't named this time, so we access them by their ordinality. If we captured a second value, we'd look inside req.params[1], and so on. Note that we still capture them as strings and have to convert them manually.
+
+This is one way to enforce the "the user ID must be an integer" constraint. Like the above, it's passed in as a string, so we have to convert it to a number (and probably to a user object further down the line).
+
+Regular expressions can be a little difficult to read, but you can use them to define much more complex routes than these. For example, you might want to define a route that looks for ranges. That is, if you visit /users/100-500, you can see a list of users from IDs 100 to 500. Regular expressions make this relatively easy to express (no pun intended):
+
+Listing 5.6 Using regular expressions for complex routes
+
+#A Like the above, this defines a route with a regular expression. This time, we capture two sets of digits on either side of a hyphen character.
+
+#B Like before, we grab the first captured parameter as a string and have to do some conversion.
+
+#C This is very similar to the previous line, but we're converting the second parameter, not the first.
+
+You can daydream about the crazy number of possibilities this opens up.
+
+For example, I once had to define a route that matched UUIDs (version 3 and 4). If you're not familiar, a UUID is a long string of hex digits that looks like this:
+
+...where x is any hex digit and y is 8, 9, A, or B. Let's say you want to write a route that matches any UUID. It might look something like this:
+
+Listing 5.7 UUID-matching routes with a regexp
+
+I could fill hundreds of pages with more examples, but I won't. The key takeaway here: you can use regular expressions to define your routes.
+Using regular expressions to match routes

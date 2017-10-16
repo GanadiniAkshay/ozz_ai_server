@@ -1,0 +1,19 @@
+
+In broad strokes, Express adds two big features to the Node.js HTTP server.
+
+1. Express adds a number of helpful conveniences to Node.js's HTTP server, abstracting away a lot of its complexity. For example, where sending a single JPEG file is 45 lines of code in raw Node.js, Express reduces it to just one line.
+
+2. Express lets you refactor one monolithic request handler function into many smaller request handlers that only handle specific bits and pieces. This is more maintainable and more modular.
+
+In contrast to Figure 1.1, Figure 1.2 shows how a request would flow through an Express application.
+
+Figure 1.2 The flow of a request through an Express. Once again, circles are code you write and squares are out of your domain.
+
+This figure might look a little more complicated, but it's much simpler for you as the developer. There are essentially two things going on here:
+
+1. Rather than one large request handler function, Express has you writing many smaller functions (many of which can be third-party and not written by you). Some functions are executed for every request (like a function that logs all requests, for example) and other functions are only executed sometimes (like a function that only handles the homepage or the 404 page, for example). Express has many utilities for partitioning these smaller request handler functions.
+
+2. Request handler functions take two arguments: one is the request and the other is the response. Node’s HTTP server provides you with some functionality; for example, Node’s HTTP server lets you extract the browser’s user-agent in one of its variables. Express augments this by adding extra features like easy access to the incoming request’s IP address and improved parsing of URLs. The response object also gets beefed up; Express adds things like the sendFile method, a one-line command that translates to about 45 lines of complicated file code. This makes it easier to write these request handler functions.
+
+Instead of managing one monolithic request handler function with verbose Node.js APIs, you write multiple small request handler functions that are made more pleasant by Express and its easier APIs.
+What Express adds to Node

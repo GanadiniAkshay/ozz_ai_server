@@ -1,0 +1,77 @@
+3.1.2. Callback functions
+Whenever we set up a function to be called at a later time, whether by the browser in the event-handling phase or by other code, we’re setting up a callback. The term stems from the fact that we’re establishing a function that other code will later “call back” at an appropriate point of execution.
+Callbacks are an essential part of using JavaScript effectively, and we’re willing to bet that you already use them in your code a lot—whether executing code on a button click, receiving data from a server, or animating parts of your UI.
+In this section, we’re about to look at how to use callbacks to handle events or to easily sort collections—typical real-world examples of how callbacks are used. But it’s a tad complex, so before diving in, let’s strip the callback concept completely naked and examine it in its simplest form. We’ll start with an illuminating example of a completely useless function that accepts a reference to another function as a parameter and calls that function as a callback:
+function useless(ninjaCallback) {
+return ninjaCallback();
+}
+As useless as this function is, it demonstrates the ability to pass a function as an argument to another function, and to subsequently invoke that function through the passed parameter.
+We can test this useless function with the code in the following listing.
+Listing 3.1. A simple callback example
+var text = "Domo arigato!";
+report("Before defining functions");
+function useless(ninjaCallback) {
+#A
+report("In useless function");
+#A
+return ninjaCallback();
+#A
+}
+#A
+function getText() {
+#B
+report("In getText function");
+#B
+return text;
+#B
+}
+#B
+report("Before making all the calls");
+assert(useless(getText) === text,
+#C
+"The useless function works! " + text);
+#C
+report("After the calls have been made");
+#A - Defines a function that takes a callback function and immediately invokes it
+#B - Defines a simple function that returns a global variable
+#C - Calls our useless function with the getText function as a callback
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this listing, we use a custom report function to output several messages as our code is being executed, so that we can track the execution of our program. We also use the assert testing function that we mentioned in chapter 1. The assert function usually takes two arguments. The first argument is an expression whose premise is asserted. In this case, we want to establish whether the result of invoking our useless function with the argument getText returns a value that’s equal to the value of the variable text (useless(getText) === text). If the first argument evaluates to true, the assertion passes; otherwise, it’s considered a failure. The second argument is the associated message, which is usually logged with an appropriate pass/fail indicator. (Appendix C discusses testing in general, as well as our own little implementation of the assert and report functions).
+When we run this code, we end up with the result shown in figure 3.1. As you can see, calling the useless function with our getText callback function as an argument returns the expected value.
+Figure 3.1. The result of running the code from listing 3.1
+We can also take a look at how exactly this simple callback example is executed. As figure 3.2 shows, we pass in the getText function to the useless function as an argument. This means that within the body of the useless function, the getText function can be referenced through the callback parameter. Then, by making the callback() call, we cause the execution of the getText function; the getText function, which we passed in as an argument, is called back by the useless function.
+Figure 3.2. The flow of execution when making the useless(getText) call. The useless function is called with getText as an argument. In the body of the useless function is a call to the passed-in function, which in this case triggers the execution of the getText function (we’ve “called back” to the getText function).
+This is easy, because JavaScript’s functional nature lets us deal with functions as first-class objects. We can even take the whole thing a step further, by rewriting our code in the following manner:
+var text = 'Domo arigato!';
+function useless(ninjaCallback) {
+return ninjaCallback();
+}
+assert(useless(function () { return text;}) === text,
+#A
+"The useless function works! " + text);
+#A - Defines a callback function directly as an argument
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":15},{\"line\":6,\"ch\":42}],[{\"line\":9,\"ch\":0},{\"line\":9,\"ch\":56}]]"}
+!@%STYLE%@!
+One of the most important features of JavaScript is the ability to create functions in the code anywhere an expression can appear. In addition to making the code more compact and easy to understand (by putting function definitions near where they’re used), this feature can also eliminate the need to pollute the global namespace with unnecessary names when a function isn’t going to be referenced from multiple places within the code.
+In the preceding example of a callback, we called our own callback. But callbacks can also be called by the browser. Think back to chapter 2, which has an example with the following snippet:
+document.body.addEventListener("mousemove", function() {
+var second = document.getElementById("second");
+addMessage(second, "Event: mousemove");
+});
+That’s also a callback function, one that’s defined as an event handler to the mousemove event, and that will be called by the browser when that event occurs.
+Note
+This section introduces callbacks as functions that other code will later “call back” at an appropriate point of execution. You’ve seen an example in which our own code immediately calls the provided callback (the useless function example), as well as an example in which the browser makes the call (the mousemove example) whenever a particular event happens. It’s important to note that, unlike us, some people believe that a callback has to be called asynchronously, and therefore that the first example isn’t really a callback. We mention this just in case you stumble upon some heated discussion.
+Now let’s consider a use of callbacks that will greatly simplify how we sort collections.
+Sorting with a comparator
+Almost as soon as we have a collection of data, odds are we’re going to need to sort it. Let’s say that we have an array of numbers in a random order: 0, 3, 2, 5, 7, 4, 8, 1. That order might be just fine, but chances are that, sooner or later, we’ll want to rearrange it.
+Usually, implementing sorting algorithms isn’t the most trivial of programming tasks; we have to select the best algorithm for the job at hand, implement it, adapt it to our current need (so that the items are sorted in a particular order), and be careful not to introduce bugs. Out of these tasks, the only one that’s application specific is the sorting order. Luckily, all JavaScript arrays have access to the sort method that requires us only to define a comparison algorithm that tells the sort algorithm how the values should be ordered.
+This is where callbacks jump in! Instead of letting the sort algorithm decide what values go before other values, we’ll provide a function that performs the comparison. We’ll give the sort algorithm access to this function as a callback, and the algorithm will call the callback whenever it needs to make a comparison. The callback is expected to return a positive number if the order of the passed values should be reversed, a negative number if not, and zero if the values are equal; subtracting the compared values produces the desired return value to sort the array:
+var values = [0, 3, 2, 5, 7, 4, 8, 1];
+values.sort(function(value1, value2){
+return value1 - value2;
+});
+There’s no need to think about the low-level details of a sorting algorithm (or even which sorting algorithm to choose). We provide a callback that the JavaScript engine will call every time it needs to compare two items.
+The functional approach allows us to create a function as a standalone entity, just as we can any other object type, and to pass it as an argument to a method, just like any other object type, which can accept it as a parameter, just like any other object type. It’s that first-class status coming into play.

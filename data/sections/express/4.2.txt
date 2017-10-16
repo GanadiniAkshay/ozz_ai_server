@@ -1,0 +1,21 @@
+
+Let's build ourselves a simple little application that serves files from a folder. You can put anything in this folder and it'll be served—HTML files, images, or an MP3 of yourself singing "My Heart Will Go On" by Celine Dion.
+
+This folder will be called "static" and it will live in our project’s directory. If there's a file called celine.mp3 and a user visits /celine.mp3, our server should send that MP3 over the internet. If the user requests /burrito.html no such file exists in the folder, our server should send a 404 error.
+
+Another requirement: our server should log every request, whether it's successful or not. It should log the URL that the user requested with the time that they requested it.
+
+This Express application will be made up of three functions on the middleware stack:
+
+1. The logger. This will output the requested URL and the time it was requested to the console. It'll always continue onto the next middleware (in terms of code, it'll always call next).
+
+2. The static file sender. This will check if the file exists in the folder. If it does, it'll send that file over the internet. If the requested file doesn't exist, it'll continue onto the final middleware (once again, calling next).
+
+3. The 404 handler. If this middleware is hit, it means that the previous one didn't find a file, and we should return a 404 message and finish up the request.
+
+4. You could visualize this middleware stack like this:
+
+Figure 4.4  The middleware stack of our static file server application.
+
+Okay, enough talking. Let's build this thing.
+Example app: a static file server

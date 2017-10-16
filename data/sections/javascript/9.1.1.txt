@@ -1,0 +1,69 @@
+9.1.1. Creating arrays
+There are two fundamental ways to create new arrays:
+Using the built-in Array constructor
+Using array literals []
+Let’s start with a simple example in which we create an array of ninjas and an array of samurai.
+Listing 9.1. Creating arrays
+const ninjas = ["Kuma", "Hattori", "Yagyu"];
+#A
+const samurai = new Array("Oda", "Tomoe");
+#B
+assert(ninjas.length === 3, "There are three ninjas");
+#C
+assert(samurai.length === 2, "And only two samurai");
+#C
+assert(ninjas[0] === "Kuma", "Kuma is the first ninja");
+#D
+assert(samurai[samurai.length-1] === "Tomoe",
+#D
+"Tomoe is the last samurai");
+#D
+assert(ninjas[4] === undefined,
+#E
+"We get undefined if we try to access an out of bounds index");
+#E
+ninjas[4] = "Ishi";
+#F
+assert(ninjas.length === 5,
+#F
+"Arrays are automatically expanded");
+#F
+ninjas.length = 2;
+#G
+assert(ninjas.length === 2, "There are only two ninjas now");
+#G
+assert(ninjas[0] === "Kuma" && ninjas[1] === "Hattori",
+#G
+"Kuma and Hattori");
+#G
+assert(ninjas[2] === undefined, "But we've lost Yagyu");
+#G
+#A - To create an array, we can use an array literal [] …
+#B - … or the built-in Array constructor.
+#C - The length property tells us the size of the array.
+#D - We access array items with index notation: The first item is indexed with 0, and the last with array.length – 1.
+#E - Reading items outside the array bounds results in undefined.
+#F - Writing to indexes outside the array bounds extends the array.
+#G -Manually overriding the length property with a lower value deletes the excess items.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In listing 9.1, we start by creating two arrays. The ninjas array is created with a simple array literal:
+const ninjas = ["Kuma", "Hattori", "Yagyu"];
+It’s immediately prefilled with three ninjas: Kuma, Hattori, and Yagyu. The samurai array is created using the built-in Array constructor:
+const samurai = new Array("Oda", "Tomoe");
+Array literals versus the Array constructor
+Using array literals to create arrays is preferred over creating arrays with the Array constructor. The primary reason is simplicity: [] versus new Array() (2 characters versus 11 characters—hardly a fair contest). In addition, because JavaScript is highly dynamic, nothing stops someone from overriding the built-in Array constructor, which means calling new Array() doesn’t necessarily have to create an array. Thus we recommend that you generally stick to array literals.
+Regardless of how we create it, each array has a length property that specifies the size of the array. For example, the length of the ninjas array is 3, and it contains 3 ninjas. We can test this with the following assertions:
+assert(ninjas.length === 3, "There are three ninjas");
+assert(samurai.length === 2, "And only two samurai");
+As you probably know, you access array items by using index notation, where the first item is positioned at index 0 and the last item at index array.length – 1. But if we try to access an index outside those bounds—for example, with ninjas[4] (remember, we have only three ninjas!), we won’t get the scary “Array index out of bounds” exception that we receive in most other programming languages. Instead, undefined is returned, signaling that there’s nothing there:
+assert(ninjas[4] === undefined,
+"We get undefined if we try to access an out of bounds index");
+This behavior is a consequence of the fact that JavaScript arrays are objects. Just as we’d get undefined if we tried to access a nonexistent object property, we get undefined when accessing a nonexistent array index.
+On the other hand, if we try to write to a position outside of array bounds, as in
+ninjas[4] = "Ishi";
+the array will expand to accommodate the new situation. For example, see figure 9.1: We’ve essentially created a hole in the array, and the item at index 3 is undefined. This also changes the value of the length property, which now reports a value of 5, even though one array item is undefined.
+Figure 9.1. Writing to an array index outside of array bounds expands the array.
+Unlike in most other languages, in JavaScript, arrays also exhibit a peculiar feature related to the length property: Nothing stops us from manually changing its value. Setting a value higher than the current length will expand the array with undefined items, whereas setting the value to a lower value will trim the array, as in ninjas.length = 2;.
+Now that we’ve gone through the basics of array creation, let’s go through some of the most common array methods.

@@ -1,0 +1,23 @@
+
+LESS also has functions, which allow you to manipulate variables and values just like you could in a programming language like JavaScript. Like a typical programming language, there are a number of built-in functions that can help you out. Unlike a typical programming language, however, these functions are all built into the language; you can't define your own; you'll have to use another feature called “mixins”, which we'll talk about in the next section.
+
+LESS has a number of functions that you can use to manipulate colors. For example, imagine your links (your <a> tags) have a base color. When you hover over them, they should get lighter. When you click on them, they should get darker. In LESS, functions and variables make this easy.
+
+Listing 11.3 Using functions to lighten and darken colors
+
+#A Use the link-color variable that we've defined before; nothing new here.
+
+#B Lighten the link color by 25%.
+
+#C Darken the link color by 20%.
+
+After we compile this LESS into CSS, we'll get something like the following:
+
+Listing 11.4 The compiled CSS from Listing 11.3
+
+#A Notice that the colors are being manipulated to be lighter and darker.
+
+As you can see, LESS makes it easier to lighten and darken colors. Sure, you could have written that CSS yourself, but choosing finding the lightened and darkened colors would have been a bit of a hassle.
+
+There are a huge slew of other functions built into LESS. http://lesscss.org/functions/ lists them all.
+Functions

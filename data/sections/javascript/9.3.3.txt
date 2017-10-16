@@ -1,0 +1,18 @@
+9.3.3. Intersection of sets
+The intersection of two sets, A and B, creates a set that contains elements of A that are also in B. For example, we can find ninjas that are also samurai, as shown next.
+Listing 9.22. Intersection of sets
+const ninjas = new Set(["Kuma", "Hattori", "Yagyu"]);
+const samurai = new Set(["Hattori", "Oda", "Tomoe"]);
+const ninjaSamurais = new Set(
+[...ninjas].filter(ninja => samurai.has(ninja))
+#A
+);
+assert(ninjaSamurais.size === 1, "There's only one ninja samurai");
+assert(ninjaSamurais.has("Hattori"), "Hattori is his name");
+#A - Uses the spread operator to turn our set into an array so we can use the array’s filter method to keep only ninjas that are contained in the samurai set
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":10,\"ch\":0},{\"line\":10,\"ch\":157}]]"}
+!@%STYLE%@!
+The idea behind listing 9.22 is to create a new set that contains only ninjas who are also samurai. We do this by taking advantage of the array’s filter method, which, as you’ll remember, creates a new array that contains only the items that match a certain criterion. In this case, the criterion is that the ninja is also a samurai (is contained in the set of samurai). Because the filter method can only be used on arrays, we have to turn the ninjas set into an array by using the spread operator:
+[...ninjas]
+Finally, we check that we’ve found only one ninja who’s also a samurai: the Jack of all trades, Hattori.

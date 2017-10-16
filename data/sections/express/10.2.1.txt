@@ -1,0 +1,27 @@
+
+At some point in your JavaScript life, you've probably heard of JavaScript: The Good Parts. If you haven't, it's a famous book by Douglas Crockford, the inventor of JSON (or the "discoverer", as he calls it). It carves out a subset of the language that's deemed "good", and the rest is discouraged.
+
+For example, Crockford discourages the use of the double-equals operator (==) and instead recommends sticking to the triple-equals operator (===). The double-equals operator does type coercion, which can get complicated and can introduce bugs, while the triple-equals operator works pretty much how you'd expect.
+
+In addition, there are a number of common pitfalls that befall JavaScript developers that aren't necessarily the language's fault. To name a few: missing semicolons, forgetting the var statement, and misspelling variable names.
+
+If there were a tool that enforced good coding style and a tool that helped you fix errors, would you use them? What if they were just one tool? I'll stop you before your imagination runs too wild: there's a tool called JSHint.
+
+JSHint looks at your code and points out what it calls "suspicious usage". It's not technically incorrect to use the double-equals operator or to forget var, but it's likely to be an error.
+
+To install JSHint, you'll install it globally with npm install jshint -g. Now, if you type jshint myfile.js, JSHint will look at your code and alert you to any suspicious usage. For example, take a look at this file:
+
+Listing 10.1  A JavaScript file with a bug
+
+#A Note the forgotten var statement here.
+
+Notice that the second line has an error: we should've written "var result", not just "result". If we run JSHint on this file (with jshint myfile.js), we'll see the following output:
+
+If we see this, we know that something's wrong! We can go back and add a var statement, and then JSHint will stop complaining.
+
+In my opinion, JSHint works best when integrated with your editor of choice. Visit the JSHint download page at http://jshint.com/install/ for a list of editor integrations. Now, you'll see the errors before you even run the code!
+
+Figure 10.1 JSHint integration in the Sublime Text editor. Notice the errors on the left side of the window and the message at the bottom, in the status bar.
+
+JSHint has saved me a ton of time when working with JavaScript and has fixed countless bugs. I know some of those bugs have been security holes.
+Enforcing good JavaScript with JSHint

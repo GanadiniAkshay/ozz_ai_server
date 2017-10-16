@@ -1,0 +1,91 @@
+
+Now that we've defined our model, we'll want to...well, use it! We'll want to do things like list users, edit profiles, and register new accounts. While defining the model and its schema can be a little hairy, using it could hardly be easier; let's see how.
+
+In order to start using it, let's first create a simple app.js in the root of our project which will set up our app. This is incomplete and we'll come back and fill in some more later, but for now, here's what we'll do:
+
+Listing 8.9 app.js, to start
+
+#1 Require everything we need, including Mongoose.
+
+#2 We'll put all of our routes in another file.
+
+#3 Connect to our MongoDB server in the test database.
+
+Above, we've specified that we're going to be using an external routes file. Let's define that too:
+
+Listing 8.10 routes.js, to start
+
+#1 We'll come back to this, but this sets a few useful variables for our templates. If you don't understand it yet, don't worry—it'll return.
+
+#2 This queries the users collection, returning the newest users first.
+
+These two files have a few new things we haven't seen before.
+
+First, we're connecting to our Mongo database with Mongoose, using mongoose.connect. We simply pass an address and Mongoose does the rest. Depending on how you've installed MongoDB, this URL might be different—for example, the server could be at localhost:12345/learn_about_me_db. Without this line, we won't be able to interact with the database at all!
+
+Second, we're grabbing a list of users with User.find. Then we sort these results by the createdAt property, and then we run the query with exec. We don't actually run the query until exec is called. As we'll see, we can also specify a callback in find to skip having to use exec, but then we can't do things like sorting.
+
+Let's create the homepage view. Create the views directory, where we'll put three files inside. The first will be _header.ejs, which is the HTML that will appear at the beginning of every page:
+
+Listing 8.11 views/_header.ejs
+
+#1 We'll change the navbar if the user is logged in. We don't have this code yet, so the user will always appear to be logged out.
+
+Next, let's create the footer in _footer.ejs:
+
+Listing 8.12 views/_footer.ejs
+
+Finally, create index.ejs which is the actual homepage. This will pull from the users variable that we're passed when we render this view.
+
+Listing 8.13 views/index.ejs
+
+If you save everything, start up your MongoDB server, and npm start, and visit localhost:3000 in your browser, you won't see much, but you'll see a homepage that looks something like this:
+
+Figure 8.2 The empty LAB homepage
+
+If you're not getting any errors, that's great! That means you're querying your Mongo database and getting all of the users in there...there just happen to be 0 users at the moment!
+
+Let's add two more routes to our page: one for the signup page and one to do the actual signing up. In order to use that, we'll need to make sure we use the body-parser middleware to parse form data. Here's what those will look like:
+
+Listing 8.14 Adding body-parser middleware (to app.js)
+
+#1 Require and use the body-parser middleware in our app.
+
+Listing 8.15 Adding signup routes (in routes.js)
+
+#1 body-parser populates req.body, which we see here contains the username and password for signup. Setting extended to false makes the parsing simpler and more secure, for reasons we'll see in Chapter 9.
+
+#2 We call findOne to just return one user. We want a match on usernames here.
+
+#3 If we find a user, we should bail out because that username already exists.
+
+#4 Create a new instance of the User model with the username and password.
+
+#5 Save the new user to the database!
+
+The code above effectively saves new users to our database! Let's add a user interface to this by creating views/signup.ejs:
+
+Listing 8.16 views/signup.ejs
+
+Now, when you submit this form, it'll talk to the server code and sign up a new user! Start up the server with npm start and go to the sign up page (at localhost:3000/signup). Create a few accounts and you'll see them appear on the homepage!
+
+Figure 8.3 An early LAB homepage, after creating a few users
+
+Figure 8.4 The LAB signup page
+
+The last bit of business before we have to code logging in and logging out is the viewing of profiles. We'll add just one more route for that, and that'll look like this:
+
+Listing 8.17 The profiles route (in routes.js)
+
+Once again, we'll be using findOne, but in this case we'll actually pass the user we find into the view. Speaking of, profile.ejs will look something like this:
+
+Listing 8.18 views/profile.ejs
+
+#1 This references currentUser, a variable that will appear once we add login and logout. For now, this will always evaluate to false.
+
+Now we can view user profiles! Check it out in Figure 8.5:
+
+Figure 8.5 The LAB profile page
+
+Now we can create and view user profiles. Next, we'll need to add login and logout so that users can edit their existing profiles. Let's see how that works!
+Using our model

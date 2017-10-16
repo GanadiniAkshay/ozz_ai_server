@@ -1,0 +1,13 @@
+12.5. Summary
+Converting an HTML string into DOM elements includes the following steps:
+Making sure that the HTML string is valid HTML code
+Wrapping it into enclosing markup, required by browser rules
+Inserting the HTML into a dummy DOM element through the innerHTML property of a DOM element
+Extracting the created DOM nodes back out
+For fast inserting of DOM nodes, use DOM fragments, because a fragment can be injected in a single operation, thereby drastically reducing the number of operations.
+DOM element attributes and properties, although linked, aren’t always identical! We can read and write to DOM attributes by using the getAttribute and setAttribute methods, whereas we write to DOM properties by using object property notation.
+When working with attributes and properties, we have to be aware of custom attributes. Attributes that we decide to place on HTML elements in order to carry information useful to our applications aren’t automatically presented as element properties.
+The style element property is an object that holds properties corresponding to the style values specified in the element markup. To get the computed styles, which also take into account the styles set in style sheets, use the built-in getComputedStyle method.
+For getting the dimensions of HTML elements, use offsetWidth and offsetHeight properties.
+Layout thrashing occurs when code performs a series of consecutive reads and writes to DOM, each time forcing the browser to recalculate the layout information. This leads to slower, less responsive web applications.
+Batch your DOM updates!

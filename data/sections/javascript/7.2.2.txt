@@ -1,0 +1,60 @@
+7.2.2. Side effects of the dynamic nature of JavaScript
+You’ve already seen that JavaScript is a dynamic language in which properties can be easily added, removed, and modified at will. The same thing holds for prototypes, both function prototypes and object prototypes. See the following listing.
+Listing 7.4. With prototypes, everything can be changed at runtime
+function Ninja(){
+#A
+this.swung = true;
+#A
+}
+#A
+const ninja1 = new Ninja();
+#B
+Ninja.prototype.swingSword = function(){
+#C
+return this.swung;
+#C
+};
+#C
+assert(ninja1.swingSword(),
+"Method exists, even out of order.");
+#D
+Ninja.prototype = {
+#E
+pierce: function() {
+#E
+return true;
+#E
+}
+#E
+}
+#E
+assert(ninja1.swingSword(),
+#F
+"Our ninja can still swing!");
+#F
+const ninja2 = new Ninja();
+#G
+assert(ninja2.pierce(),"Newly created ninjas can pierce");
+#G
+assert(!ninja2.swingSword, "But they cannot swing!");
+#G
+#A - Defines a constructor that creates a Ninja with a single Boolean property
+#B - Creates an instance of Ninja by calling the constructor function via the “new” operator
+#C - Adds a method to the prototype after the object has been created
+#D - Shows that the method exists in the object
+#E - Completely overrides the Ninja’s prototype with a new object via the pierce method
+#F - Even though we’ve completely replaced the Ninja constructor’s prototype, our Ninja can still swing a sword, because it keeps a reference to the old Ninja prototype.
+#G - Newly created ninjas reference the new prototype, so they can pierce but can’t swing.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we again define a Ninja constructor and proceed to use it to create an object instance. The state of the application at this moment is shown in figure 7.7.
+Figure 7.7. After construction, ninja1 has the property swung, and its prototype is the Ninja prototype that has only a constructor property.
+After the instance has been created, we add a swingSword method to the prototype. Then we run a test to show that the change we made to the prototype after the object was constructed takes effect. The current state of the application is shown in figure 7.8.
+Figure 7.8. Because the ninja1 instance references the Ninja prototype, even changes made after the instance was constructed are accessible.
+Later, we override the Ninja function’s prototype by assigning it to a completely new object that has a pierce method. This results in the application state shown in figure 7.9.
+Figure 7.9. The function’s prototype can be replaced at will. The already constructed instances reference the old prototype!
+As you can see, even though the Ninja function doesn’t reference the old Ninja prototype, the old prototype is still kept alive by the ninja1 instance, which can still, through the prototype chain, access the swingSword method. But if we create new objects after this prototype switcheroo, the state of the application will be as shown in figure 7.10.
+Figure 7.10. All newly created instances reference the new prototype.
+The reference between an object and the function’s prototype is established at the time of object instantiation. Newly created objects will have a reference to the new prototype and will have access to the pierce method, whereas the old, pre-prototype-change objects keep their original prototype, happily swinging their swords.
+We’ve explored how prototypes work and how they’re related to object instantiation. Well done! Now take a quick breath, so we can continue onward by learning more about the nature of those objects.

@@ -1,0 +1,85 @@
+
+Imagine that I'm logged into my bank. You want me to transfer a million dollars into your account, but you aren't logged in as me. (Another challenge: I don't have a million dollars.) How can you get me to send you the money?
+
+The attack
+
+On the bank site, there's a "transfer money" form. On this form, one types the amount of money and the recipient of the money, and then they hit "Send". Behind the scenes, a POST request is being made to a URL. The bank will make sure my cookies are correct, and if they are, it'll wire the money.
+
+You can make the POST request with the amount and the recipient, but you don't know my cookie and you can't guess it; it's a long string of characters. So what if you could make me do the POST request? You'll do this with cross-site request forgery (shortened to CSRF, and sometimes XSRF).
+
+To pull off this CSRF attack, you'll basically have me submit a form without knowing it. Imagine that you've made a form like this:
+
+Listing 10.10  A first draft of a hacker form
+
+Let's say that you put this in an HTML file on a page you controlled; maybe it's hacker.com/stealmoney.html. You could email me and say, "Click here to see some photos of my cat!" If I clicked on it, I would see something like this:
+
+And if I see that, I'll get suspicious. I won't click "submit" and I'll close the window. But we can use JavaScript to automatically submit the form.
+
+Listing 10.11  Automatically submitting the form
+
+If I get sent to this page, the form will immediately submit and I'll be sent to my bank, to a page that says "Congratulations, you've just transferred a million dollars." I'll probably panic and call my bank, and the authorities can likely sort something out.
+
+But this is progress—you're now sending money to yourself. I won't show it here, but you can completely hide this from the victim. First, you make an <iframe> on your page. You can then use the form target attribute, so that when the form submits, it submits inside the iframe, rather than on the whole page. If you make this iframe small or invisible  (easy with CSS!), then I'd never know I was hacked until I suddenly had a million fewer dollars.
+
+My bank needs to protect against this. But how?
+
+Overview of protecting against CSRF
+
+My bank already checks cookies, to make sure that it's me. You can't perform CSRF attacks without getting me to do something. But once the bank knows it's me, how does it know that I meant to do something and wasn't being tricked into doing something?
+
+My bank decides this: if you're submitting a POST request to mybank.biz/transfermoney, you're not just doing that out of the blue. Before doing that POST, you'll be on a page that's asking you where you want to transfer your money--perhaps the URL is mybank.biz/transfermoney_form.
+
+So when the bank sends you the HTML for mybank.biz/transfermoney_form, it's going to add a hidden element to the form: a completely random, unguessable string called a token. The form might now look like this:
+
+Listing 10.12  Adding CSRF protections
+
+#A The value of the CSRF token will be different for every user, often every time. The above is just an example.
+
+You've probably used thousands of CSRF tokens while browsing the web, but you haven't seen it because it's hidden from you. If you're like me and you enjoy viewing the HTML source of pages, you'll see CSRF tokens!
+
+Now, when you submit the form and send the POST request, my bank will make sure that the CSRF token I send is the same as the one I just received. If it is, the bank can be pretty sure that I just came from the bank's website and therefore intended to send the money.  If it's not, I might be being hacked—don't send the money.
+
+In short, we need to do two things:
+
+1. Create a random CSRF token every time we're asking users for data
+
+2. Validate that random token every time we deal with that data
+
+Protecting against CSRF in Express
+
+The Express team has a simple middleware that does those two tasks: csurf (at https://github.com/expressjs/csurf ). The csurf middleware does two things:
+
+1. Adds a method to the request object called req.csrfToken. You'll send this token whenever you send a form, for example.
+
+2. If the request is anything other than a GET, it looks for a parameter called _csrf to validate the request, creating an error if it's invalid. (Technically, it skips also skips HEAD and OPTIONS requests, but those are much less common. There are also a few other places the middleware will search for CSRF tokens; consult the documentation for more.)
+
+To install this middleware, just run npm install csurf --save.
+
+The csurf middleware depends on some kind of session middleware and middleware to parse request bodies. If you need CSRF protections, you probably have some notion of users, which means that you're probably already using these, but express-session and body-parser do the job. Make sure you're using those before you use csurf. If you need an example, you can check out Chapter 8's code for app.js, or look at the CSRF example app at https://github.com/EvanHahn/Express.js-in-Action-code/blob/master/Chapter_09/csrf-example/app.js .
+
+To use the middleware, simply require and use it:
+
+Listing 10.13  Using the CSRF middleware
+
+#A Make sure to include a body parser and session middleware before this.
+
+Once you've used the middleware, you can grab the token when rendering a view, like so:
+
+Listing 10.15  Getting the CSRF token
+
+Now, inside of a view, you'll output the csrfToken variable into a hidden input called _csrf. It might look like this in an EJS template:
+
+Listing 10.16  Showing the CSRF token in a form
+
+And that's all! Once you've added the CSRF token to your forms, the csurf middleware will take care of the rest.
+
+It's not required, but you'll probably want to have some kind of handler for failed CSRF.  Define an error middleware that checks for a CSRF error. For example:
+
+Listing 10.17  Handling CSRF errors
+
+#A We'll skip this handler if it's not a CSRF error.
+
+#B Error code 403 is "Forbidden".
+
+This error handler will return "CSRF error" if there's, well, a CSRF error. You might want to customize this error page and you might also want this to send you a message—someone's trying to hack one of your users!
+Cross-site request forgery (CSRF) prevention

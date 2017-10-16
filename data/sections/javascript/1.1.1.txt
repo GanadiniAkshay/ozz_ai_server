@@ -1,0 +1,8 @@
+1.1.1. How will JavaScript evolve?
+The ECMAScript committee, in charge of standardizing the language, has just finished the ES7/ES2016 version of JavaScript. The ES7 version is a relatively small upgrade to JavaScript (at least, when compared to ES6), because the committee’s goal going forward is to focus on smaller, yearly incremental changes to the language.
+In this book we thoroughly explore ES6 but also focus on ES7 features, such as the new async function, which will help you deal with asynchronous code (discussed in chapter 6).
+Note
+When we cover features of JavaScript defined in ES6/ES2015 or ES7/ES2016, you’ll see these icons alongside a link to information about whether they’re supported by your browser.
+Yearly incremental updates to the language specification are excellent news, but this doesn’t mean that web developers will instantly have access to the new features after the specification has been released. JavaScript code has to be executed by a Java-Script engine, so we’re often left waiting impatiently for updates to our favorite JavaScript engines that incorporate these new and exciting features.
+Unfortunately, although the JavaScript engine developers are trying to keep up and are doing better all the time, there’s always a chance that you’ll run into features that you are dying to use but that are yet to be supported.
+Luckily, you can keep up with the state of feature support in the various browsers via the lists at https://kangax.github.io/compat-table/es6/, http://kangax.github.io/compat-table/es2016plus/, and https://kangax.github.io/compat-table/esnext/.

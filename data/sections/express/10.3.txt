@@ -1,0 +1,5 @@
+
+Governments have had their sites defaced; Twitter had a kind of "tweet virus"; bank account information has been stolen. Even products who aren't dealing with particularly sensitive data can still have passwords leaked—Sony and Adobe have been caught up in such scandals. If you site has users, you'll want to be responsible and protect them.
+
+There are a number of things you can do to protect your users from harm, and we'll look at those in this section.
+Protecting your users

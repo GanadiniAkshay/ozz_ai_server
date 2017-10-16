@@ -1,0 +1,15 @@
+
+Imagine a user has uploaded a plain text file to my server called file.txt. My server serves this with a text/plain content-type, because it's plain text. So far, this is simple. But what if file.txt contains something like this:
+
+Listing 10.24  A malicious script that could be stored as plain text
+
+Even though we're serving this file as plain text, this looks like JavaScript, and some browsers will try to "sniff" the file type. That means that you can still run that file with <script src="file.txt"></script>. Many browsers will allow file.txt to be run even if the content-type isn't for JavaScript!
+
+This example extends further if file.txt looks like HTML and the browser interprets it as HTML. That HTML page can contain malicious JavaScript, which could do lots of bad things!
+
+Luckily, we can fix this with a single HTTP header. You can set the X-Content-Type-Options header to its only option, nosniff. Helmet comes with noSniff middleware, and you can use it like this:
+
+Listing 10.25  Preventing browsers from sniffing MIME types
+
+Nice that one HTTP header can fix this!
+Don't let browsers infer the filetype

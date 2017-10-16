@@ -1,0 +1,11 @@
+
+As your site gets bigger and bigger, you'll start to have more and more styles. In CSS, you can break your code up into multiple files, but this incurs the performance penalty of multiple HTTP requests.
+
+LESS allows you to split up your styles into multiple files, which are all concatenated into one CSS file at compilation time, saving performance. This means that developers can split their variables and mixins into separate files as needed, making for more modular code. You could also make one LESS file for the homepage, one for the user profiles page, and so on.
+
+The syntax is quite simple:
+
+Listing 11.10 Including another LESS file
+
+#A Imports “other-less-file.less” in the same folder.
+Includes

@@ -1,0 +1,66 @@
+8.1. Controlling access to properties with getters and setters
+In JavaScript, objects are relatively simple collections of properties. The primary way to keep track of our program state is by modifying those properties. For example, consider the following code:
+function Ninja (level) {
+this.skillLevel = level;
+}
+const ninja = new Ninja(100);
+Here we define a Ninja constructor that creates ninja objects with a property skillLevel. Later, if we want to change the value of that property, we can write the following code: ninja.skillLevel = 20.
+That’s all nice and convenient, but what happens in the following cases?
+We want to safeguard against accidental mistakes, such as assigning unanticipated data. For example, we want to stop ourselves from doing something like assigning a value of a wrong type: ninja.skillLevel = "high".
+We want to log all changes to the skillLevel property.
+We need to show the value of our skillLevel property somewhere in the UI of our web page. Naturally, we want to present the last, up-to-date value of the property, but how can we easily do this?
+We can handle all of these cases elegantly with getter and setter methods.
+In chapter 5, you saw a glimpse of getters and setters as a means of mimicking private object properties in JavaScript through closures. Let’s revisit the material you’ve learned so far, by working with ninjas that have a private skillLevel property accessible only through getters and setters, as shown in the following listing.
+Listing 8.1. Using getters and setters to guard private properties
+function Ninja () {
+let skillLevel;
+#A
+this.getSkillLevel = () => skillLevel;
+#B
+this.setSkillLevel = value => {
+#C
+skillLevel = value;
+#C
+};
+#C
+}
+const ninja = new Ninja();
+ninja.setSkillLevel(100);
+#D
+assert(ninja.getSkillLevel() === 100,
+#E
+"Our ninja is at level 100!");
+#E
+#A - Defines a private skillLevel variable
+#B - The getter method controls access to our private skillLevel variable.
+#C - The setter method controls the values we can assign to skillLevel.
+#D - Sets a new value of skillLevel through the setter method
+#E - Retrieves the value of skillLevel with the getter method
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We define a Ninja constructor that creates ninjas with a “private” skillLevel variable accessible only through our getSkillLevel and setSkillLevel methods: The property value can be obtained only through the getSkillLevel method, whereas a new property value can be set only through the setSkillLevel method (remember chapter 5 on closures?).
+Now, if we want to log all read attempts of the skillLevel property, we expand the getSkillLevel method; and if we want to react to all write attempts, we expand the setSkillLevel method, as in the following snippet:
+function Ninja () {
+let skillLevel;
+this.getSkillLevel = () => {
+report("Getting skill level value");
+#A
+return skillLevel;
+};
+this.setSkillLevel = value => {
+report("Modifying skillLevel property from:",
+skillLevel, "to: ", value);
+#B
+skillLevel = value;
+#B
+}
+}
+#A - Using getters, we can know whenever code accesses a property.
+#B - Using setters, we can know whenever code wants to set a new value to a property.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":4,\"ch\":4},{\"line\":4,\"ch\":40}]]"}
+!@%STYLE%@!
+This is great. We can easily react to all interactions with our properties by plugging in, for example, logging, data validation, or other side effects such as UI modifications.
+But one nagging concern might be popping into your mind. The skillLevel property is a value property; it references data (the number 100), and not a function. Unfortunately, in order to take advantage of all the benefits of controlled access, all our interactions with the property have to be made by explicitly calling the associated methods, which is, to be honest, slightly awkward.
+Luckily, JavaScript has built-in support for true getters and setters: properties that are accessed as normal data properties (for example, ninja.skillLevel), but that are methods that can compute the value of a requested property, validate the passed-in value, or whatever else we need them to do. Let’s take a look at this built-in support.

@@ -1,0 +1,43 @@
+
+Let's recall our photo-sharing app. Here's how you might envision that in CRUD style:
+
+·   Users can upload photos; this is the create step.
+
+·   Users can browse photos; this is the read part.
+
+·   Users can update photos, perhaps by giving them different filters or changing captions; this would be an update.
+
+·   Users can delete photos from the website.
+
+If you're like me, you didn't immediately see the connection between CRUD and the four main HTTP verbs I listed above. But if GET is for reading resources, and POST is for creating resources...woah! We see the following:
+
+·   Create = POST
+
+·   Read = GET
+
+·   Update = PUT
+
+·   Delete = DELETE
+
+The four main HTTP methods lend themselves pretty well to CRUD-style applications, which are very common on the web.
+
+
+POST versus PUT
+
+
+POST versus PUT
+
+There's a little bit of debate about which HTTP verbs correspond to which CRUD operations. Most people agree that Read == GET and Delete == DELETE, but Create and Update are a little murkier.
+
+Because PUT can create records just like POST can, one could say that PUT better corresponds to Create. PUT can both Create and Update records, so why not put it in both spots?
+
+Similarly, the PATCH method (which we haven't yet mentioned) sometimes takes the Update role. To quote the specification, "the PUT method is already defined to overwrite a resource with a complete new body, and cannot be reused to do partial changes." PATCH allows you to partially overwrite a resource. PATCH was only formally defined in 2010, so it's relatively new on the HTTP scene, which is why it's less used. In any case, some people think PATCH is better suited to Update than PUT.
+
+Because HTTP doesn't specify this stuff too strictly, it's up to you to decide what you want to do. In this book, we'll be using the convention above, but know that the expectations are a little murky here.
+
+
+ 
+
+
+ 
+CRUD applications with HTTP methods

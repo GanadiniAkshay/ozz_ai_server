@@ -1,0 +1,59 @@
+
+In Chapter 1, we discussed the asynchronous nature of Node. I used a "let's bake muffins" analogy. While I'm preparing the batter for my muffins, I can't do other things; I can't read a book; I can't prepare more batter, et cetera. But once I put the muffins in the oven, I can do other things. I don't just stand there staring at the oven until it beeps—I could go for a jog. When the oven beeps, I'm back on muffin duty and I'm occupied again.
+
+A key point here is that I'm never doing two things at once. Even if multiple things are happening at once (I could be jogging while the muffins are baking), I'm only doing one thing at a time. This is because the oven isn't me—it's an external resource.
+
+Figure 2.1  Comparing an asynchronous world (like Node) to a synchronous one.
+
+Node's asynchronous model works similarly. A browser might request a 100 megabyte cat picture from your Node-powered web server. You begin to load this big photo off of the hard disk. As far as we're concerned, the hard disk is an external resource, so we ask it for the file and then we can move onto other things while we wait for it to load.
+
+While you're loading that file, a second request comes in. You don't have to wait for the first request to finish completely—while you're waiting for the hard disk to finish what it was working on, you can start parsing the second request. Once again: Node is never really doing two things at once, but when an external resource is working on something, you're not held up waiting.
+
+The two most common external resources you'll deal with in Express are:
+
+1. Anything involving the file system—like reading and writing files from your hard drive
+
+2. Anything involving a network—like receiving requests, sending responses, or sending your own requests over the Internet
+
+Conceptually, that's about it!
+
+In code, these asynchronous things are handled by callbacks. You’ve probably done something like this if you've ever done an AJAX request on a webpage; you send a request and pass a callback. When the browser has finished your request, it'll call your callback. Node works in exactly the same way.
+
+For example, let's say you're reading a file from disk. When you've finished reading the whole file, you want to print the number of times the letter X appears in the file. Here's how that might work:
+
+Listing 2.10 Reading a file from disk
+
+  console.log(data.match(/x/gi).length + " letter X's");   #D });
+
+#A Require Node's file system module like we've seen before.
+
+#B Read myfile.txt (and interpret the bytes as UTF-8).
+
+#C Handle any errors encountered when reading the file.
+
+#D Print the number of X's by using a regular expression.
+
+Let's step through this code.
+
+First, we require Node's built-in file system module. This has tons of functions for various tasks on the file system, most commonly reading and writing files. In this example, we'll use its readFile method.
+
+Next, we set some options that we'll pass into fs.readFile. We call it with the filename (myfile.txt), the options we just created, and a callback. When the file has been read off of disk, Node will jump into your callback.
+
+Most callbacks in Node are called with an error as their first argument. If all goes well, the err argument will be null. But if things don't go so well (maybe the file didn't exist or was corrupted), the err argument will have some value. It's a best practice to handle those errors. Sometimes the errors don't completely halt your program and you can continue on, but you often handle the error and then break out of the callback by throwing an error or returning.
+
+This is a common Node practice and you'll see it almost everywhere you see a callback.
+
+Finally, once we know we don't have any data, we print out the number of X's in the file! We use a little regular expression trick to do this.
+
+Okay, pop quiz: what happens if we added a console.log statement at the very end of this file, like this?
+
+Listing 2.11 Adding a console.log after the asynchronous operations
+
+  // ... });
+
+#A Note the added line here.
+
+Because this file reading operation is asynchronous, we'll see "Hello world" before we see any results from the file. This is because the external resource—the file system—hasn't gotten back to us yet.
+
+NOTE There's a fantastic video on how callbacks and the event loop work in JavaScript (both in Node and in the browsers). If you're interested in understanding the nitty-gritty details, I cannot recommend Philip Roberts's "What the heck is the event loop anyway?" at https://www.youtube.com/watch?v=8aGhZQkoFbQ enough.
+Node: an asynchronous world

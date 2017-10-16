@@ -1,0 +1,27 @@
+
+I think clickjacking is quite clever. It's relatively easy to prevent, but I almost feel guilty for doing so—it's such a clever trick.
+
+Imagine I'm a hacker, and I want to find out information from your private social networking profile. I'd love it if you would just make your profile public. It'd be so easy, if I could just get you to click the big button:
+
+Figure 10.3 An example page for a social network.
+
+Clickjacking takes advantage of browser frames—the ability to embed one page in another—to make this happen. I could send you a link to an innocent-looking page, which might look something like this:
+
+Figure 10.4  An innocent-looking page that's concealing a clickjacking attack.
+
+But in reality, this innocent-looking page is concealing the social network page! There's an <iframe> of the social network site, and it's invisible. It's positioned just right, so that when you click "Click here to enter my page", you're actually clicking "Click to make profile public".
+
+Figure 10.5  Not so innocent now, is it!?
+
+I don't know about you, but I think that's quite clever. Unfortunately for hackers, it's quite easily prevented.
+
+Most browsers (and all modern ones) listen for a header called X-Frame-Options. If it's loading a frame or iframe and that page sends a restrictive X-Frame-Options, the browser won't load the frame any longer.
+
+X-Frame-Options has three options. DENY keeps anyone from putting your site in a frame, period. SAMEORIGIN keeps anyone else from putting your site in a frame, but your own site is allowed. You can also let one other site through with the ALLOW-FROM option. I'd recommend the SAMEORIGIN or DENY options.
+
+As before, if you're using Helmet, you can set them quite easily:
+
+Listing 10.21  Keeping your app out of frames
+
+This Helmet middleware will set the X-Frame-Options so you don't have to worry about your pages being susceptible to clickjacking attacks.
+Preventing clickjacking

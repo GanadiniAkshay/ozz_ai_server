@@ -1,0 +1,25 @@
+
+Let's talk about a simple JSON API and how it could be used so that we see a concrete example of the kind of thing we'll be building.
+
+Let's imagine a simple API that takes a timezone string like "America/Los_Angeles" or "Europe/London" and returns a string that represents the current time in that timezone (like "2015-04-07T20:09:58-07:00"). Notice that these strings aren't things that a human would naturally type or be able to easily read—they're for a computer to understand.
+
+Our API might accept an HTTP request to this URL:
+
+And our API server might respond with JSON, like this:
+
+One could imagine writing simple applications that used this API. These applications could run on a variety of platforms, and as long as they communicated with this API and could parse JSON (which most platforms can), they can build whatever they want!
+
+You could build a simple webpage that consumed this API, as shown in Figure 6.1. It might send AJAX requests to your server, parse the JSON, and display it in the HTML.
+
+Figure 6.1 A website that consumes our JSON API.
+
+You could also build a mobile application, like Figure 6.2. It would make a request to our API server, parse the JSON, and display the results on the screen.
+
+Figure 6.2 A mobile app that uses your API.
+
+You could even build a command-line tool that runs in the terminal, like in Figure 6.3. Once again, it'd make a request to the API server, parse the JSON, and display the results for humans in the terminal.
+
+Figure 6.3 Even terminal-based applications can consume a JSON API.
+
+The point is this: if you make an API that takes requests from computers and spits out responses for computers (not humans!), you can build user interfaces atop that API.
+A basic JSON API example

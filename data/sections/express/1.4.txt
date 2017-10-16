@@ -1,0 +1,5 @@
+
+Express, like any tool, doesn’t exist in a vacuum.
+
+It lives in the Node.js ecosystem, so you have a bevy of third-party modules that can help you, such as interfaces with databases. Because Express is extensible, lots of developers have made third-party modules that work well with Express (rather than general Node.js), such as specialized middleware or ways to render dynamic HTML.
+The ecosystem surrounding Express

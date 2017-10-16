@@ -1,0 +1,39 @@
+
+Let's set up a new Express project. Make a new directory and put a file called package.json inside. Recall that package.json is how we store information about a Node project. It lists simple data like the project's name and author, and also contains information about its dependencies.
+
+Start with a skeleton package.json:
+
+Listing 3.1 A bare-bones package.json
+
+...and then install Express and save it to your package.json:
+
+Running this command will find Express in the directory of third-party Node packages and fetch the latest version. It will put it in a folder called node_modules/. Adding --save to the installation command will save it under the dependencies key of package.json. After running this command, your package.json will look something like this:
+
+Listing 3.2 package.json after installing Express with the --save flag
+
+Alright, now we're ready. Save this file into app.js:
+
+Listing 3.3 "Hello, World" with Express
+
+#A There's a new kid on the block: the express module. We require it just like we require the http module.
+
+#B To start a new Express application, we simply call the express function.
+
+#C This function is called "middleware". As we'll see, it looks an awful lot like the request handlers from before.
+
+#D Start the server up!
+
+Now let's step through this.
+
+First, we require Express. We then require Node's HTTP module just like we did before. We're ready.
+
+Then we make a variable called app like we did before, but instead of creating the server, we call express(), which returns a request handler function. This is important: it means that we can pass the result into http.createServer just like before.
+
+Remember the request handler we had before, with "vanilla" Node? It looked like this:
+
+We have a very similar function in this example (in fact, I copy-pasted it). It's also passed a request and a response object, and we interact with them in the same way.
+
+Next we create the server and start listening. Recall that http.createServer took a function before, so guess what—app is just a function. It's an Express-made request handler that starts going through all the middleware until the end. At the end of the day, it's just a request handler function like before.
+
+NOTE Worth noting that you might see people using app.listen(3000), which just defers to http.createServer. It's just shorthand, like how we shorten request to req and response to res.
+"Hello, World" with Express

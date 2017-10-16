@@ -1,0 +1,20 @@
+3.4. Arguments and function parameters
+When discussing functions, we often use the terms argument and parameter almost interchangeably, as if they were more or less the same thing. But now, let’s be more formal:
+A parameter is a variable that we list as part of a function definition.
+An argument is a value that we pass to the function when we invoke it.
+Figure 3.7 illustrates the difference.
+Figure 3.7. The difference between function parameters and function arguments
+As you can see, a function parameter is specified with the definition of the function, and all types of functions can have parameters:
+Function declarations (the ninja parameter to the skulk function)
+Function expressions (the person and action parameters to the perform-Action function)
+Arrow functions (the daimyo parameter)
+Arguments, on the other hand, are linked with the invocation of the function; they’re values passed to a function at the time of its invocation:
+The string Hattori is passed as an argument to the skulk function.
+The string Oda Nobunaga is passed as an argument to the rule function.
+The parameter ninja of the skulk function is passed as an argument to the performAction function.
+When a list of arguments is supplied as a part of a function invocation, these arguments are assigned to the parameters in the function definition in the order specified. The first argument gets assigned to the first parameter, the second argument to the second parameter, and so on.
+If we have a different number of arguments than parameters, no error is raised. JavaScript is perfectly fine with this situation and deals with it in the following way. If more arguments are supplied than there are parameters, the “excess” arguments aren’t assigned to parameter names. For example, see figure 3.8.
+Figure 3.8. Arguments are assigned to function parameters in the order specified. Excess arguments aren’t assigned to any parameters.
+Figure 3.8 shows that if we were to call the practice function with practice("Yoshi", "sword", "shadow sword", "katana"), the arguments Yoshi, sword, and shadow sword would be assigned to the parameters ninja, weapon, and technique, respectively. The argument katana is an excess argument, and wouldn’t be assigned to any parameter. In the next chapter, you’ll see that even though some arguments aren’t assigned to parameter names, we still have a way to access them.
+On the other hand, if we have more parameters than arguments, the parameters that have no corresponding argument are set to undefined. For example, if we were to make the call practice("Yoshi"), the parameter ninja would be assigned the value Yoshi, while the parameters weapon and technique would be set to undefined.
+Dealing with function arguments and parameters is as old as JavaScript itself, but now let’s explore two new features of JavaScript bestowed by ES6: rest and default parameters.

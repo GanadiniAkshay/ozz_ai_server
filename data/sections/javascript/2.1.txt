@@ -1,0 +1,85 @@
+2.1. The lifecycle overview
+The lifecycle of a typical client-side web application begins with the user typing a URL into the browser’s address bar or clicking a link. Let’s say we want to look up a term and go to Google’s homepage. We type in the URL www.google.com, as shown at upper left in figure 2.1.
+Figure 2.1. The lifecycle of a client-side web application starts with the user specifying a website address (or clicking a link) and ends when the user leaves the web page. It’s composed of two steps: page building and event handling.
+On behalf of the user, the browser formulates a request that is sent to a server , which processes the request
+and formulates a response that is usually composed of HTML, CSS, and JavaScript code. The moment the browser receives this response
+is when our client-side web application truly starts coming to life.
+Because client-side web applications are Graphical User Interface (GUI) applications, their lifecycle follows similar phases as other GUI applications (think standard desktop applications or mobile applications) and is carried out in the following two steps:
+Page building— Set up the user interface.
+Event handling— Enter a loop
+waiting for events to occur , and start invoking event handlers.
+The lifecycle of the application ends when the user closes or leaves the web page .
+Now let’s look at an example web application with a simple UI that reacts to user actions: Every time a user moves a mouse or clicks the page, a message is displayed. We’ll use this application throughout the chapter.
+Listing 2.1. Small web application with a GUI reacting to events
+<!DOCTYPE html>
+<html>
+<head>
+<title>Web app lifecycle</title>
+<style>
+#first { color: green;}
+#second { color: red;}
+</style>
+</head>
+<body>
+<ul id="first"></ul>
+<script>
+function addMessage(element, message){
+#A
+var messageElement = document.createElement("li");
+#A
+messageElement.textContent = message;
+#A
+element.appendChild(messageElement);
+#A
+}
+#A
+var first = document.getElementById("first");
+addMessage(first, "Page loading");
+</script>
+<ul id="second"></ul>
+<script>
+document.body.addEventListener("mousemove", function() {
+#B
+var second = document.getElementById("second");
+addMessage(second, "Event: mousemove");
+});
+document.body.addEventListener("click", function(){
+#C
+var second = document.getElementById("second");
+addMessage(second, "Event: click");
+});
+</script>
+</body>
+</html>
+#A - Defines a function that adds a message to an element
+#B - Attaches mousemove event handler to body
+#C - Attaches click event handler to body
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":10,\"ch\":4},{\"line\":10,\"ch\":24}],[{\"line\":23,\"ch\":4},{\"line\":23,\"ch\":25}]]"}
+!@%STYLE%@!
+Listing 2.1 first defines two CSS rules, #first and #second, that specify the text color for the elements with the IDs first and second (so that we can easily distinguish between them). We continue by defining a list element with the id first:
+<ul id="first"></ul>
+Then we define an addMessage function that, when invoked, creates a new list item element, sets its text content, and appends it to an existing element:
+function addMessage(element, message){
+var messageElement = document.createElement("li");
+messageElement.textContent = message;
+element.appendChild(messageElement);
+}
+We follow this by using the built-in getElementById method to fetch an element with the ID first from the document, and adding a message to it that notifies us that the page is loading:
+var first = document.getElementById("first");
+addMessage(first, "Page loading");
+Next we define another list element, now with the attribute ID second:
+<ul id="second"></ul>
+Finally we attach two event handlers to the body of the web page. We start with the mousemove event handler, which is executed every time the user moves the mouse, and adds a message "Event: mousemove" to the second list element by calling the addMessage function:
+document.body.addEventListener("mousemove", function() {
+var second = document.getElementById("second");
+addMessage(second, "Event: mousemove");
+});
+We also register a click event handler, which, whenever the user clicks the page, logs a message "Event: click", also to the second list element:
+document.body.addEventListener("click", function(){
+var second = document.getElementById("second");
+addMessage(second, "Event: click");
+});
+The result of running and interacting with this application is shown in figure 2.2.
+Figure 2.2. When the code from listing 2.1 runs, messages are logged depending on user actions.
+We’ll use this example application to explore and illustrate the differences between different phases of the web application lifecycle. Let’s start with the page-building phase.

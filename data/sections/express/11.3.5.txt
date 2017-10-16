@@ -1,0 +1,17 @@
+
+While you're developing, you don't want to have to run npm run grunt every time you edit a file. There's a Grunt task that watches your files and re-runs any Grunt tasks when a change occurs. Enter grunt-contrib-watch. Let's use it to auto-compile any CSS and JavaScript whenever they change.
+
+Start by installing the task with npm install grunt-contrib-watch --save-dev, then add some stuff to your Gruntfile like so:
+
+Listing 11.24 A Gruntfile with watching added
+
+#A Tell the Grunt watch task to run the Browserify task any time a .js file changes.
+
+#B Tell the Grunt watch task to run the LESS task any time a .less file changes.
+
+#C Register the new watch task to execute when you run “grunt watch”.
+
+In the above example, we specify all files to watch and tasks to run when they change—it's that simple. Now, when you run npm run grunt watch, Grunt will watch your files and compile your CSS/JavaScript as needed. For example, if you change a file with the .less file extension, the LESS task will run (but no other tasks will); this is because we've configured .less files to trigger that task.
+
+I find this super useful for development and strongly recommend it.
+"grunt watch"

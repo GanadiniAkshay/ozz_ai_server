@@ -2,7 +2,6 @@ import os
 import time
 import spacy
 
-
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +12,7 @@ from rasa_nlu.model import Trainer
 from rasa_nlu.components import ComponentBuilder
 
 from werkzeug.contrib.cache import SimpleCache
+from cachetools import LRUCache
 from duckling import Duckling
 
 from project.config import DevelopmentConfig
@@ -22,7 +22,8 @@ db = SQLAlchemy()
 # instantiate flask migrate
 migrate = Migrate()
 # instantiate a cache
-cache = SimpleCache()
+# cache = SimpleCache()
+cache = LRUCache(maxsize=100)
 #set up spacy nlp
 nlp = spacy.load('en')
 # set up duckling

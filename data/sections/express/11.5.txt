@@ -1,0 +1,7 @@
+
+Heroku's website has buzzwords like “cloud platform” and “built by developers for developers”. To us, it's a way to deploy our Node.js applications onto the real internet for free. No more localhost:3000! You'll be able to have your apps on the real life internet.
+
+Essentially, when you deploy your site, you're sending your code to be run somewhere. In this case, when we deploy to Heroku, we'll be sending out code to Heroku's servers and they'll run your Express applications.
+
+Like everything, there are a lot of ways to deploy your site. Heroku may not be the best option for you, and you should explore all of your options. We choose it here because it's relatively simple and it costs nothing.
+Deploying to Heroku

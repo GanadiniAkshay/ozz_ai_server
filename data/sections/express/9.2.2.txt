@@ -1,0 +1,25 @@
+
+Let's take a stab at writing a first version of this. Create a new directory and create one file inside: capitalize.js, then put the following inside:
+
+Listing 9.1 A first version of the capitalize function (in capitalize.js)
+
+If we just eyeball the code, it looks like it should work, but let's write some tests to become more confident about that.
+
+Create a package.json file in the same directory, which should contain the following:
+
+Listing 9.2 The package.json for the capitalize function
+
+#A As always, your version numbers may vary.
+
+#B When you type “npm test”, this will run Mocha to run your tests.
+
+We're using two modules here: Mocha and Chai.
+
+Mocha is a testing framework. If you've ever used other JavaScript testing frameworks like Jasmine, this should be familiar. At the end of the day, it's the thing that actually runs your tests. It's the syntax you use to say "here's what I'm testing, let me set it up, here's where I test thing A, here's where I test thing B”, et cetera.
+
+Chai is an assertion library. While Mocha lays out the tests, Chai (almost literally) says "I expect the helloWorld function to return 'hello world'". The actual syntax is expect(helloWorld()).to.equal("hello world"), which reads a lot like the previous English. If helloWorld works and returns “hello world”, your tests will pass. If it doesn't return “hello world”, an error will appear, telling you that things aren't as you expect.
+
+There are a number of assertion libraries (including one built into Node), but at the end of the day, Mocha waits for an assertion library to throw an error. If no error is thrown, the test passes. If an error is thrown, the test fails. That’s why we use Chai—it’s a nice way to throw errors when our tests fail.
+
+The distinction between Mocha and Chai is important. Mocha is the test runner, so there’s an actual executable that runs (you don’t ever type node my_tests.js nor do you ever require it). Mocha injects some global variables into your code—as we’ll see, these globals exist to structure each of your tests. Inside of each of these tests, you use Chai to actually test your code. When we test our capitalization library, we’ll use Mocha to break up our tests into pieces like “the capitalization library capitalizes single words” and “the capitalization library doesn’t break if you pass it the empty string”. At the Chai level, we’ll actually call our capitalization library and make sure that our module’s output matches what we expect.
+Setting up Mocha and the Chai assertion library

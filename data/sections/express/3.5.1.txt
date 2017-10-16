@@ -1,0 +1,11 @@
+
+Let's start a new project. Make a new folder, and inside, make a file called package.json. It should look something like this:
+
+Listing 3.19 package.json for the guestbook
+
+You can add other fields (like author or version), but for this example, we don't need much. Now, let's install our dependencies like we've done before and save them into package.json:
+
+These modules should look familiar to you, except for body. Our app will need to post new guestbook entries in HTTP POST requests, so we'll need to parse the body of the POST; that's where body will come in.
+
+Check to make sure that Express, Morgan, Body, and EJS have been saved into package.json. If they haven't, make sure you've added the --save flag.
+Getting set up

@@ -1,0 +1,5 @@
+
+View engines like Handlebars, Mustache, and EJS don't completely replace HTML—they augment it with some new features. This is really nice if you have designers, for example, who've already learned HTML and don't want to learn a whole new language. It's also useful for non-HTML-like templating solutions. If you're in this sort of situation, Jade is probably the wrong choice.
+
+But Jade also promises some other features. It allows you to write far fewer lines of code and the lines you write are much prettier. Doctypes are easy; tags are nested by indentation, not close tags. It's got a number of EJS-style features built into the language, like conditionals and loops. It's more to learn, but more powerful.
+Everything you need to know about Jade

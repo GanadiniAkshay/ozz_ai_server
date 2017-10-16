@@ -1,0 +1,2 @@
+5.2. Putting closures to work
+Now that we have a high-level understanding of closures, let’s see how to put them to work in our JavaScript applications. For now, we’ll focus on their practical aspects and benefits. Later in the chapter, we’ll revisit the same examples to see exactly what’s going on behind the scenes.

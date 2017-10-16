@@ -1,0 +1,9 @@
+
+In this chapter, we've been creating "Learn About Me", a website that lets users create and browse profiles. We've implemented the homepage, the "view profile" page, and even signup!
+
+But right now, our app knows nothing "special" about our User model. They have no authentication, so they might as well be Cake models or Burrito models -- you can view and create them just like you could another object. We'll want to implement user authentication. We'll need a login page, the notion of a currently logged-in user (which you've seen as currentUser in a few places), and the actual verification of passwords.
+
+For this, we'll choose Passport. To quote its documentation, "Passport is authentication middleware for Node. It is designed to serve a singular purpose: authenticate requests." We'll be dropping this middleware into our application, writing a little code to wire up our users, and we'll be in business! Passport takes away a lot of the headache for us.
+
+It's important to remember that Passport doesn't dictate how you authenticate your users; it's only there to provide helpful boilerplate code. It's like Express in that way. In this chapter, we'll look at how to use Passport to authenticate users stored in a MongoDB database, but Passport supports authentication with providers like Facebook, Google, Twitter, and over 100 more. It's extremely modular and powerful!
+Authenticating users with Passport

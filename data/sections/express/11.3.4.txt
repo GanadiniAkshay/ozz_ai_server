@@ -1,0 +1,19 @@
+
+Luckily, the LESS compiler already does minification for us. That's super convenient! Unfortunately, Browserify doesn't minify your JavaScript for you; its only blemish.
+
+We'd like to do that to reduce file sizes and load times as best we can.
+
+UglifyJS is a popular JavaScript minifier that crushes your code down to tiny sizes. We'll be a Grunt task that takes advantage of UglifyJS to minify your already-Browserified code, called grunt-contrib-uglify. You can an read more about it at https://www.npmjs.com/package/grunt-contrib-uglify.
+
+First, install the Grunt task as usual with npm install grunt-contrib-uglify --save-dev. Next, let's add this to our Gruntfile:
+
+Listing 11.23 A Gruntfile with Browserify, LESS, and Uglify
+
+#A As before, we've left the existing LESS and Browserify tasks.
+
+#B This compiles your compiled JavaScript into a minified version. You can also overwrite the full JavaScript if you'd like: just set them both to "tmp/serve/app.js".
+
+#C We've defined a new task called “build” in addition to our existing task. This will run when we type “npm run grunt build”.
+
+npm run grunt won't do anything different than it did before—it'll run the default task, which in turns runs the Browserify and LESS tasks. But when you run npm run grunt build, you'll run both the Browserify task and the Uglify task. Now your JavaScript will be minified!
+Minifying the JavaScript with Grunt

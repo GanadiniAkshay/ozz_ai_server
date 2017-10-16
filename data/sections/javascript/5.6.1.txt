@@ -1,0 +1,57 @@
+5.6.1. Revisiting mimicking private variables with closures
+As you’ve already seen, closures can help us mimic private variables. Now that we have a solid understanding of how scoping rules work in JavaScript, let’s revisit the private variables example. This time, we’ll focus on execution contexts and lexical environments. Just to make things easier, let’s repeat the listing.
+Listing 5.11. Approximate private variables with closures
+function Ninja() {
+var feints = 0;
+#A
+this.getFeints = function(){
+#B
+return feints;
+#B
+};
+#B
+this.feint = function(){
+#C
+feints++;
+#C
+};
+#C
+}
+var ninja1 = new Ninja();
+assert(ninja1.feints === undefined,
+#D
+"And the private data is inaccessible to us.");
+#D
+ninja1.feint();
+#E
+assert(ninja1.getFeints()=== 1,
+#F
+"We're able to access the internal feint count.");
+#F
+var ninja2 = new Ninja();
+#G
+assert(ninja2.getFeints()=== 0,
+"The second ninja object gets its own feints variable.");
+#A - Declares a variable inside the constructor. Because the scope of the variable is limited to inside the constructor, it’s a “private” variable.
+#B - An accessor method for the feints counter
+#C - The increment method for the value. Because the value is private, no one can screw it up behind our backs; they’re limited to the access that we give them via methods.
+#D - Verifies that we can’t get at the variable directly
+#E - Calls the feint method, which increments the count of the number of times that our ninja has feinted
+#F - Tests that the increment was performed
+#G - When we create a new ninja2 object with the Ninja constructor, the ninja2 object gets its own feints variable.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Now we’ll analyze the state of the application after the first Ninja object has been created, as shown in figure 5.15. We can use our knowledge of the intricacies of identifier resolution to better understand how closures come into play in this situation. JavaScript constructors are functions invoked with the keyword new. Therefore, every time we invoke a constructor function, we create a new lexical environment, which keeps track of variables local to the constructor. In this example, a new Ninja environment that keeps track of the feints variable is created.
+Figure 5.15. Private variables are realized as closures that are created by object methods defined in the constructor.
+In addition, whenever a function is created, it keeps a reference to the lexical environment in which it was created (through an internal [[Environment]] property). In this case, within the Ninja constructor function, we create two new functions: getFeints and feint, which get a reference to the Ninja environment, because this is the environment in which they were created.
+The getFeints and feint functions are assigned as methods of the newly created ninja object (which, if you remember from the previous chapter, is accessible through the this keyword). Therefore, getFeints and feint will be accessible from outside the Ninja constructor function, which in turn leads to the fact that you’ve effectively created a closure around the feints variable.
+When we create another Ninja object, the ninja2 object, the whole process is repeated. Figure 5.16 shows the state of the application after creating the second Ninja object.
+Figure 5.16. The methods of each instance create closures around the “private” instance variables.
+Every object created with the Ninja constructor gets its own methods (the ninja1.getFeints method is different from the ninja2.getFeints method) that close around the variables defined when the constructor was invoked. These “private” variables are accessible only through object methods created within the constructor, and not directly!
+Now let’s see how things play out when making the ninja2.getFeints() call. Figure 5.17 shows the details.
+Figure 5.17. The state of execution contexts and lexical environments when performing the ninja2.getFeints() call. A new getFeints environment is created that has the environment of the constructor function in which ninja2 was created as its outer environment. getFeints can access the “private” feints variable.
+Before making the ninja2.getFeints() call, our JavaScript engine is executing global code. Our program execution is in the global execution context, which is also the only context in the execution stack. At the same time, the only active lexical environment is the global environment, the environment associated with the global execution context.
+When making the ninja2.getFeints() call, we’re calling the getFeints method of the ninja2 object. Because every function call causes the creation of a new execution context, a new getFeints execution context is created and pushed to the execution stack. This also leads to the creation of a new getFeints lexical environment, which is normally used to keep track of variables defined in this function. In addition, the getFeints lexical environment, as its outer environment, gets the environment in which the getFeints function was created, the Ninja environment that was active when the ninja2 object was constructed.
+Now let’s see how things play out when we try to get the value of the feints variable. First, the currently active getFeints lexical environment is consulted. Because we haven’t defined any variables in the getFeints function, this lexical environment is empty and our targeted feints variable won’t be found in there. Next, the search continues in the outer environment of the current lexical environment—in our case, the Ninja environment is active when constructing the ninja2 object. This time around, the Ninja environment has a reference to the feints variable, and the search is done. It’s as simple as that.
+Now that we understand the role that execution contexts and lexical environments play when dealing with closures, we’d like to turn our attention to “private” variables and why we keep putting quotes around them. As you might have figured out by now, these “private” variables aren’t private properties of the object, but are variables kept alive by the object methods created in the constructor. Let’s take a look at one interesting side effect of this.

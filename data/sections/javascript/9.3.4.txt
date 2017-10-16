@@ -1,0 +1,17 @@
+9.3.4. Difference of sets
+The difference of two sets, A and B, contains all elements that are in set A but are not in set B. As you might guess, this is similar to the intersection of sets, with one small but significant difference. In the next listing, we want to find only true ninjas (not those who also moonlight as samurai).
+Listing 9.23. Difference of sets
+const ninjas = new Set(["Kuma", "Hattori", "Yagyu"]);
+const samurai = new Set(["Hattori", "Oda", "Tomoe"]);
+const pureNinjas = new Set(
+[...ninjas].filter(ninja => !samurai.has(ninja))
+#A
+);
+assert(pureNinjas.size === 2, "There's only one ninja samurai");
+assert(pureNinjas.has("Kuma"), "Kuma is a true ninja");
+assert(pureNinjas.has("Yagyu"), "Yagyu is a true ninja");
+#A - With set difference, we care only about ninjas who are not samurai!
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":11,\"ch\":0},{\"line\":11,\"ch\":72}]]"}
+!@%STYLE%@!
+The only change is to specify that we care only about the ninjas who are not also samurai, by putting an exclamation mark (!) before the samurai.has(ninja) expression.

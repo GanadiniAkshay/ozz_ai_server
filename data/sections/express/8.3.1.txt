@@ -1,0 +1,175 @@
+
+When setting up Passport, you'll need to do three things:
+
+1. Set up the Passport middleware; this is pretty easy.
+
+2. Tell Passport how to serialize and deserialize users. This is a short amount of code that effectively translates a user's session into an actual user object.
+
+3. Tell Passport how to authenticate users. In this case, this is the bulk of our code, which will instruct Passport how to talk to our Mongo database.
+
+Let's get started.
+
+Setting up the Passport middleware
+
+In order to initialize Passport, you'll need to set up three official Express middlewares, a third-party middleware, and then two Passport middlewares. For your reference, they are:
+
+1. body-parser
+
+2. cookie-parser
+
+3. express-session
+
+4. connect-flash
+
+5. passport.initialize
+
+6. passport.session
+
+We've already included one of the official Express middlewares—body-parser—for parsing forms. The other two we'll need are cookie-parser and express-session. The former is for parsing cookies from browsers and the latter is for storing sessions across different browsers. We'll also need connect-flash for showing error messages. If you've installed the dependencies from the package.json way up above, you should already have these included.
+
+After that, make sure you require Passport and then you'll use two middleware functions it provides. Put these at the top of your application (and make sure you require them, too):
+
+Listing 8.19 Setting up the middleware for Passport (in app.js)
+
+#1 The session needs something called a "session secret", which allows each session to be encrypted from the clients. This deters hackers from hacking into users' cookies. It needs to be a bunch of random characters (not necessarily what I have above!).
+
+#2 The session middleware requires this option to be set, which forces the session to be re-set even when it hasn't been modified.
+
+#3 saveUninitialized is another required option. This also resets sessions but resets ones that are uninitialized.
+
+Once you've set that up, you'll be ready to move on to the next step: telling Passport how to extract users from the session.
+
+Serializing and deserializing users
+
+Passport needs to know how to serialize and deserialize users. In other words, we'll need to translate a user's session into an actual user object, and vice-versa. Passport's documentation does a better job describing it than I could:
+
+In a typical web application, the credentials used to authenticate a user will only be transmitted during the login request. If authentication succeeds, a session will be established and maintained via a cookie set in the user's browser.
+
+     Each subsequent request will not contain credentials, but rather the unique cookie that identifies the session. In order to support login sessions, Passport will serialize and deserialize user instances to and from the session.
+
+To keep our code separated, we'll be defining a new file called setuppassport.js. This file will export a single function that will, not surprisingly, set up this Passport stuff. Create setuppassport.js and require it from app.js:
+
+Listing 8.20 Requiring and using Passport setup (in app.js)
+
+Now, let's fill in our Passport setup.
+
+Because all of our user models have a unique _id property, we'll use that as our "translation". First, make sure you require your User model:
+
+Listing 8.21 Require your User model
+
+Next, instruct Passport how to serialize and deserialize users from their ID. This code can be placed before or after the Passport middleware; place it where you'd like!
+
+Listing 8.22 Serializing and deserializing users (in setuppassport.js)
+
+#1 serializeUser should turn a user object into an ID. We call done with no error and the user's ID.
+
+#2 deserializeUser should turn the ID into a user object. Once we're done, we call done with any errors and the user object.
+
+Now, once the session is dealt with, it's time to do the hard part: the actual authentication.
+
+The real authentication
+
+The final part of Passport is setting up something called a strategy. Some strategies include authentication with sites like Facebook or Google; the strategy we'll use is called a local strategy. In short, that means the authentication is up to us, which means we'll have to write a little bit of Mongoose code.
+
+First, require the Passport local strategy into a variable called LocalStrategy:
+
+Listing 8.23 Requiring the Passport LocalStrategy (in setuppassport.js)
+
+Next, you'll need to tell Passport how to use that local strategy. Our authentication code will run through the following steps:
+
+1. Look for a user with the supplied username.
+
+2. If no user exists, then our user isn't authenticated; say that we're done with the message "No user has that username!"
+
+3. If the user does exist, compare their real password with the password we supply. If the password matches, return the current user. If it doesn't, return "Invalid password."
+
+Now, let's take that English and translate it into Passport code:
+
+Listing 8.24 Our Passport local strategy (in setuppassport.js)
+
+#1 This is how we tell Passport to use a local strategy.
+
+#2 Use a MongoDB query we've seen before to get one user.
+
+#3 If there is no user with the supplied username, return false with an error message. Call the checkPassword method we defined earlier in our User model.
+
+#4 If it is a match, return the current user with no error.
+
+#5 If it's not a match, return false with an error message.
+
+As you can see, you instantiate a LocalStrategy. Once you do that, you call the done callback whenever you're done! You'll return the user object if it's found, and false otherwise.
+
+The routes and the views
+
+Finally, let's set up the rest of the views. We'll still need:
+
+·   Logging in
+
+·   Logging out
+
+·   Profile editing (when you're logged in)
+
+Let's start with logging in. The GET route will be really straight-forward, and just render the view:
+
+Listing 8.25 GET /login (in routes.js)
+
+And this is what the view, at login.ejs, will look like. It'll just be a simple form accepting a username and password, and then sending a POST request to /login:
+
+Listing 8.26 views/login.ejs
+
+Next, we'll define the handler for a POST to /login. This will deal with Passport's authentication:
+
+Listing 8.27 Do the login (in routes.js)
+
+#1 This sets an error message with connect-flash if the user fails to log in.
+
+passport.authenticate returns a request handler function which we pass instead one we write ourselves. This lets us redirect to the right spot, depending on whether the user successfully logged in or not.
+
+Logging out is also trivial with Passport. All you have to do is call req.logout, a new function added by Passport:
+
+Listing 8.28 Logging out (in routes.js)
+
+Passport will populate req.user and connect-flash will populate some flash values. We added this code awhile ago, but take a look at it now; because you'll likely understand it better:
+
+Listing 8.29 Passing data to views (in routes.js)
+
+#1 Every view will now have access to currentUser, which pulls from req.user, which is populated by Passport.
+
+Now all we have is the edit page, and look at this! We can log in and log out.
+
+Next, let's make some utility middleware that ensures users are authenticated. We won't actually use this middleware yet; we'll just define it so that other routes down the line can use it. We'll call it ensureAuthenticated, and we'll redirect to the login page if the user isn't authenticated.
+
+Listing 8.30 Middleware for determining if the user is authenticated
+
+#1 req.isAuthenticated is a function provided by Passport.
+
+Now, let's use this middleware to create the "Edit profile" page.
+
+When we GET the edit page, we'll just render the view, but we want to make sure the user is authenticated before we do that. All we have to do is pass ensureAuthenticated to our route, and then it's business as usual. Here's how we'd do that:
+
+Listing 8.31 GET /edit (in router.js)
+
+#1 First, we ensure that the user is authenticated, then we run our request handler if they haven't been redirected.
+
+As you can see, everything is as we've seen before, except we place our middleware right before our request handler.
+
+Let's define the edit view now. This will be in edit.ejs, and be a simple form that allows users to change their display name and biography:
+
+Listing 8.32 views/edit.ejs
+
+Now, let's handle that form with a POST handler. This will also ensure authentication with ensureAuthenticated, and will otherwise update our model and save it to our MongoDB database.
+
+Listing 8.33 POST /edit (in routes.js)
+
+There's nothing fancy here; all we do is update the user in our MongoDB database. Remember that Passport populates req.user for us.
+
+Suddenly, we have our profile editor!
+
+Figure 8.6 Profile editor
+
+Now that we can edit profiles, create some fake users and edit their profiles. Check out Learn About Me, our mostly-finished app!
+
+Figure 8.7 The LAB homepage
+
+And now you have a real app!
+Setting up Passport

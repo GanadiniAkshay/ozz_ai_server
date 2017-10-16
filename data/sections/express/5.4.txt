@@ -1,0 +1,5 @@
+
+Unless you're building a web server that's 100% API (and I mean one hundred percent), you're probably going to send a static file or two. Maybe you have some CSS to send, maybe you have a single-page app that needs some static files sent, and maybe you're a donut enthusiast and have gigabytes of donut photos to serve your hungry viewers.
+
+We've seen how to send static files before, but let's explore it in more depth.
+Serving static files

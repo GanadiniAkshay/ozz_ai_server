@@ -1,0 +1,43 @@
+
+When we learned about LESS above, I recommended a website that compiled your code live, in front of you. That's great for learning and it's useful to make sure your code is being compiled correctly, but it's hardly an automated solution. You don't want to have to put all of your code into a website, copy-paste the resulting CSS, and copy it into a CSS file! Let's make Grunt do it. (If you're not using LESS, there are other Grunt tasks for your favorite preprocessor. Just search the Grunt plugins page at http://gruntjs.com/plugins.)
+
+Let's start by writing a very simple LESS file, which we'll compile to CSS with Grunt.
+
+Listing 11.17 A simple LESS file
+
+That should translate to the following CSS:
+
+Listing 11.18 Listing 11.17 compiled to CSS
+
+And if we minify that CSS, it should look like this:
+
+Listing 11.19 Listing 11.18, minified
+
+We can use a third-party LESS task for Grunt to get us there! Start by installing this Grunt LESS task with npm install grunt-contrib-less --save-dev. Next, add the following to your Gruntfile:
+
+Listing 11.20 A Gruntfile with LESS
+
+#Z grunt.initConfig is called at the top of every Gruntfile to configure settings for each of your tasks. In this case, we're only configuring LESS right now.
+
+#A We define the configuration for our LESS tasks. This is what the Grunt LESS task will look at.
+
+#B Define the development configuration. This configuration tells the Grunt LESS plugin to compile my_css/the.less into tmp/serve/the.css.
+
+#C Like our development configuration, we define the production configuration, but we also use cleancss to minify the output.
+
+#D This loads the Grunt LESS plugin. Without this, we won't be able to compile anything!
+
+#E This tells Grunt to run the LESS compilation task when we run “grunt” at the command line.
+
+Now, when you run Grunt npm run grunt, your LESS will be compiled into tmp/serve/the.css. After doing that, you'll need to make sure to serve that file.
+
+Serving these compiled assets
+
+Now that we've compiled something, we actually need to serve it to our visitors! We'll use Express's static middleware to do that. We'll just add tmp/serve as part of our middleware stack. For example:
+
+Listing 11.21 Static middleware with compiled files
+
+Now, you can serve files from public and compiled files from tmp/serve!
+
+NOTE You likely don't want to commit compiled files into your repository, so you have to store them into a directory that you'll later ignore with version control. If you're using Git, add tmp to your .gitignore to make sure that your compiled assets aren't put into version control. Some people do like to commit these, so do what's right for you.
+Compiling LESS with Grunt

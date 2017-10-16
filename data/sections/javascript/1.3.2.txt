@@ -1,0 +1,10 @@
+1.3.2. Testing
+Throughout this book, we’ll apply testing techniques to ensure that the example code operates as intended and to serve as examples of how to test code in general. The primary tool we’ll use for testing is an assert function, whose purpose is to assert that a premise is either true or false. By specifying assertions, we can check whether the code is behaving as expected.
+The general form of this function is as follows:
+assert(condition, message);
+The first parameter is a condition that should be true, and the second is a message that will be displayed if it’s not.
+Consider this, for example:
+assert(a === 1, "Disaster! a is not 1!");
+If the value of variable a isn’t equal to 1, the assertion fails, and the somewhat overly dramatic message is displayed.
+Note
+The assert function isn’t a standard feature of the language, so we’ll implement it ourselves in appendix B.

@@ -1,0 +1,19 @@
+3.2. Fun with functions as objects
+In this section, we’ll examine ways to exploit the similarities that functions share with other object types. One capability that might be surprising is that there’s nothing stopping us from attaching properties to functions:
+var ninja = {};
+#A
+ninja.name = "hitsuke";
+#A
+var wieldSword = function(){};
+#B
+wieldSword.swordType = "katana";
+#B
+#A - Creates an object and assigns a new property to it
+#B - Creates a function and assigns a new property to it
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Let’s look at a couple of the more interesting things that can be done with this capability:
+Storing functions in a collection allows us to easily manage related functions—for example, callbacks that have to be invoked when something of interest occurs.
+Memoization allows the function to remember previously computed values, thereby improving the performance of subsequent invocations.
+Let’s get cracking.

@@ -1,0 +1,23 @@
+
+CSS doesn't have variables. If your website's link color is #29A1A4, for example, and you decide you want to change it to #454545, you'd have to search for it everywhere in your CSS file and change it. If you want to experiment with a color that's used in many different places, you'll be doing find-replace, which can lead to various reliability issues. It's also unclear to other developers which color is which; where is that color used in various places?
+
+LESS added variables to CSS, allowing you to solve this kind of problem.
+
+For example, let's say you want to define your site's primary color as #FF9900. In LESS, you might do something like this:
+
+Listing 11.1 Variables in LESS
+
+#A Define the variable primary-color.
+
+#B Use that variable in several places.
+
+If you run the LESS code in Listing 11.1 through a LESS compiler (like the one at http://less2css.org/), the following CSS will be produced:
+
+Listing 11.2 The compiled CSS from Listing 11.1
+
+#A Notice that the variable is being inserted here.
+
+As you can see, the variable is being inserted into the resulting CSS. Now, if we want to change the primary color of our site, we only have to do it in one place: the variable at the top.
+
+You might also notice that LESS looks an awful lot like CSS, and that's intentional—it's a strict superset of the language. That means that any valid CSS is valid LESS (but not the other way around). That means that you can easily import your existing CSS stylesheets into LESS and everything will work.
+Variables

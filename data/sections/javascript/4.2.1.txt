@@ -1,0 +1,58 @@
+4.2.1. Invocation as a function
+Invocation as a function? Well, of course functions are invoked as functions. How silly to think otherwise. But in reality, we say that a function is invoked “as a function” to distinguish it from the other invocation mechanisms: methods, constructors, and apply/call. If a function isn’t invoked as a method, as a constructor, or via apply or call, it’s invoked as a function.
+This type of invocation occurs when a function is invoked using the () operator, and the expression to which the () operator is applied doesn’t reference the function as a property of an object. (In that case, we’d have a method invocation, but we discuss that next.) Here are some simple examples:
+function ninja(){};
+#A
+ninja();
+#A
+var samurai = function(){};
+#B
+samurai();
+#B
+(function(){})()
+#C
+#A - Function declaration invoked as a function
+#B - Function expression invoked as a function
+#C - Immediately invoked function expression, invoked as a function
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+When invoked in this manner, the function context (the value of the this keyword) can be two things: In nonstrict mode, it will be the global context (the window object), whereas in strict mode, it will be undefined.
+The following listing illustrates the difference in behavior between strict and nonstrict modes.
+Listing 4.5. Invocation as a function
+function ninja() {
+#A
+return this;
+#A
+}
+#A
+function samurai() {
+#B
+"use strict";
+#B
+return this;
+#B
+}
+#B
+assert(ninja() === window,
+#C
+"In a 'nonstrict' ninja function, " +
+#C
+"the context is the global window object");
+#C
+assert(samurai() === undefined,
+#D
+"In a 'strict' samurai function, " +
+#D
+"the context is undefined");
+#D
+#A - A function in nonstrict mode
+#B - A function in strict mode
+#C - As expected, a nonstrict function has window as the function context.
+#D - The strict function, on the other hand, has an undefined context.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Note
+As you can see, strict mode is, in most cases, much more straightforward than nonstrict mode. For example, when listing 4.5 invokes a function as a function (as opposed to as a method), it hasn’t specified an object on which the function should be invoked. So, in our opinion, it makes more sense that the this keyword should be set to undefined (as in strict mode), as opposed to the global window object (as in nonstrict mode). In general, strict mode fixes a lot of these small JavaScript oddities. (Remember arguments aliasing from the beginning of the chapter?)
+You’ve likely written code such as this many times without giving it much thought. Now let’s step it up a notch by looking at how functions are invoked as methods.

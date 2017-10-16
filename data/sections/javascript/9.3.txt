@@ -1,0 +1,67 @@
+9.3. Sets
+In many real-world problems, we have to deal with collections of distinct items (meaning each item can’t appear more than once) called sets. Up to ES6, this was something you had to implement yourself by mimicking sets with standard objects. For a crude example, see the next listing.
+Listing 9.19. Mimicking sets with objects
+function Set(){
+this.data = {
+};
+#A
+this.length = 0;
+};
+#A
+}
+Set.prototype.has = function(item){
+#B
+return typeof this.data[item] !== "undefined";
+#B
+};
+Set.prototype.add = function(item){
+if(!this.has(item)){
+#C
+this.data[item] = true;
+#C
+this.length++;
+#C
+}
+#C
+};
+Set.prototype.remove = function(item){
+#D
+if(this.has(item)){
+#D
+delete this.data[item];
+#D
+this.length--;
+#D
+}
+#D
+};
+#D
+const ninjas = new Set();
+ninjas.add("Hattori");
+#E
+ninjas.add("Hattori");
+#E
+assert(ninjas.has("Hattori") && ninjas.length === 1,
+#F
+"Our set contains only one Hattori");
+#F
+ninjas.remove("Hattori");
+#G
+assert(!ninjas.has("Hattori") && ninjas.length === 0,
+#G
+"Our set is now empty");
+#G
+#A - Uses an object to store items
+#B - Checks whether the item is already stored
+#C - Adds an item only if it isn’t already contained in the set
+#D - Removes an item if it’s already contained in the set
+#E - Tries to add Hattori twice
+#F - Checks that Hattori was added only once
+#G - Removes Hattori and checks that he was removed from the set
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":36},{\"line\":6,\"ch\":47}]]"}
+!@%STYLE%@!
+Listing 9.19 shows a simple example of how sets can be mimicked with objects. We use a data-storage object, data, to keep track of our set items, and we expose three methods: has, which checks whether an item is already contained in the set; add, which adds an item only if the same item isn’t already contained in the set; and remove, which removes an already-contained item from the set.
+But this is a poor doppelganger. Because with maps, you can’t really store objects—only strings and numbers—and there’s always the risk of accessing prototype objects. For these reasons, the ECMAScript committee decided to introduce a completely new type of collection: sets.
+Note
+Sets are a part of the ES6 standard. For current browser compatibility, see http://mng.bz/QRTS.

@@ -1,0 +1,118 @@
+9.2.2. Creating our first map
+Creating maps is easy: We use a new, built-in Map constructor. Look at the following example.
+Listing 9.16. Creating our first map
+const ninjaIslandMap = new Map();
+#A
+const ninja1 = { name: "Yoshi"};
+#B
+const ninja2 = { name: "Hattori"};
+#B
+const ninja3 = { name: "Kuma"};
+#B
+ninjaIslandMap.set(ninja1, { homeIsland: "Honshu"});
+#C
+ninjaIslandMap.set(ninja2, { homeIsland: "Hokkaido"});
+#C
+assert(ninjaIslandMap.get(ninja1).homeIsland === "Honshu",
+#D
+"The first mapping works");
+#D
+assert(ninjaIslandMap.get(ninja2).homeIsland === "Hokkaido",
+#D
+"The second mapping works");
+#D
+assert(ninjaIslandMap.get(ninja3) === undefined,
+#E
+"There is no mapping for the third ninja!");
+#E
+assert(ninjaIslandMap.size === 2,
+#F
+"We've created two mappings");
+#F
+assert(ninjaIslandMap.has(ninja1)
+#G
+&& ninjaIslandMap.has(ninja2),
+#G
+"We have mappings for the first two ninjas");
+#G
+assert(!ninjaIslandMap.has(ninja3),
+#G
+"But not for the third ninja!");
+#G
+ninjaIslandMap.delete(ninja1);
+#H
+assert(!ninjaIslandMap.has(ninja1)
+#H
+&& ninjaIslandMap.size() === 1,
+#H
+"There's no first ninja mapping anymore!");
+#H
+ninjaIslandMap.clear();
+#I
+assert(ninjaIslandMap.size === 0,
+#I
+"All mappings have been cleared");
+#I
+#A - Uses the Map constructor to create a map
+#B - Defines three ninja objects
+#C - Creates a mapping for the first two ninja objects by using the map set method
+#D - Gets the mapping for the first two ninja objects by using the map get method
+#E - Checks that there’s no mapping for the third ninja
+#F - Checks that the map contains mappings for the first two ninjas, but not for the third one!
+#G - Uses the has method to check whether a mapping for a particular key exists
+#H - Uses the delete method to delete a key from the map
+#I - Uses the clear method to completely clear the map
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we create a new map by calling the built-in Map constructor:
+const ninjaIslandMap = new Map();
+Next, we create three ninja objects, cleverly called ninja1, ninja2, and ninja3. We then use the built-in map set method:
+ninjaIslandMap.set(ninja1, { homeIsland: "Honshu"});
+This creates a mapping between a key—in this case, the ninja1 object—and a value—in this case, an object carrying the information about the ninja’s home island. We do this for the first two ninjas, ninja1 and ninja2.
+In the next step, we obtain the mapping for the first two ninjas by using another built-in map method, get:
+assert(ninjaIslandMap.get(ninja1).homeIsland === "Honshu",
+"The first mapping works");
+The mapping of course exists for the first two ninjas, but it doesn’t exist for the third ninja, because we haven’t used the third ninja as an argument to the set method. The current state of the map is shown in figure 9.14.
+Figure 9.14. A map is a collection of key-value pairs, where a key can be anything—even another object.
+In addition to get and set methods, every map also has a built-in size property and has and delete methods. The size property tells us how many mappings we’ve created. In this case, we’ve created only two mappings.
+The has method, on the other hand, notifies us whether a mapping for a particular key already exists:
+ninjaIslandMap.has(ninja1); //true
+ninjaIslandMap.has(ninja3); //false
+The delete method enables us to remove items from our map:
+ninjaIslandMap.delete(ninja1);
+One of the fundamental concepts when dealing with maps is determining when two map keys are equal. Let’s explore this concept.
+Key equality
+If you come from a bit more traditional background, such as C#, Java, or Python, you may be surprised by the next example.
+Listing 9.17. Key equality in maps
+const map = new Map();
+const currentLocation = location.href;
+#A
+const firstLink = new URL(currentLocation);
+#B
+const secondLink = new URL(currentLocation);
+#B
+map.set(firstLink, { description: "firstLink"});
+#C
+map.set(secondLink, { description: "secondLink"});
+#C
+assert(map.get(firstLink).description === "firstLink",
+#D
+"First link mapping" );
+#D
+assert(map.get(secondLink).description === "secondLink",
+#D
+"Second link mapping");
+#D
+assert(map.size === 2, "There are two mappings");
+#D
+#A - Uses the built-in location.href property to get the current page URL
+#B - Creates two links to the current page
+#C - Adds a mapping for both links
+#D - Each link gets its own mapping, even though they point to the same page.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In listing 9.17, we use the built-in location.href property to obtain the URL of the current page. Next, by using the built-in URL constructor, we create two new URL objects that link to the current page. We then associate a description object with each link. Finally, we check that the correct mappings have been created, as shown in figure 9.15.
+Figure 9.15. If we run the code from listing 9.17, we can see that key equality in maps is based on object equality.
+People who have mostly worked in JavaScript may not find this result unexpected: We have two different objects for which we create two different mappings. But notice that the two URL objects, even though they’re separate objects, still point to the same URL location: the location of the current page. We could argue that, when creating mappings, these two objects should be considered equal. But in JavaScript, we can’t overload the equality operator, and the two objects, even though they have the same content, are always considered different. This isn’t the case with other languages, such as Java and C#, so be careful!

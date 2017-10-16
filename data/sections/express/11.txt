@@ -1,0 +1,21 @@
+
+It's time to put our applications into the real world.
+
+The first part of this chapter will discuss assets. If you're building any sort of website, it's very likely that you'll be serving some CSS and some JavaScript. It's common to concatenate and minify these assets for performance. It's also common to code in languages that compile to CSS (like SASS and LESS), just as it's common to have build steps for JavaScript (like CoffeeScript, TypeScript, concatenation, or module systems). Debates quickly turn into flame wars when talking about things like this; should you use LESS or SASS? Is CoffeeScript a good thing? In any case, I'll show you how to use a few of these tools to package up your assets for the web.
+
+The rest of this chapter will your Express applications and put them online. There are lots of deployment options, but we'll choose one that's easy and free to try: Heroku. We'll add a few small things to our app and deploy an Express app into the wild!
+
+After this chapter, you'll:
+
+·   Develop CSS with more ease using the LESS preprocessor
+
+·   Use Browserify to use require in the browser, just like in Node
+
+·   Minify your assets to make the smallest files possible
+
+·   Use Grunt to run this compilation and much more
+
+·   Use some Express middleware (connect-assets) as an alternative to this Grunt workflow
+
+·   Know how to deploy Express applications to the web with Heroku
+ Deployment: Assets & Heroku

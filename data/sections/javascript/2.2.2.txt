@@ -1,0 +1,57 @@
+2.2.2. Executing JavaScript code
+All JavaScript code contained in the script element is executed by the browser’s JavaScript engine; for example, Firefox’s Spidermonkey, Chrome and Opera’s V8, or Edge’s (IE’s) Chakra. Because the primary purpose of JavaScript code is to provide dynamicity to the page, the browser provides an API through a global object that can be used by the JavaScript engine to interact with and modify the page.
+Global objects in JavaScript
+The primary global object that the browser exposes to the JavaScript engine is the window object, which represents the window in which a page is contained. The window object is the global object through which all other global objects, global variables (even user-defined ones), and browser APIs are accessible. One of the most important properties of the global window object is the document, which represents the DOM of the current page. By using this object, the JavaScript code can alter the DOM of the page to any degree, by modifying or removing existing elements, and even by creating and inserting new ones.
+Let’s look at a snippet of code from listing 2.1:
+var first = document.getElementById("first");
+This example uses the global document object to select an element with the ID first from the DOM and assign it to a variable first. We can then use JavaScript code to make all sorts of modifications to that element, such as changing its textual content, modifying its attributes, dynamically creating and adding new children to it, and even removing the element from the DOM.
+Browser APIs
+Throughout the book, we use a number of browser built-in objects and functions (for example, window and document). Unfortunately, covering everything supported by the browser lies beyond the scope of a JavaScript book. Luckily, Mozilla again has our backs with https://developer.mozilla.org/en-US/docs/Web/API, where you can find the current status of the Web API Interfaces.
+With this basic understanding of the global objects provided by the browser, let’s look at two different types of JavaScript code that define exactly when that code is executed.
+Different types of JavaScript code
+We broadly differentiate between two different types of JavaScript code: global code and function code. The following listing will help you understand the differences between these two types of code.
+Listing 2.2. Global and function JavaScript code
+<script>
+function addMessage(element, message){
+var messageElement = document.createElement("li");
+#A
+messageElement.textContent = message;
+#A
+element.appendChild(messageElement);
+#A
+}
+var first = document.getElementById("first");
+#B
+addMessage(first, "Page loading");
+#B
+</script>
+#A - Function code is the code contained in a function.
+#B - Global code is the code outside functions.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+The main difference between these two types of code is their placement: the code contained in a function is called function code, whereas the code placed outside all functions is called global code.
+These two code types also differ in their execution (you’ll see some additional differences later on, especially in chapter 5). Global code is executed automatically by the JavaScript engine (more on that soon) in a straightforward fashion, line by line, as it’s encountered. For example, in listing 2.2, the pieces of global code that define the addMessage function use the built-in getElementById method to fetch the element with ID first and call the addMessage function; they are executed one after another as they’re encountered, as shown in figure 2.6.
+Figure 2.6. Program execution flow when executing JavaScript code
+On the other hand, function code, in order to be executed, has to be called by something else: either by global code (for example, the addMessage function call in the global code causes the execution of the addMessage function code), by some other function, or by the browser (more on this soon).
+Executing JavaScript code in the page-building phase
+When the browser reaches the script node in the page-building phase, it pauses the DOM construction based on HTML code and starts executing JavaScript code instead. This means executing the global JavaScript code contained in the script element (and functions called by the global code are also executed). Let’s go back to the example from listing 2.1.
+Figure 2.7 shows the state of the DOM after the global JavaScript code has been executed. Let’s walk slowly through its execution. First a function addMessage is defined:
+function addMessage(element, message){
+var messageElement = document.createElement("li");
+messageElement.textContent = message;
+element.appendChild(messageElement);
+}
+Figure 2.7. The DOM of the page after executing the JavaScript code contained in the script element
+Then an existing element is fetched from the DOM by using the global document object and its getElementById method:
+var first = document.getElementById("first");
+This is followed by a call to the addMessage function
+addMessage(first, "Page loading");
+which causes the creation of a new li element, the modification of its text content, and finally its insertion into the DOM.
+In this example, the JavaScript code modifies the current DOM by creating a new element and inserting it into the DOM. But in general, JavaScript code can modify the DOM to any degree: It can create new nodes and modify or remove existing DOM nodes. But there are also some things it can’t do, such as select and modify elements that haven’t yet been created. For example, we can’t select and modify the ul element with the ID second, because that element is found after the current script node and hasn’t yet been reached and created. That’s one of the reasons people tend to put their script elements at the bottom of the page. That way, we don’t have to worry about whether a particular HTML element has been reached.
+Once the JavaScript engine executes the last line of JavaScript code in the script element (in figure 2.5, this means returning from the addMessage function), the browser exits the JavaScript execution mode and continues building DOM nodes by processing the remaining HTML code. If, during that processing, the browser again encounters a script element, the DOM creation from HTML code is again paused, and the JavaScript runtime starts executing the contained JavaScript code. It’s important to note that the global state of the JavaScript application persists in the meantime. All user-defined global variables created during the execution of JavaScript code in one script element are normally accessible to JavaScript code in other script elements. This happens because the global window object, which stores all global JavaScript variables, is alive and accessible during the entire lifecycle of the page.
+These two steps
+Building the DOM from HTML
+Executing JavaScript code
+are repeated as long as there are HTML elements to process and JavaScript code to execute.
+Finally, when the browser runs out of HTML elements to process, the page-building phase is complete. The browser then moves on to the second part of the web application lifecycle: event handling.

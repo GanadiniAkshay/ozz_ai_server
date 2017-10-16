@@ -1,0 +1,113 @@
+8.2.4. Using proxies to implement negative array indexes
+In our day-to-day programming, we’ll usually work with a lot of arrays. Let’s explore how to take advantage of proxies to make our dealings with arrays a little more pleasant.
+If your programming background is from languages such as Python, Ruby, or Perl, you might be used to negative array indexes, which enable you to use negative indexes to access array items from the back, as shown in the following snippet:
+const ninjas = ["Yoshi", "Kuma", "Hattori"];
+ninjas[0]; //"Yoshi"
+#A
+ninjas[1]; //"Kuma"
+#A
+ninjas[2]; //"Hattori"
+#A
+ninjas[-1]; //"Hattori"
+#B
+ninjas[-2]; //"Kuma"
+#B
+ninjas[-3]; //"Yoshi"
+#B
+#A - Standard access to array items, with positive array indexes
+#B - Negative array indexes enable us to access array items from the back, starting with –1, which accesses the last array item.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Now compare the code that we normally use to access the last item in the array, ninjas [ninjas.length-1], with the code that we can use if our language of choice supports negative array indexes, ninjas[-1]. See how much more elegant this is?
+Unfortunately, JavaScript doesn’t offer built-in support for negative array indexes, but we can mimic this ability through proxies. To explore this concept, we’ll look at a slightly simplified version of code written by Sindre Sorhus (https://github.com/sindresorhus/negative-array), as shown in the following listing.
+Listing 8.12. Negative array indexes with proxies
+function createNegativeArrayProxy(array){
+if (!Array.isArray(array)) {
+#A
+throw new TypeError('Expected an array');
+#A
+}
+#A
+return new Proxy(array, {
+#B
+get: (target, index) => {
+#C
+index = +index;
+#D
+return target[index < 0 ? target.length + index : index];
+#E
+},
+set: (target, index, val) => {
+#F
+index = +index;
+return target[index < 0 ? target.length + index : index] = val;
+}
+});
+}
+const ninjas = ["Yoshi", "Kuma", "Hattori"];
+#G
+const proxiedNinjas = createNegativeArrayProxy(ninjas);
+#H
+assert(ninjas[0] === "Yoshi" && ninjas[1] === "Kuma"
+#I
+&& ninjas[2] === "Hattori",
+#I
+"Array items accessed through positive indexes");
+#I
+#I
+assert(proxiedNinjas[0] === "Yoshi" && proxiedNinjas[1] === "Kuma"
+#I
+&& proxiedNinjas [2] === "Hattori",
+#I
+"Array items accessed through positive indexes on a proxy");
+#I
+assert(typeof ninjas[-1] === "undefined"
+#J
+&& typeof ninjas[-2] === "undefined"
+&& typeof ninjas[-3] === "undefined",
+"Items cannot be accessed through negative indexes on an array");
+assert(proxiedNinjas[-1] === "Hattori"
+#K
+&& proxiedNinjas[-2] === "Kuma"
+&& proxiedNinjas[-3] === "Yoshi",
+"But they can be accessed through negative indexes");
+proxiedNinjas[-1] = "Hachi";
+#L
+assert(proxiedNinjas[-1] === "Hachi" && ninjas[2] === "Hachi",
+#L
+"Items can be changed through negative indexes");
+#L
+#A - If our target object isn’t an array, throw an exception.
+#B - Returns a new proxy that takes in the array and uses it as a proxy target
+#C - The get trap is activated whenever an array index is read.
+#D - Turns the property name into a number with the unary plus operator
+#E - If the read index is a negative number, read from the back of the array, and if it’s a positive number, access it normally.
+#F - The set trap is activated whenever an array index is written to.
+#G - Creates a standard array
+#H - Passes it into our function that will create a proxy to that array
+#I - Checks that we can access array items through the original array as well as through the proxy
+#J - Checks that we can’t access array items through negative indexes in a standard array...
+#K - ...but that we can do it through our proxy, because we’ve supplied a get trap that handles the case.
+#L - We can also modify array items from the back, but only if we go through the proxy.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we define a function that will create a proxy for a passed-in array. Because we don’t want our proxy to work with other types of objects, we throw an exception in case the argument isn’t an array:
+if (!Array.isArray(array)) {
+throw new TypeError('Expected an array');
+}
+We continue by creating and returning a new proxy with two traps, a get trap that will activate whenever we try to read an array item, and a set trap that will activate whenever we write to an array item:
+return new Proxy(array, {
+get: (target, index) => {
+index = +index;
+return target[index < 0 ? target.length + index : index];
+},
+set: (target, index, val) => {
+index = +index;
+return target[index < 0 ? target.length + index : index] = val;
+}
+});
+The trap bodies are similar. First, we turn the property into a number by using the unary plus operator (index = +index). Then, if the requested index is less than 0, we access array items from the back by anchoring to the length of the array, and if it’s greater than or equal to 0, we access the array item in a standard fashion.
+Finally, we perform various tests to check that on normal arrays we can only access array items through positive array indexes, and that, if we use a proxy, we can both access and modify array items through negative indexes.
+Now that you’ve seen how to use proxies to achieve some interesting features such as autopopulating object properties and accessing negative array indexes, which are outright impossible without proxies, let’s explore the most significant downside to proxies: performance issues.

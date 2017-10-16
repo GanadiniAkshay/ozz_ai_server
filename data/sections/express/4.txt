@@ -1,0 +1,19 @@
+
+Without any framework like Express, Node.js gives you a pretty simple API. Create a function that handles requests, pass it to http.createServer, and call it a day. While this API is simple, your request handler function can get unwieldy as your app grows.
+
+Express helps to mitigate some of these issues. One of the ways it does this is through the use of something called middleware. Where framework-free Node has you writing a single large request handler function for your entire app, middleware allows you to break these request handler functions into smaller bits. These smaller functions tend to handle one thing at a time. One might log all of the requests that come into your server; another might parse special values of incoming requests; another might authenticate users.
+
+In this chapter, we'll learn:
+
+·   What middleware is
+
+·   How a request flows through Express middleware; the "middleware stack"
+
+·   How to use middleware
+
+·   How to write your own middleware
+
+·   Helpful third-party Express middleware
+
+Conceptually, middleware is the biggest part of Express. At the end of the day, most of the Express code you write is middleware in one way or another. Hopefully, after this chapter, you'll see why!
+ Middleware

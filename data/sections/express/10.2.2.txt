@@ -1,0 +1,13 @@
+
+Callbacks are a pretty important part of Node. Every middleware and route in Express uses them, not to mention…well, nearly everything else! Unfortunately, people make a few mistakes with callbacks, and these can create bugs.
+
+See if you can spot the error in this code:
+
+In this code, we're reading a file and outputting its contents with console.log if everything worked. But if it didn't work for some reason, we output the error…and then just continue on to try to output the file's data!
+
+If there's an error, we should be halting execution. For example:
+
+#A If there's an error, we'll never continue to the rest of the code, because there's been an error!
+
+It's always important to stop if there's any kind of error. You don't want to be dealing with errors.
+Halting after errors happen in callbacks

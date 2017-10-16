@@ -1,0 +1,69 @@
+
+As we've seen, if the user requests plain text, then they'll get plain text. But if they want HTML, they should get HTML, but they're just getting plain text right now. To fix this “the TDD way”, we'll write some tests to make sure the HTML stuff works, we'll watch those tests fail, and then we'll fill in the rest of the code.
+
+Create test/html.js which will hold the tests for the HTML part of our server. The skeleton for this file will look pretty similar to what we've seen in the plain text part of our tests, but the “innards” of one of them will look pretty different. Here's the skeleton of the HTML tests:
+
+Listing 9.19 Testing our HTML responses (in test/html.js)
+
+#A This beforeEach is very similar to before, but we're requesting text/html instead of text/plain.
+
+So far, this should look a lot like the code we had from our plain text tests. We're requiring the app, Supertest, and is-ip; we're doing some test setup in a beforeEach block; we're making sure we're getting HTML back and also an IP address.
+
+The first test also looks pretty darn similar. Let's fill it in now:
+
+Listing 9.20 Testing for an HTML response (in test/html.js)
+
+This is very similar to before. We're testing for a response that contains “html” and we want the HTTP status code to be 200.
+
+The next test is where things get pretty different.
+
+First, let's write the code to get the HTML response from the server. This should look pretty similar to what we've seen before:
+
+Listing 9.21 Getting the HTML response (in test/html.js)
+
+But now it's time to do something with that HTML. We don't just want the IP address to show up somewhere in the HTML. We want it to show up inside a specific HTML tag. Our response will look something like this:
+
+Listing 9.22 What we might be looking for in our HTML responses
+
+We don't care too much about most of this HTML; the thing we care to test is inside something with the class ip-address. How do we get it out?
+
+Enter Cheerio, the final dependency from our list of devDependencies. In short, Cheerio is jQuery for Node. That might sound silly—why would you need to deal with the DOM in an environment that doesn't have a DOM?—but it's exactly what we need here. We need to be able to look through the HTML and find the IP address inside. If we were in the browser, we could use jQuery to do this. Because we're in Node, we'll use Cheerio, which will be very familiar to anyone who knows jQuery. We'll use Cheerio to parse the HTML, find where the IP address should be, and make sure that it's valid.
+
+Start by requiring Cheerio at the top of your test file, and then we'll use Cheerio to parse the HTML we get from our server.
+
+Listing 9.23 Parsing HTML with Cheerio (in test/html.js)
+
+#A Initialize a Cheerio object from our HTML.
+
+#B Get the IP address from the HTML. This should look a lot like jQuery.
+
+#C Test for an IP address just like before.
+
+Here, we use Cheerio to parse our HTML and make sense of it like we do with jQuery. Once we've parsed the HTML and gotten the value we want, we run our tests just like before! Cheerio makes parsing HTML easy, and you can use it to test HTML responses.
+
+Now that we've written our two tests, we can run npm test. We should see our plain text tests pass as before, but our new HTML tests will fail because we haven't written the code yet—this is the “red” step. Let's make those tests pass.
+
+If you've been following along so far, the code for this shouldn't be too crazy. We'll make some changes to our request handler, and render an EJS view which will contain the IP address as our test expects.
+
+First, let's make some modifications to app.js. We'll set up EJS as our view engine and then render the HTML view when the client wants HTML.
+
+Listing 9.24 Filling in app.js to support HTML responses
+
+#A Set up our views with EJS and make sure we're using the “views” directory.
+
+#B If the request accepts HTML, render the “index” template (which we'll define in a moment).
+
+#C Otherwise, send the IP address as plain text as we've done before.
+
+This code shouldn't be too wild if you've seen views before. We're setting up EJS as our view engine, assigning a path to it, and then rendering a view if the user requests it.
+
+The last thing we'll need to do is define the EJS view. Create views/index.ejs and put the following code inside:
+
+Listing 9.25 views/index.ejs
+
+It's time for the big moment. Run all of your tests with npm test, and you should see a sea of positivity:
+
+All of your tests pass! It’s all green! Happy days! Now you know how to test an application with Mocha, Chai, Supertest, and Cheerio.
+
+The biggest takeaway from this chapter isn't a series of tools: it's the fact that through testing, you can be much more confident about your application's behavior. When we write code, we want our code to work as we intend. That is often hard to do, but with testing, we can be a little more sure that things work as we intend.
+Testing HTML responses

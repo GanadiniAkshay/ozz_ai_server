@@ -1,0 +1,13 @@
+
+There are several status codes in the 300 range, but you'll really only use two of them, and they both involve redirects.
+
+301: "Moved Permanently"
+
+HTTP status code 301 means "don't visit this URL any more; see another URL". 301 responses are accompanied with an HTTP header called Location, so you know where to redirect to.
+
+You've probably been browsing the web and have been redirected in your life—this probably happened because of a 301 code.
+
+303: "See Other"
+
+HTTP status code 303 is also a redirect, but it's a little bit different. Just like code 200 is for "regular" requests and 201 is for requests where a resource is created, 301 is for "regular" requests and 303 is for requests where a resource is created and you want to redirect to a new page.
+The 300 range

@@ -1,0 +1,9 @@
+
+In the previous chapters, we learned what Express is, how Express works, and how to use its routing feature. Starting in this chapter, we're going to stop learning about Express!
+
+...well, okay, not exactly. We'll still be using Express to power our applications, don't worry. But as we've discussed throughout the book so far, Express is unopinionated and requires a lot of third-party accessories to make a full-fledged application. In this chapter and beyond, we'll start really digging into some of these modules, learning how they work, and how they can make your applications lovely.
+
+In this chapter we will talk about views. Views are great. They give us a convenient way to dynamically generate content (usually HTML). We've seen a view engine before; Jade has helped us clean up some ugly HTML code and inject special variables inside. But while Jade gave us a conceptual understanding of views, we never really explored everything that Express (and the other view engines) had to offer. We'll learn the many ways to inject values into templates, see the features of Jade and EJS and other Express-compatible view engines, and some subtleties in the world of views.
+
+Let's get started.
+ Views & Templates: Jade & EJS

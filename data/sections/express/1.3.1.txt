@@ -1,0 +1,13 @@
+
+As we saw above, raw Node.js gives us one request handler function to work with. The request comes into our function and the response goes out of our function.
+
+Middleware is poorly-named, but it's a term that's not Express-specific and has been around for a while. The idea is pretty simple: rather than one monolithic request handler function, we call several request handler functions that each deal with a small chunk of the work. These smaller request handler functions are called middleware functions, or sometimes just “middleware”.
+
+Middleware can handle a variety of tasks, from logging requests to sending static files to setting HTTP headers. For example, the first middleware function we might use in an application is a logger—log every request that comes into our server. When the logger is all done logging, it will continue onto the next middleware in the chain. This next middleware function might authenticate users. If they’re visiting a forbidden URL, respond with a “not authorized” page. If they’re allowed to visit it, continue to the next function in the chain. The next function might send the homepage and be done. An illustration of two possible options is shown in Figure 1.3.
+
+Figure 1.3 Two requests flowing through middleware functions. See that middleware sometimes continues on, but sometimes responds to requests.
+
+In Figure 1.3, the logging middleware is first in the chain and is always called, so something will always noted in the log file. Next, the logging middleware continues to the next one in the chain, the authorization middleware. This middleware decides, by some decree, whether the user is authorized to keep going. If they are, it continues on to the next middleware in the chain. Otherwise, send a “you’re not authorized!” message to the user and halt the chain. (This message could be an HTML page or a JSON response or anything else, depending on the application.) Finally, the last middleware, if it’s called, will send some secret information and not continue to any further middleware in the chain. (Once again, this last middleware can send any kind of response, from HTML to JSON to an image file.)
+
+One of the biggest features of middleware is that it's relatively standardized, which means that lots of people have developed middleware for Express (including folks on the Express team). That means that if you can dream up the middleware, someone has probably made it. There's middleware to compile static assets like LESS and SCSS; there’s middleware for security and user authentication; there’s middleware to parse cookies and sessions.
+Middleware

@@ -1,0 +1,31 @@
+3.4.1. Rest parameters
+Note
+Rest parameters are added by the ES6 standard (for browser compatibility, see http://mng.bz/3go1).
+For our next example, we’ll build a function that multiplies the first argument with the largest of the remaining arguments. This probably isn’t something that’s particularly applicable in our applications, but it’s an example of yet more techniques for dealing with arguments within a function.
+This might seem simple enough: We’ll grab the first argument and multiply it by the biggest of the remaining argument values. In the old versions of JavaScript, this would require some workarounds (which we’ll look at in the next chapter). Luckily, in ES6, we don’t need to jump through any hoops. We can use rest parameters, as shown in the following listing.
+Listing 3.7. Using rest parameters
+function multiMax(first, ...remainingNumbers){
+#A
+var sorted = remainingNumbers.sort(function(a, b){
+return b – a;
+#B
+});
+return first * sorted[0];
+}
+assert(multiMax(3, 1, 2, 3) == 9,
+#C
+"3*3=9 (First arg, by largest.)");
+#A - Rest parameters are prefixed with …
+#B - Sort the remaining numbers, descending.
+#C - The function is called just like any other function.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":27},{\"line\":0,\"ch\":30}]]"}
+!@%STYLE%@!
+By prefixing the last-named argument of a function with an ellipsis (...), we turn it into an array called the rest parameters, which contains the remaining passed-in arguments.
+function multiMax(first, ...remainingNumbers){
+...
+}
+For example, in this case, the multiMax function is called with four arguments: multiMax(3, 1, 2, 3). In the body of the multiMax function, the value of the first argument, 3, is assigned to the first multiMax function parameter, first. Because the second parameter of the function is the rest parameter, all remaining arguments (1, 2, 3) are placed in a new array: remainingNumbers. We then obtain the biggest number by sorting the array in descending order (notice how it’s simple to change the sorting order) and picking the largest number, which is in the first place of our sorted array. (This is far from the most efficient way of determining the largest number, but why not take advantage of the skills we gained earlier in the chapter?)
+Note
+Only the last function parameter can be a rest parameter. Trying to put the ellipsis in front of any parameter that isn’t last will bring us only sorrow, in the form of SyntaxError: parameter after rest parameter.
+In the next section, we’ll continue adding to our JavaScript tool belt with additional ES6 functionality: default parameters.

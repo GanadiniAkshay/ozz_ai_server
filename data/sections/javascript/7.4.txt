@@ -1,0 +1,6 @@
+7.4. Using JavaScript “classes” in ES6
+It’s great that JavaScript lets us use a form of inheritance via prototypes. But many developers, especially those from a classical object-oriented background, would prefer a simplification or abstraction of JavaScript’s inheritance system into one that they’re more familiar with.
+This inevitably leads toward the realm of classes, even though JavaScript doesn’t support classical inheritance natively. As a response to this need, several JavaScript libraries that simulate classical inheritance have popped up. Because each library implements classes in its own way, the ECMAScript committee has standardized the syntax for simulating class-based inheritance. Notice how we said simulating. Even though now we can use the class keyword in JavaScript, the underlying implementation is still based on prototype inheritance!
+Note
+The class keyword has been added to the ES6 version of JavaScript, and not all browsers implement it (see http://mng.bz/3ykA for current support).
+Let’s start by studying the new syntax.

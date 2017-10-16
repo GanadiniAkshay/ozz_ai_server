@@ -1,0 +1,68 @@
+5.1. Understanding closures
+A closure allows a function to access and manipulate variables that are external to that function. Closures allow a function to access all the variables, as well as other functions, that are in scope when the function itself is defined.
+Note
+You’re probably familiar with the concept of scopes, but just in case, a scope refers to the visibility of identifiers in certain parts of a program. A scope is a part of the program in which a certain name is bound to a certain variable.
+That may seem intuitive until you remember that a declared function can be called at any later time, even after the scope in which it was declared has gone away. This concept is probably best explained through code. But before we get into concrete examples that will help you develop more elegant animations in code or to define private object properties, let’s start small, with the following listing.
+Listing 5.1. A simple closure
+var outerValue = "ninja";
+#A
+function outerFunction(){
+assert(outerValue === "ninja","I can see the ninja.");
+#B
+}
+outerFunction();
+#C
+#A - Defines a value in global scope
+#B - Declares a function in global scope
+#C - Executes the function
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":6},{\"line\":0,\"ch\":16}],[{\"line\":2,\"ch\":11},{\"line\":2,\"ch\":21}]]"}
+!@%STYLE%@!
+In this code example, we declare a variable outerValue and a function outerFunction in the same scope—in this case, the global scope. Afterward, we call outerFunction.
+As you can see in figure 5.1, the function is able to “see” and access the outerValue variable. You’ve likely written code such as this hundreds of times without realizing that you were creating a closure!
+Figure 5.1. Our function has found the ninja, who was hiding in plain sight.
+Not impressed? Guess that’s not surprising. Because both outerValue and outerFunction are declared in global scope, that scope (which is a closure) never goes away (as long as our application is running). It’s not surprising that the function can access the variable, because it’s still in scope and viable.
+Even though the closure exists, its benefits aren’t yet clear. Let’s spice it up in the next listing.
+Listing 5.2. Another closure example
+var outerValue = "samurai";
+var later;
+#A
+function outerFunction(){
+var innerValue = "ninja";
+#B
+function innerFunction(){
+#C
+assert(outerValue === "samurai", "I can see the samurai."); #C
+assert(innerValue === "ninja", "I can see the ninja.")
+#C
+}
+#C
+later = innerFunction;
+#D
+}
+outerFunction();
+#E
+later();
+#F
+#A - An empty variable that we’ll use later
+#B - Declares a value inside the function. This variable’s scope is limited to the function and can’t be accessed from outside the function.
+#C - Declares an inner function within the outerFunction. innerValue is in scope when we create this function.
+#D - Stores a reference to innerFunction in the later variable. Because later is in the global scope, it’ll allow us to call the function later.
+#E - Invokes outerFunction, which causes innerFunction to be created and its reference assigned to later
+#F - Invokes innerFunction through later. We can’t invoke it directly because its scope (along with innerValue) is limited to within outerFunction.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Let’s overanalyze the code in innerFunction and see whether we can predict what might happen:
+The first assert is certain to pass; outerValue is in the global scope and is visible to everything. But what about the second assert?
+We’re executing innerFunction after outerFunction has been executed via the trick of copying a reference to the function to the global variable later.
+When innerFunction executes, the scope inside the outer function is long gone and not visible at the point at which we’re invoking the function through later.
+So we could very well expect assert to fail, as innerValue is sure to be undefined. Right?
+But when we run the test, we see the display in figure 5.2.
+Figure 5.2. Despite trying to hide inside a function, the ninja has been detected!
+How can that be? What magic allows the innerValue variable to still be “alive” when we execute the inner function, long after the scope in which it was created has gone away? The answer is closures.
+When we declare innerFunction inside the outer function, not only is the function declaration defined, but a closure is created that encompasses the function definition as well as all variables in scope at the point of function definition. When innerFunction eventually executes, even if it’s executed after the scope in which it was declared goes away, it has access to the original scope in which it was declared through its closure, as shown in figure 5.3.
+Figure 5.3. Like a protective bubble, the closure for innerFunction keeps the variables in the function’s scope alive for as long as the function exists.
+That’s what closures are all about. They create a “safety bubble” of the function and the variables in scope at the point of the function’s definition, so that the function has all it needs to execute. This bubble, containing the function and its variables, stays around as long as the function does.
+Although all this structure isn’t readily visible (there’s no “closure” object holding all of this information that you can inspect), storing and referencing information in this way has a direct cost. It’s important to remember that each function that accesses information via a closure has a “ball and chain” attached to it, carrying this information around. So although closures are incredibly useful, they aren’t free of overhead. All that information needs to be held in memory until it’s absolutely clear to the JavaScript engine that it’s no longer needed (and is safe to garbage-collect), or until the page unloads.
+Don’t worry; this isn’t all that we have to say about how closures work. But before exploring the mechanisms that enable closures, let’s look at their practical uses.

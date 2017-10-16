@@ -1,0 +1,23 @@
+
+In order to learn the topics in this chapter, we'll develop a very simple social network application. This app will let users register new profiles, edit those profiles, and browse each others' profiles. We'll call it "Learn About Me", for lack of a creative name. We'll call it "LAB" for short.
+
+Our site will have a few pages on it:
+
+·   The homepage, which will list all users. Clicking on a user in the list will take you to their profile page.
+
+·   The profile page will show the user's display name (or username if no display name is defined), the date they joined the site, and their biography.
+
+·   The user will be able to sign up for a new account, log into accounts, and log out.
+
+·   After signing up, users will be able to edit their display names and biographies, but only when they're logged in.
+
+As always, create a new directory for this project. As always, we'll need to create a package file with metadata about our project and its dependencies. Create a package.json file and put this inside:
+
+Listing 8.1 package.json for LAB
+
+Your dependency versions may vary.
+
+After you've created this file, run npm install to install our slew of dependencies. We'll see what each of these dependencies do as we chug through the rest of the chapter, so if any of them are unclear, don't worry! As usual, we've set this up so that npm start will start our app (which we'll save into app.js).
+
+Now it's time to start putting things into databases!
+Setting up our project

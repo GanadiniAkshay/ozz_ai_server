@@ -1,0 +1,21 @@
+
+Every introduction to a new code thing needs a “hello world”, right?
+
+Let's take a look at one of the simplest Express applications we can build: the Hello World. We'll delve into this in much greater detail throughout the book, so don't worry if not all of this makes sense right now.
+
+Here's Hello World, in Express:
+
+Listing 1.1 “Hello World” in Express
+
+#A Require Express and put it in a variable.
+
+#B Call express() to make a new Express application, and put it inside of a variable called “app”.
+
+#C When someone sends a request to the root of your site (at “/”), they will be sent “Hello world!”.
+
+#D Start the Express server on port 3000 and log that the server has started.
+
+Once again: if not all of this makes sense to you, don't worry! But you might be able to see that we're creating an Express application, defining a route that responds with “Hello world!”, and starting our app on port 3000.
+
+We'll learn all of Express's secrets soon.
+The obligatory hello world

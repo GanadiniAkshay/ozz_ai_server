@@ -1,0 +1,21 @@
+
+You'll need to npm install connect-assets --save and any other compilers you'll need:
+
+·   coffee-script for CoffeeScript support
+
+·   stylus for Stylus support
+
+·   less for LESS support
+
+·   node-sass for SASS support
+
+·   ejs for some EJS support
+
+·   uglify-js for JavaScript minification
+
+·   csso for CSS minification
+
+The last two won't be used by default in development mode, but will be in production. If you don't change the default options and forget to install those, your app will fail in production. Make sure to get those installed!
+
+You'll also need to pick a directory for your assets to live. By default, connect-assets will look for your CSS-related assets in assets/css and your JavaScript-related assets in assets/js, but this is configurable. I recommend using the defaults while you're getting started, so make a directory called assets and put the css and js directories inside.
+Getting everything installed

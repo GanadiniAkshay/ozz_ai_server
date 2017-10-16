@@ -1,0 +1,37 @@
+
+Now we've installed all of our dependencies, create app.js and put the following app inside:
+
+Listing 3.20 The Express guestbook, in app.js
+
+#A First, we require all of the modules we need, just like before.
+
+#B Next, we make an Express app, just like we've done before.
+
+#C Our guestbook app won't have a database; it'll just have an in-memory array. This isn't ideal for a real guestbook, but works for the simple example.
+
+#D Make sure we pass entries to every view.
+
+#E Use Morgan to log every request.
+
+#F The first line tells Express that the views are in a folder called views, and the next line says that the views will use EJS.
+
+#G When visiting the site root, render the homepage (which will be in a views/index.ejs).
+
+#H Render the "new entry" page (at views/index.ejs) when GETting the URL.
+
+#I Define a route handler when we POST to the "new entry" URL.
+
+#J We'll use formBody to parse the data given to us by the "new guestbook entry" form.
+
+#K If there are errors parsing the form body, respond with a 500 error.
+
+#L If the user submits the form with no title or body, respond with a 400 "bad request" error.
+
+#M Add a new entry to the list of entries, with the title, body, and the time published.
+
+#N Finally, redirect back to the homepage to see your new entry.
+
+#O None of the other request handlers happened, so that means we're trying to request an unknown resource. Render a 404 page. 
+
+#P Start the server on port 3000!
+The main app code

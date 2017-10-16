@@ -1,0 +1,15 @@
+
+At this point in your programming career, you've likely realized that most bugs are bad and that you should take measures to prevent them. It should come as no surprise that many bugs can cause security vulnerabilities. For example, if a certain kind of user input can crash your application, a hacker could simply flood your servers with those requests and bring the service down for everyone. We don't want that!
+
+There are a variety of methods you can use to keep your Express applications bug-free, and therefore less susceptible to attacks. In this section, I won't cover the general principles for keeping your software bug-free, but here are a few to keep in mind:
+
+·   Testing is terribly important. We discussed testing in the previous chapter.
+
+·   Code reviews can be quite helpful. More eyes on the code almost certainly means fewer bugs.
+
+·   Don't reinvent the wheel. If someone has made a library that does what you want, you should probably use the library. Make sure the library is well-tested and reliable!
+
+·   Stick to good coding practices. We'll go over some Express and JavaScript-specific issues, but you should make sure your code is well-architected and clean.
+
+We'll talk about Express-specifics in this section, but the things above are hugely helpful in preventing bugs, and therefore in preventing security issues.
+Keeping your code as bug-free as possible

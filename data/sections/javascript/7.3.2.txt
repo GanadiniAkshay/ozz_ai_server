@@ -1,0 +1,41 @@
+7.3.2. The instanceof operator
+In most programming languages, the straightforward approach for checking whether an object is a part of a class hierarchy is to use the instanceof operator. For example, in Java, the instanceof operator works by checking whether the object on the left side is either the same class or a subclass of the class type on the right.
+Although certain parallels could be made with how the instanceof operator works in JavaScript, there’s a little twist. In JavaScript, the instanceof operator works on the prototype chain of the object. For example, say we have the following expression:
+ninja instanceof Ninja
+The instanceof operator works by checking whether the current prototype of the Ninja function is in the prototype chain of the ninja instance. Let’s go back to our persons and ninjas, for a more concrete example.
+Listing 7.11. Studying the instanceof operator
+function Person(){}
+function Ninja(){}
+Ninja.prototype = new Person();
+const ninja = new Ninja();
+assert(ninja instanceof Ninja, "Our ninja is a Ninja!");
+#A
+assert(ninja instanceof Person, "A ninja is also a Person. ");
+#A
+#A - A ninja instance is both a Ninja and a Person.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":10,\"ch\":0},{\"line\":10,\"ch\":51}]]"}
+!@%STYLE%@!
+As expected, a ninja is, at the same time, a Ninja and a Person. But, to nail down this point, figure 7.16 shows how the whole thing works behind the scenes.
+Figure 7.16. The prototype chain of a ninja instance is composed of a new Person() object and the Person prototype.
+The prototype chain of a ninja instance is composed of a new Person() object, through which we’ve achieved inheritance, and the Person prototype. When evaluating the expression ninja instanceof Ninja, the JavaScript engine takes the prototype of the Ninja function, the new Person() object, and checks whether it’s in the prototype chain of the ninja instance. Because the new Person() object is a direct prototype of the ninja instance, the result is true.
+In the second case, where we check ninja instanceof Person, the JavaScript engine takes the prototype of the Person function, the Person prototype, and checks whether it can be found in the prototype chain of the ninja instance. Again, it can, because it’s the prototype of our new Person() object, which, as we’ve already seen, is the prototype of the ninja instance.
+And that’s all there is to know about the instanceof operator. Although its most common use is in providing a clear way to determine whether an instance was created by a particular function constructor, it doesn’t exactly work like that. Instead, it checks whether the prototype of the right-side function is in the prototype chain of the object on the left. Therefore, there is a caveat that we should be careful about.
+The instanceof caveat
+As you’ve seen multiple times throughout this chapter, JavaScript is a dynamic language in which we can modify a lot of things during program execution. For example, there’s nothing stopping us from changing the prototype of a constructor, as shown in the following listing.
+Listing 7.12. Watch out for changes to constructor prototypes
+function Ninja(){}
+const ninja = new Ninja();
+assert(ninja instanceof Ninja, "Our ninja is a Ninja!");
+Ninja.prototype = {};
+#A
+assert(!(ninja instanceof Ninja), "The ninja is now not a Ninja!?");
+#B
+#A - We change the prototype of the Ninja constructor function.
+#B - Even though our ninja instance was created by the Ninja constructor, the instanceof operator now says that ninja isn’t an instance of Ninja anymore!
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":0},{\"line\":6,\"ch\":21}]]"}
+!@%STYLE%@!
+In this example, we again repeat all the basic steps of making a ninja instance, and our first test goes fine. But if we change the prototype of the Ninja constructor function after the creation of the ninja instance, and again test whether ninja is an instanceof Ninja, we’ll see that the situation has changed. This will surprise us only if we cling to the inaccurate assumption that the instanceof operator tells us whether an instance was created by a particular function constructor. If, on the other hand, we take the real semantics of the instanceof operator—that it checks only whether the prototype of the function on the right side is in the prototype chain of the object on the left side—we won’t be surprised. This situation is shown in figure 7.17.
+Figure 7.17. The instanceof operator checks whether the prototype of the function on the right is in the prototype chain of the object on the left. Be careful; the function’s prototype can be changed anytime!
+Now that we understand how prototypes work in JavaScript, and how to use prototypes in conjunction with constructor functions to implement inheritance, let’s move on to a new addition in the ES6 version of JavaScript: classes.

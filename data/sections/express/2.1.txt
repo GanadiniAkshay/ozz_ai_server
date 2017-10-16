@@ -1,0 +1,13 @@
+
+A theme of the JavaScript world is an overwhelming number of choices, and Node's installation is no exception; there are a lot of different ways to get Node running on your system.
+
+The official downloads page at http://nodejs.org/download/ has a number of download links for pretty much every platform—Windows, Mac, and Linux. The choice of platform should be obvious—choose the one for your operating system. If you're not sure if your system is 32-bit or 64-bit, search the web to try to answer it because you'll get a lot of performance benefits from choosing 64-bit if it's available. Mac and Windows users have the option to download a binary or an installer, and I'd recommend the latter.
+
+If you have a package manager on your system, you can use that instead. Node.js is available on various package mangers, including apt-get, Homebrew, and Chocolatey. You can check out the official "Installing Node.js via package manager" guide at https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager.
+
+If you're on Mac or Linux, I highly recommend the Node Version Manager, or NVM, found at https://github.com/creationix/nvm. If you're on Windows, NVMW at https://github.com/hakobera/nvmw is a port for Windows users. You might infer that these programs allow you to easily switch between Node versions, which is great if you want to have the stable version of Node and the exciting experimental pre-release versions. It also allows you to easily upgrade Node when new versions are released. NVM has a couple of other benefits that I like, too: it's trivial to uninstall, and it doesn't need administrator (root) access to install it on your system.
+
+NVM is a one-line install that you can copy-paste and run from the instructions at https://github.com/creationix/nvm (or https://github.com/hakobera/nvmw for the Windows version).
+
+In any case, get Node installed!
+Installing Node

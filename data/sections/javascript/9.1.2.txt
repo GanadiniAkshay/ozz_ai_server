@@ -1,0 +1,111 @@
+9.1.2. Adding and removing items at either end of an array
+Let’s start with the following simple methods we can use to add items to and remove items from an array:
+push adds an item to the end of the array.
+unshift adds an item to the beginning of the array.
+pop removes an item from the end of the array.
+shift removes an item from the beginning of the array.
+You’ve probably already used these methods, but just in case, let’s make sure we’re on the same page by exploring the following listing.
+Listing 9.2. Adding and removing array items
+const ninjas = [];
+#A
+assert(ninjas.length === 0, "An array starts empty");
+#A
+ninjas.push("Kuma");
+#B
+assert(ninjas[0] === "Kuma",
+#B
+"Kuma is the first item in the array");
+#B
+assert(ninjas.length === 1, "We have one item in the array");
+#B
+ninjas.push("Hattori");
+#C
+assert(ninjas[0] === "Kuma",
+#C
+"Kuma is still first");
+#C
+assert(ninjas[1] === "Hattori",
+#C
+"Hattori is added to the end of the array");
+#C
+assert(ninjas.length === 2,
+#C
+"We have two items in the array!");
+#C
+ninjas.unshift("Yagyu");
+#D
+assert(ninjas[0] === "Yagyu",
+#D
+"Now Yagyu is the first item");
+#D
+assert(ninjas[1] === "Kuma",
+#D
+"Kuma moved to the second place");
+#D
+assert(ninjas[2] === "Hattori",
+#D
+"And Hattori to the third place");
+#D
+assert(ninjas.length === 3,
+#D
+"We have three items in the array!");
+#D
+const lastNinja = ninjas.pop();
+#E
+assert(lastNinja === "Hattori",
+#E
+"We've removed Hattori from the end of the array");
+#E
+assert(ninjas[0] === "Yagyu",
+#E
+"Now Yagyu is still the first item");
+#E
+assert(ninjas[1] === "Kuma,
+#E
+"Kuma is still in second place");
+#E
+assert(ninjas.length === 2,
+#E
+"Now there are two items in the array");
+#E
+const firstNinja = ninjas.shift();
+#F
+assert(firstNinja === "Yagyu",
+#F
+"We've removed Yagyu from the beginning of the array");
+#F
+assert(ninjas[0] === "Kuma",
+#F
+"Kuma has shifted to the first place");
+#F
+assert(ninjas.length === 1,
+#F
+"There's only one ninja in the array");
+#F
+#A - Creates a new, empty array
+#B - Pushes a new item to the end of the array
+#C - Pushes another item to the end of the array
+#D - Uses the built-in unshift method to insert the item at the beginning of the array. Other items are adjusted accordingly.
+#E - Pops the last item from the array
+#F - Removes the first item from the array. Other items are moved to the left accordingly.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we first create a new, empty ninjas array:
+ninjas = [] // ninjas: []
+In each array, we can use the built-in push method to append an item to the end of the array, changing its length in the process:
+ninjas.push("Kuma"); // ninjas: ["Kuma"];
+ninjas.push("Hattori"); // ninjas: ["Kuma", "Hattori"];
+We can also add new items to the beginning of the array by using the built in unshift method:
+ninjas.unshift("Yagyu");// ninjas: ["Yagyu", "Kuma", "Hattori"];
+Notice how existing array items are adjusted. For example, before calling the unshift method, "Kuma" was at index 0, and afterward it’s at index 1.
+We can also remove elements from either the end or the beginning of the array. Calling the built-in pop method removes an element from the end of the array, reducing the array’s length in the process:
+var lastNinja = ninjas.pop(); // ninjas:["Yagyu", "Kuma"]
+// lastNinja: "Hattori"
+We can also remove an item from the beginning of the array by using the built-in shift method:
+var firstNinja = ninjas.shift(); //ninjas: ["Kuma"]
+//firstNinja: "Yagyu"
+Figure 9.2 shows how push, pop, shift, and unshift modify arrays.
+Figure 9.2. The push and pop methods modify the end of an array, whereas shift and unshift modify the array’s beginning.
+Performance considerations: pop and push versus shift and unshift
+The pop and push methods only affect the last item in an array: pop by removing the last item, and push by inserting an item at the end of the array. On the other hand, the shift and unshift methods change the first item in the array. This means the indexes of any subsequent array items have to be adjusted. For this reason, push and pop are significantly faster operations than shift and unshift, and we recommend using them unless you have a good reason to do otherwise.

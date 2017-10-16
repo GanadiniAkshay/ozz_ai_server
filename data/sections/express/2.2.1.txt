@@ -1,0 +1,27 @@
+
+Node has a number of built-in modules, ranging from file system access in a module called "fs" to utility functions in a built-in module called "util".
+
+A common task when building web applications with Node is parsing of the URL. When a browser sends a request to your server, they'll ask for a specific URL. Perhaps they'll ask for the homepage; perhaps they'll ask for the about page; perhaps they'll ask for something else. These URLs come in as strings but we often want to parse them to get more information about them. Node has a built-in URL parser module; let's use it to see how to require packages.
+
+Node's built-in url module exposes a few functions, but the "big kahuna" is a function called parse. It takes a URL string and extracts useful information, like the domain or the path.
+
+We'll use Node's require function to use the url module. require is similar to keywords like import or include in other languages. require takes the name of a package as a string argument and returns a package. There's nothing special about the object that's returned—it's often an object, but it could be a function or a string or a number. Here's how we might use the URL module:
+
+Listing 2.1 Requiring Node's URL module
+
+#A This requires a module called "url" and puts it in a variable called "url". It's just a convention that these are the same.
+
+#B This uses url.parse. This would throw an undefined error if we didn't have the first line requiring the module.
+
+In the above example, require("url") returns an object that has the parse function attached. Then we use it as we would any object!
+
+If you save this as url-test.js, you can run it with node url-test.js. It will print the protocol, host, and query of our example URL.
+
+Most of the time, when you are requiring a module, you'll put in a variable that has the same name as the module itself. The above example puts the url module in a variable of the same name: url.
+
+But you don't have to do that! We could have put it in a variable with a completely different name, if we wanted. The following example illustrates that:
+
+Listing 2.2 Requiring things into different variable names
+
+It's a loose convention to give the variables the same name as what you're requiring to prevent confusion, but there's nothing enforcing that in code.
+Requiring built-in modules

@@ -1,0 +1,69 @@
+
+Now that we know what an API is, let's build a simple one with Express.
+
+The fundamentals of an Express API are pretty straightforward: take a request, parse it, and respond with a JSON object and an HTTP status code. We'll use middleware and routing to take requests and parse them, and we'll use Express's conveniences to respond to requests.
+
+NOTE Technically, APIs don't have to use JSON—they can use other data interchange formats like XML or plain text. JSON has the best Express integration and is one of the most popular API choices, so we'll use it here. But you can use other formats if you want to!
+
+Let's build a simple API that generates random integers. This might seem a bit of a contrived example, but we might want a consistent random number generator across multiple platforms (iOS, Android, web, and more) and we don't want to write the same code.
+
+·   Anyone who requests the API must send a minimum value and a maximum value.
+
+·   We'll parse those values, calculate our random number, and send it back as JSON.
+
+You might think that JSON is overkill for this situation—why not stick to plain text?—but it'll help us learn how to do it and make it easy to expand our functionality later.
+
+To build this project, we will:
+
+1. Create a package.json to describe the metadata of our app
+
+2. Create a file called app.js which will contain all of our code
+
+3. In app.js, we'll create an Express application and attach a single route that gives a random number
+
+Let's get started.
+
+As usual, to start a project, make a new folder and create a package.json. You can create this file by running npm init or you can just manually type out the file. In any case, you'll want to create it and install Express. Your package.json should look something like this:
+
+Listing 6.1 package.json for our random number project
+
+#A As always, your package version numbers may vary.
+
+Next, we'll want to create app.js. Create it in the root of your project and put the following inside:
+
+Listing 6.2 Our random number app
+
+#A We pass two parameters in the URL of the request: min and max.
+
+#B Do some error checking. If either of the numbers are malformed, we respond with an error.
+
+#C Calculate and send the result as JSON.
+
+If you start this app and visit http://localhost:3000/random/10/100, you'll see a JSON response with a random number between 10 and 100. It will look something like this:
+
+Figure 6.4 Testing your API in your browser. Try refreshing and you'll see different numbers!
+
+Let's step through this code.
+
+The first two lines simply require Express and create a new Express application as we've seen before.
+
+Next, we create a route handler for GET requests. This will take requests like /random/10/100, or /random/50/52, but it will also handle requests like /random/foo/bar. We'll have to make sure that both fields are numbers, and we'll do that soon.
+
+Next, we parse out the numbers using the built-into-JavaScript parseInt function. This function either returns a number or NaN. If either of the values are NaN, we show an error to the user. Let's look at these five lines in detail, because they're pretty important.
+
+Listing 6.3 Drilling down into the error handler
+
+The first line shouldn't be too new to you: it just checks if either of the numbers are NaN, meaning they're badly-formatted. If they are, we do three things:
+
+1. Set the HTTP status code to 400. If you've ever seen a 404 error, this is just a variant: it signals that something about the user's request was bad.
+
+2. Send a JSON object. In this case, we send an object that has the error.
+
+3. Return. If we didn't return, we'd continue onto the rest of the function and we'd send the request twice and Express would start throwing nasty errors.
+
+Finally, we calculate the result and send it as JSON!
+
+This is a pretty basic API, but it shows the fundamentals of building an API with Express: parsing requests, setting HTTP status codes, and sending JSON!
+
+Now that we know the fundamentals, we can start learning more about building bigger, better APIs.
+A simple Express-powered JSON API

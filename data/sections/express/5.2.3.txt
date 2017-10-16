@@ -1,0 +1,11 @@
+
+Another common way to dynamically pass information in URLs is to use something called "query strings". You've probably seen query strings every time you've done a search on the Internet. For example, if you searched for "javascript-themed burrito" on Google, you'd see a URL like this: https://www.google.com/search?q=javascript-themed%20burrito
+
+This is passing a query. If Google were written in Express (it's not), it might handle a query like this:
+
+Listing 5.8 Handling a search query string
+
+This is pretty similar to how you handle parameters, but it allows you to grab this style of query.
+
+NOTE There's a common security bug with query parameters, unfortunately. If you visit ?arg=something, then req.query.arg will be a string. But if you visit ?arg=something&arg=somethingelse, then req.query.arg will be an array. We'll discuss coping with these types of issues in detail in Chapter 8, if you thirst for more. In general, though, you'll want to make sure that you don't blindly assume something is a string or an array.
+Grabbing query arguments

@@ -1,0 +1,29 @@
+
+I have three favorite chapters in this book.
+
+You've already passed my first favorite: Chapter 3, where we discuss the foundations of Express. I like that chapter because the goal is to really explain Express. In my opinion, it's the most important chapter of the book, because it explains the framework conceptually.
+
+Chapter 10 is the second of my three favorites. As you'll see, it discusses security, and I love putting a hacker hat on and trying to break Express applications. It's a lot of fun (and, incidentally, terribly important).
+
+This chapter is my final favorite. Why? Because after this chapter, your applications will feel real. No more dinky example apps. No more data that quickly disappears. Your Express applications will have user accounts, blog posts, friend requests, calendar appointments...all with the power of data persistence.
+
+Nearly every application has some kind of data, be it blog posts or user accounts or cat pictures. As we've discussed, Express is generally an unopinionated framework. Fitting in with this unopinionated mantra, Express doesn't dictate how you store your data. So how should we approach it?
+
+You could store your application's data in memory, by simply setting variables. For example, Chapter 3's guestbook example stored the guestbook entries in an array. While this is useful in very simple cases, it's got a number of disadvantages. For one, if your server stops (either because you manually stop it or because it crashes), your data is gone! And if you grow to hundreds of millions of data points, you'll run out of memory. This method also runs into issues when you have multiple servers running your application, because data can be on one machine but not the other.
+
+You could try to store your application's data in files, by writing to a file or multiple files. This is how many databases work internally, after all. But that leaves you to figure out how to structure and query that data. How do you save your data? How do you efficiently get data out of those files when you need it? You might wind up building a database of your own, which is a huge headache. And once again, this doesn't magically work with multiple servers.
+
+We'll need another plan. And that's why we choose software designed for this purpose: a database. Our database of choice is something called MongoDB.
+
+In this chapter, we'll learn the following:
+
+·   How MongoDB works
+
+·   How to use Mongoose, an official MongoDB library
+
+·   How to securely create user accounts
+
+·   How to use Passport for authentication
+
+Let's get real.
+ Persisting your data with MongoDB

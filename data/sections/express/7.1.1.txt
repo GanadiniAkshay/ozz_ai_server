@@ -1,0 +1,17 @@
+
+We've seen simple examples of how to render views before, but just in case, here's an app that renders a simple EJS view:
+
+Listing 7.1 Simple view rendering example
+
+#A First, we require what we need and create our application.
+
+#B This tells Express that any file ending in ".ejs" should be rendered with whatever comes out of require("ejs"). This is a convention followed by some view engines; we'll later see how to use view engines that don't conform to this convention. .
+
+#C This tells Express where your views directory is. It happens to default to this, but I much prefer to be explicit. This also makes sure things work on Windows.      &nbsp.
+
+#D When we visit the root, we'll render a file called "index". This resolves to "views/index.ejs", which is then rendered with EJS.          &nbsp.
+
+#E This starts the server on port 3000!
+
+Once you've done an npm install of EJS (and Express, of course), this should work! When you visit the root, it'll find views/index.ejs and render it with EJS! 99% of the time, you'll do something like this; one view engine all the time. But things can get more complicated if you decide to mix things up.
+A simple view rendering

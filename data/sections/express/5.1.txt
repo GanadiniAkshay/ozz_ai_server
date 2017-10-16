@@ -1,0 +1,11 @@
+
+Let's imagine we're building the homepage for Olivia Example. She's a great lady and we're honored to build her website.
+
+If we're a browser visiting example.com/olivia, here's what the "raw" HTTP request might look like:
+
+Listing 5.1 The first line of an HTTP request
+
+That HTTP request has a verb (GET), a URI (the /olivia part), and the HTTP version (1.1). When we're routing, we take the pair of the verb and the URI and map it to a request handler. We basically say, "Hey, Express! When you see a GET request to /about_me, run this code. And when you see a POST request to /new_user, run this other code."
+
+That's pretty much it—routing maps verbs and URIs to specific code. Let's take a look at a simple example.
+What is routing?

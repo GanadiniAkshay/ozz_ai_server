@@ -1,0 +1,17 @@
+
+Famous security technologist Bruce Schneier describes something that he calls the “security mindset”:
+
+Uncle Milton Industries has been selling ant farms to children since 1956. Some years ago, I remember opening one up with a friend. There were no actual ants included in the box. Instead, there was a card that you filled in with your address, and the company would mail you some ants. My friend expressed surprise that you could get ants sent to you in the mail.
+
+      I replied: "What's really interesting is that these people will send a tube of live ants to anyone you tell them to."
+
+      Security requires a particular mindset. Security professionals -- at least the good ones -- see the world differently. They can't walk into a store without noticing how they might shoplift. They can't use a computer without wondering about the security vulnerabilities. They can't vote without trying to figure out how to vote twice. They just can't help it.
+
+      — “The Security Mindset” by Bruce Schneier, at https://www.schneier.com/blog/archives/2008/03/the_security_mi_1.html
+
+Bruce Schneier isn’t advocating that you should steal things and break the law! But the best way to secure yourself is to think like an attacker—how could someone subvert a system? How could someone abuse what they’re given? If you can think like an attacker and seek out loopholes in your own code, then you can figure out how to close those holes and make your application more secure.
+
+This chapter can’t possibly cover every security vulnerability out there. Between the time I write this and the time you read this, there will likely be a new attack vector that could affect your Express applications. Thinking like an attacker will help you defend your applications against the endless onslaught of possible security flaws.
+
+Just because I'm not going through every security vulnerability doesn't mean I won't go through the common ones. Read on!
+The security mindset

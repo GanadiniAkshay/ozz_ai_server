@@ -1,0 +1,21 @@
+
+Perhaps you're at this section wishing you could define your own functions; why does LESS get all of the power? Enter mixins, a way of defining reusable CSS declarations that you can use throughout your stylesheets.
+
+Perhaps the most common example is with vendor prefixing. If you want to use the CSS border-radius property, you have to prefix it to make sure it works in Chrome, Firefox, Internet Explorer, Safari, and the like. You've probably seen something like this:
+
+In CSS, if you want to use border-radius and have it work on all browsers, you'll need the vendor prefixes. And if you want to put those prefixes, you'll have to write all of those every time you use border-radius. This can get tedious and is error-prone.
+
+In LESS, rather than define the border-radius and then make several vendor prefixed copies, you can define a mixin, or a reusable component that you can use in multiple declarations. They look an awful lot like functions in other programming languages.
+
+Listing 11.5 Mixins in LESS
+
+#A Define the border-radius mixin.
+
+#B Use our border-radius mixin in a couple of elements.
+
+Now, if you run that LESS through a compiler, it produces the following CSS:
+
+Listing 11.6 The compiled CSS from Listing 11.5
+
+As you can see, the mixin is expanded into the tedious vendor-prefixed declarations so that you don't have to write them every time.
+Mixins

@@ -1,0 +1,59 @@
+
+In short, you want to use HTTPS instead of HTTP. It helps protect your users against all kinds of attacks. Appendix B talks about HTTPS and its motivations in greater detail. Trust me—you want it!
+
+There are two pieces of Express middleware that you'll want to use with HTTPS. One will force your users to use HTTPS and the other will keep them there.
+
+Force users to HTTPS
+
+The first middleware we'll look at is express-enforces-ssl. As the name suggests, it enforces SSL (HTTPS).  Here's a snippet of its source code.
+
+Listing 10.5  A snippet from express-enforces-ssl's source code
+
+That's most of this module's code. Basically, if the request is secure, it continues on. If not, it redirects to the secure version (that redirection logic isn't shown above).
+
+To use this module, you'll need to do two things.
+
+1. Most of the time, when you deploy your applications, your server isn't directly connecting to the client. If you're deployed to the Heroku cloud platform (as we'll see in Chapter 11), Heroku servers sit "between" you and the client. To tell Express about this, we'll need to enable the "trust proxy" setting.
+
+2. Call the middleware!
+
+3. Make sure you npm install express-enforces-ssl, and then:
+
+Listing 10.6  Enforcing HTTPS in Express
+
+There's not much more to this module, but you can see more at https://github.com/aredo/express-enforces-ssl.
+
+Keep users on HTTPS
+
+Once your users are on HTTPS, we'll want to tell them to avoid going back to HTTP. New browsers support a feature called HTTP Strict Transport Security (shortened to HSTS). It's a simple HTTP header that tells browsers to stay on HTTPS for a period of time.
+
+For example, if you want to keep your users on HTTPS for one year, you'd set the following header:
+
+Listing 10.7  Sticking to HTTPS for one year
+
+#A There are approximately 3,1536,000 seconds in a year.
+
+You can also enable support for subdomains. If you own slime.biz, you'll probably want to enable HSTS for cool.slime.biz.
+
+To set this header, we'll meet Helmet. Helmet is a module for setting helpful HTTP security headers in your Express applications. As we'll see throughout the chapter, it has various headers it can set. We'll start with its HSTS functionality.
+
+First, as always, npm install helmet. I'd also recommend installing the ms module, which translates human-readable strings (like "2 days") into 172,800,000 milliseconds. Now you can use the middleware!
+
+Listing 10.8  Using Helmet's HSTS middleware
+
+Now, HSTS will be set on every request!
+
+
+Why can't we just use HSTS?
+
+
+Why can't we just use HSTS?
+
+This header is only effective if your users are already on HTTPS, which is why we need express-enforces-ssl.
+
+
+ 
+
+
+ 
+Using HTTPS

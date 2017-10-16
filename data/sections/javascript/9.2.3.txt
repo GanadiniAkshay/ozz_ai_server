@@ -1,0 +1,51 @@
+9.2.3. Iterating over maps
+So far, you’ve seen some of the advantages of maps: You can be sure they contain only items that you put in them, and you can use anything as a key. But there’s more!
+Because maps are collections, there’s nothing stopping us from iterating over them with for...of loops. (Remember, we used the for...of loop to iterate over values created by generators in chapter 6.) You’re also guaranteed that these values will be visited in the order in which they were inserted (something we can’t rely on when iterating over objects using the for...in loop). Let’s look at the following example.
+Listing 9.18. Iterating over maps
+const directory = new Map();
+#A
+directory.set("Yoshi", "+81 26 6462");
+#B
+directory.set("Kuma", "+81 52 2378 6462");
+#B
+directory.set("Hiro", "+81 76 277 46");
+#B
+for(let item of directory){
+#C
+assert(item[0] !== null, "Key:" + item[0]);
+#C
+assert(item[1] !== null, "Value:" + item[1]);
+#C
+}
+#C
+for(let key of directory.keys()){
+#D
+assert(key !== null, "Key:" + key);
+#D
+assert(directory.get(key) != null,
+#D
+"Value:" + directory.get(key));
+#D
+}
+#D
+for(var value of directory.values()){
+#E
+assert(value !== null, "Value:" + value);
+#E
+}
+#E
+#A - Creates a new map, just as we’ve done so far
+#B - Creates a ninja directory that stores each ninja’s phone number
+#C - Iterates over each item in a dictionary using the for...of loop. Each item is a two-item array: a key and a value.
+#D - We can also iterate over keys using the built-in keys method…
+#E - …and over values using the built-in values method.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+As the previous listing shows, once we’ve created a mapping, we can easily iterate over it using the for...of loop:
+for(var item of directory){
+assert(item[0] !== null, "Key:" + item[0]);
+assert(item[1] !== null, "Value:" + item[1]);
+}
+In each iteration, this gives a two-item array, where the first item is a key and the second item is the value of an item from our directory map. We can also use the keys and values methods to iterate over, well, keys and values contained in a map.
+Now that we’ve looked at maps, let’s visit another newcomer to JavaScript: sets, which are collections of unique items.

@@ -1,0 +1,31 @@
+
+The techniques above are useful for testing “business logic” like model behavior or utility functions. But you might also want to test the routes or middleware of your Express applications. You might want to make sure that your API endpoints are returning the values they should, or that you're serving static files, or a number of other things.
+
+We'll use Supertest to accomplish this. Supertest spools up our Express server and sends requests to it. Once the requests come back, we can make assertions about the response. For example, we might want to make sure that we get an HTTP 200 status code when we send a GET request to the homepage. Supertest will send that GET request to the homepage and then, when we get the response, make sure it had 200 as its HTTP status code. We can use this to test and middleware or route that we define in our application.
+
+Let's build “Your IP Is...”, a simple application for getting users' IP addresses. It will support a “classic” HTML view when you visit it in a browser. You'll also be able to get the user's IP address as plain text. There will be two separate routes for these two responses. If a visitor comes to the root of your site (at /), they'll be shown their IP address as an HTML page. If they visit /plain, they'll be given their IP address as plain text.
+
+Create a new directory for this project, and create a package file in the folder:
+
+Listing 9.12 package.json for “Your IP Is...”
+
+#A We'll use EJS to render the HTML page, as we've used before.
+
+#B Cheerio lets us parse the rendered HTML for testing. We'll use this to make sure the IP address is properly inserted into our HTML.
+
+#C is-ip exposes a function that lets us determine whether a string is an IP address. We'll use this to make sure the IP addresses are, indeed, IP addresses.
+
+#D Supertest lets us spool up Express servers and test them. We'll use Supertest to test both of our application's routes.
+
+In the previous examples, we wrote our code and then wrote the tests. In this example, we'll flip it around and do test-driven development. We know what we want our application to do, so we can write the tests right now without worry about how we implement it. Our tests will fail at first, because we won't have written any “real” code! After our tests are written, we'll go back and “fill in” the application to make our tests pass.
+
+The TDD approach isn't always the best; sometimes you aren't quite sure what your code should look like, so it'd be a bit of a waste to write tests. There are huge flame wars online about the pros and cons of TDD; I won't reiterate them here, but we'll try TDD for this example.
+
+We will write tests for the two major parts of this application:
+
+1. The plain text API
+
+2. The HTML view
+
+Let's start by testing the plain text API.
+Testing Express servers with Supertest

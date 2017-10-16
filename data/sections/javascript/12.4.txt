@@ -1,0 +1,84 @@
+12.4. Minimizing layout thrashing
+So far in this chapter, you’ve learned how to relatively easily modify the DOM: by creating and inserting new elements, removing existing elements, or modifying their attributes. Modifying the DOM is one of the fundamental tools for achieving highly dynamic web applications.
+But this tool also comes with usage asterisks, one of the most important being, be aware of layout thrashing. Layout thrashing occurs when we perform a series of consecutive reads and writes to DOM, in the process not allowing the browser to perform layout optimizations.
+Before we delve deeper, consider that changing attributes of one element (or modifying its content) doesn’t necessarily affect only that element; instead it can cause a cascade of changes. For example, setting the width of one element can lead to changes in the element’s children, siblings, and parents. So whenever a change is made, the browser has to calculate the impact of those changes. In certain cases, there’s nothing we can do about it; we need those changes to occur. But at the same time, there’s no need to put additional weight on the shoulders of our poor browsers, causing our web application performance to dwindle.
+Because recalculating layout is expensive, browsers try to be as lazy as possible, by delaying working with the layout as much as they can; they try to batch as many write operations as possible on the DOM in a queue so that these operations can be executed in one go. Then, when an operation that requires an up-to-date layout comes along, the browser grudgingly obeys, and executes all batched operations and finally updates the layout. But sometimes, the way we’ll write our code doesn’t give the browser enough room to perform these sorts of optimizations, and we force the browser to perform a lot of (possibly needless) recalculations. This is what layout thrashing is all about; it occurs when our code performs a series of (often unnecessary) consecutive reads and writes to the DOM, not allowing the browser to optimize layout operations. The problem is that, whenever we modify the DOM, the browser has to recalculate the layout before any layout information is read. This action is expensive, in terms of performance. Let’s take a look at an example.
+Listing 12.10. Consecutive series of reads and writes causes layout thrashing
+<div id="ninja">I’m a ninja</div>
+#A
+<div id="samurai">I’m a samurai</div>
+#A
+<div id="ronin">I’m a ronin</div>
+#A
+<script>
+const ninja = document.getElementById("ninja");
+#B
+const samurai = document.getElementById("samurai");
+#B
+const ronin = document.getElementById("ronin");
+#B
+const ninjaWidth = ninja.clientWidth;
+#C
+ninja.style.width = ninjaWidth/2 + "px";
+#C
+#C
+const samuraiWidth = samurai.clientWidth;
+#C
+samurai.style.width = samuraiWidth/2 + "px";
+#C
+#C
+const roninWidth = ronin.clientWidth;
+#C
+ronin.style.width = roninWidth/2 + "px";
+#C
+</script>
+#A - Defines a few HTML elements
+#B - Fetches the elements from the DOM
+#C - Performs a series of consecutive reads and writes. DOM modifications invalidate the layout.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Reading the value of the element’s clientWidth property is one of those actions that requires the browser to have an up-to-date layout. By performing consecutive reads and writes to the width property of different elements, we don’t allow the browser to be lazy in a smart way. Instead, because we read layout information after every layout modification, the browser has to recalculate the layout every time, just to be sure that we still get the correct information.
+One way of minimizing layout thrashing is to write code in a way that doesn’t cause needless layout recalculations. For example, we can rewrite listing 12.10 into the following.
+Listing 12.11. Batch DOM reads and writes to avoid layout thrashing
+<div id="ninja">I’m a ninja</div>
+<div id="samurai">I’m a samurai</div>
+<div id="ronin">I’m a ronin</div>
+<script>
+const ninja = document.getElementById("ninja");
+const samurai = document.getElementById("samurai");
+const ronin = document.getElementById("ronin");
+const ninjaWidth = ninja.clientWidth;
+#A
+const samuraiWidth = samurai.clientWidth;
+#A
+const roninWidth = ronin.clientWidth;
+#A
+ninja.style.width = ninjaWidth/2 + "px";
+#B
+samurai.style.width = samuraiWidth/2 + "px";
+#B
+ronin.style.width = roninWidth/2 + "px";
+#B
+</script>
+#A - Batches all reads to layout properties together
+#B - Batches all writes to layout properties together
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we batch all reads and writes, because we know that no dependencies exist between the dimensions of our elements; setting the width of the ninja element doesn’t influence the width of the samurai element. This allows the browser to lazily batch operations that modify the DOM.
+Layout thrashing isn’t something that you’d notice in smaller, simpler pages, but it’s something to keep in mind when developing complex web applications, especially on mobile devices. For this reason, it’s always good to keep in mind the methods and properties that require an up-to-date layout, shown in the following table (obtained from http://ricostacruz.com/cheatsheets/layout-thrashing.html).
+Table 12.2. APIs and properties that cause layout invalidation
+Interface
+Property name
+Element
+clientHeight, clientLeft, clientTop, clientWidth, focus, getBoundingClientRect, getClientRects, innerText, offsetHeight, offsetLeft, offsetParent, offsetTop, offsetWidth, outerText, scrollByLines, scrollByPages, scrollHeight, scrollIntoView, scrollIntoViewIfNeeded, scrollLeft, scrollTop, scrollWidth
+MouseEvent
+layerX, layerY, offsetX, offsetY
+Window
+getComputedStyle, scrollBy, scrollTo, scroll, scrollY
+Frame, Document, Image
+height, width
+Several libraries that try to minimize layout thrashing have been developed. One of the more popular ones is FastDom (https://github.com/wilsonpage/fastdom). The library repository includes examples that clearly show the performance gains that can be achieved by batching DOM read/write operations (https://wilsonpage.github.io/fastdom/examples/aspect-ratio.html).
+React’s virtual DOM
+One of the most popular client-side libraries is Facebook’s React (https://facebook.github.io/react/). React achieves great performance by using a virtual DOM, a set of JavaScript objects that mimic the actual DOM. When we develop applications in React, we perform all modifications on the virtual DOM, without any regard for layout thrashing. Then, at an appropriate time, React uses the virtual DOM to figure out what changes have to be made to the actual DOM, in order to keep the UI in sync. This batching of updates increases the performance of applications.

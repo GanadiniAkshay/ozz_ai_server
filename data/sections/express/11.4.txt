@@ -1,0 +1,9 @@
+
+I don't love Grunt, to be quite honest. I include it in the book because it's incredibly popular and powerful, but I find the code verbose and a little confusing. There's another solution for Express users: a piece of middleware called connect-assets (at https://github.com/adunkman/connect-assets).
+
+connect-assets can concatenate, compile to, and minify JavaScript and CSS. It supports CoffeeScript, Stylus, LESS, SASS, and even some EJS. It doesn't support Browserify and isn't as configurable as build tools like Grunt or Gulp, but it's very easy to use.
+
+connect-assets is heavily inspired by the Sprockets asset pipeline from the Ruby on Rails world. If you've used that, this will be quite familiar, but if you haven't, don't worry!
+
+NOTE Connect is another web framework for Node, and in short, Express middleware is compatible with Connect middleware. You can think of Connect as Express with just the middleware feature; no views, no routing, no application settings, no niceties...just middleware. Its middleware API is identical. In fact, previous versions of Express used to be built on Connect! This is why a lot of Express-compatible middleware has "connect" in the name; they're compatible with a "lower level" of Express, if you will.
+Using connect-assets to compile LESS and CoffeeScript and more

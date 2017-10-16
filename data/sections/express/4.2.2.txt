@@ -1,0 +1,43 @@
+
+We'll start by making our app log requests, just to get started.
+
+Put the following inside of app.js:
+
+Listing 4.3 Start app.js for our static file server
+
+#A Require the modules we need. We'll use Express in this example, but we'll use Node's built-in Path and filesystem ("fs") modules soon.
+
+#B Create a new Express application and put it inside the "app" variable.
+
+#C This middleware logs all incoming requests. It has a bug, though!
+
+#D Start the app on port 3000 and log out when it's started!
+
+For now, all we have is an application that logs every request that comes into the server. Once we've set up our app (the first few lines), we call app.use to add a function to our application's middleware stack. When a request comes into this application, that function will be called.
+
+Unfortunately, even this simple app has a critical bug. Run npm start and visit localhost:3000 in your browser to see it.
+
+You'll see the request being logged into the console, and that's great news. But your browser will hang—the loading spinner will spin and spin and spin, until the request eventually times out and you get an error in your browser. That's not good!
+
+This is happening because we didn't call next.
+
+When your middleware function is finished, it needs to do one of two things:
+
+1. The function needs to finish responding to the request (with res.end or one of Express's convenience methods like res.send or res.sendFile).
+
+2. The function needs to call next to continue onto the next function in the middleware stack.
+
+If you do one of those two things, your app will work just fine. If you do neither, inbound requests will never get a response; their loading spinners will never stop spinning (this is what happened above). If you do both, you're likely to get an error because you don't want to call res.end more than once.
+
+These bugs are usually pretty easy to catch once you know how to spot them. If you're not responding to the request and you're not calling next, it'll look like your server is super slow.
+
+Let's fix our middleware by calling next.
+
+Listing 4.4  Fixing our logging middleware
+
+#A This is the critical new line!
+
+Now, if you stop your app, run npm start again, and visit http://localhost:3000 in your browser, you should see your server logging all of the requests and immediately failing with an error message (something like "Cannot GET /"). Because we're never responding to the request ourselves, Express will give an error to the user, and it'll happen immediately.
+
+Now that we've written our logger, let's write the next part—the static file server middleware.
+Writing our first middleware function: the logger

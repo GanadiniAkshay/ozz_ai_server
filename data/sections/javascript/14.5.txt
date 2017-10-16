@@ -1,0 +1,12 @@
+14.5. Summary
+Although the situation has improved considerably, browsers unfortunately aren’t bug-free and usually don’t support web standards consistently.
+When writing JavaScript applications, choosing which browsers and platforms to support is an important consideration.
+Because it’s not possible to support all combinations, quality should never be sacrificed for coverage!
+The biggest challenges to writing JavaScript code that can be executed in various browsers are bug fixes, regressions, browser bugs, missing features, and external code.
+Reusable cross-browser development involves juggling several factors:
+Code size— Keeping the file size small
+Performance overhead— Keeping the performance level above a palatable minimum
+API quality— Making sure that the APIs work uniformly across browsers
+There’s no magic formula for determining the correct balance of these factors.
+The development factors are something that have to be balanced by every developer in their individual development efforts.
+By using smart techniques such as feature detection, we can defend against the numerous directions from which reusable code will be attacked without making any undue sacrifices.

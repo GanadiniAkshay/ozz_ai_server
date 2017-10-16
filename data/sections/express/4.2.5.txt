@@ -1,0 +1,33 @@
+
+A common piece of advice in software development is "don't reinvent the wheel". If someone else has already solved your problem, you should take their solution and move onto better things.
+
+That's what we'll do with our logging middleware. We'll remove the hard work we put in (all five lines) and use a piece of middleware called Morgan (at https://github.com/expressjs/morgan). It's not baked into core Express but it's maintained by the Express team.
+
+Morgan describes itself as "request logger middleware", which is exactly what we want!
+
+To install it, run npm install morgan --save to install the latest version of the Morgan package. You'll see it inside a new folder inside of node_modules and it'll also appear in package.json.
+
+Now, let's change app.js to use Morgan instead of our logging middleware.
+
+Listing 4.8  app.js that now uses Morgan
+
+#A Require Express, just like before.
+
+#B Require Morgan.
+
+#C Use the Morgan middleware instead of the one we used to have.
+
+Now, when you run this app, you'll see output like Figure 4.??, with the IP address and a bunch of other useful information.
+
+Figure 4.6  Our application's logs after adding Morgan.
+
+So…what's happening here?
+
+morgan is a function that returns a middleware function. When you call it, it will return a function like the one you'd written before; it'll take 3 arguments and call console.log. Most third-party middleware works this way—you call a function which returns the middleware, which you then use. You could have written the above like this:
+
+Listing 4.9  An alternative usage of Morgan
+
+Notice that we're calling Morgan with one argument: a string, "short". This is a Morgan-specific configuration option that dictates what the output should look like. There are other format strings that have more or less information. "combined" gives a lot of info—"tiny" gives a very minimal output. When you call Morgan with different configuration options, you're effectively making it return a different middleware function.
+
+Morgan is the first example of open-source middleware we'll use, but we'll use a lot throughout this book. We'll use another one to replace our second middleware function: the static file server.
+Switching our logger to an open-source one: Morgan

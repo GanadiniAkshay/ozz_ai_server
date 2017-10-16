@@ -1,0 +1,29 @@
+5.6.2. Private variables caveat
+In JavaScript, there’s nothing stopping us from assigning properties created on one object to another object. For example, we can easily rewrite the code from listing 5.11 into something like the following.
+Listing 5.12. Private variables are accessed through functions, not through objects!
+function Ninja() {
+var feints = 0;
+this.getFeints = function(){
+return feints;
+};
+this.feint = function(){
+feints++;
+};
+}
+var ninja1 = new Ninja();
+ninja1.feint();
+var imposter = {};
+imposter.getFeints = ninja1.getFeints;
+#A
+assert(imposter.getFeints() === 1,
+#B
+"The imposter has access to the feints variable!");
+#B
+#A - Makes the getFeints function of ninja1 accessible through the imposter
+#B - Verifies that we can access the supposedly private variable of ninja1
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":12,\"ch\":2},{\"line\":12,\"ch\":20}]]"}
+!@%STYLE%@!
+This listing modifies the source code in a way that it assigns the ninja1.getFeints method to a completely new imposter object. Then, when we call the getFeints function on the imposter object, we test that we can access the value of the variable feints created when ninja1 was instantiated, thus proving that we’re faking this whole “private” variable thing. See figure 5.18.
+Figure 5.18. We can access the “private” variables through functions, even if that function is attached to another object!
+This example illustrates that there aren’t any private object variables in JavaScript, but that we can use closures created by object methods to have a “good enough” alternative. Still, even though it isn’t the real thing, lots of developers find this way of hiding information useful.

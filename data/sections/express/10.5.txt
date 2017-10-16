@@ -1,0 +1,21 @@
+
+I've got some bad news: your server is might crash at some point.
+
+There are loads of things that can crash your servers. Perhaps there's a bug in your code and you're referencing an undefined variable; perhaps a hacker has found a way to crash your server with malicious input; perhaps your servers have reached their capacities. Unfortunately, these apps can get wildly complicated, and at some point, they might crash.
+
+And while this chapter has tips to help keep your apps running smoothly, you don't want a crash to completely ruin your day. While they're not ideal, you can recover from them.
+
+The folks at Nodejitsu developed a simple tool called Forever. Its name might be a hint: it keeps your apps running forever. The important part: if your app crashes, Forever will restart it.
+
+To install Forever, just run npm install forever --save. You've probably had an npm start script in your package.json for awhile, and we're going to change it from this:
+
+Listing 10.18  A classic npm start script
+
+…to this:
+
+Listing 10.19  npm start with Forever
+
+And now your server will restart if it crashes!
+
+NOTE You can see a simple code example of this in action at the book's source code repository at https://github.com/EvanHahn/Express.js-in-Action-code/tree/master /Chapter_09/forever-example.
+Handling server crashes

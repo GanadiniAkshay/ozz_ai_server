@@ -1,0 +1,51 @@
+
+We've written a single test so far, and it's showed us that our code isn't totally broken. But we don't know if it works on more complex inputs. What would happen if you passed it a string with no letters? What about an empty string? We can see that we're capitalizing the first letter, but are we lowercasing the rest of the string? Let's add some more tests to test the “unhappy paths”.
+
+Let's start by adding another relatively simple test: does it make the rest of the string lowercase? We'll leave everything from before and we'll add a new test to test/capitalize.js:
+
+Listing 9.4 Another test for capitalize (in test/capitalize.js)
+
+#A Our new tests will make sure it “makes the rest of the string lowercase”.
+
+#B We expect the capitalization of “javaScript” to equal “Javascript”.
+
+You can run your tests with npm test (or just npm t for short), and you should see something like this:
+
+Cool! Now we're more confident that we're capitalizing the first letter and lowercasing the rest of the string. But we're not out of the woods yet.
+
+What about adding a test for the empty string? Capitalizing the empty string should just return the empty string, right? Let's write a test to see if that happens.
+
+Listing 9.5 Testing capitalization of the empty string (in test/capitalize.js)
+
+Run npm test again to run this new test (and all the others). You should see something like the following output:
+
+Uh oh! Looks like we have a red/failing test. Let's look at it to see what's wrong.
+
+First, we can see that the error occurs when we run the “leaves empty strings alone” test. The error is a TypeError, and it's telling us that we can't call toUpperCase on undefined. We can also see a stack trace, which starts on line 2 of capitalize.js. Here's the line that's causing the error:
+
+Looks like str[0] is undefined when we pass the empty string, so we'll need to make sure it's defined. Let's replace the use of square brackets with the charAt method. Our new-and-improved function should look like this:
+
+Listing 9.6 The new capitalize.js
+
+#A Check out this new-and-improved line!
+
+Re-run our tests with npm test and you should see everything green!
+
+We can add a few more tests to make sure our code is robust. We'll add a test that doesn't try to capitalize any letters. We'll also make sure it properly capitalizes multi-word strings. We should also make sure it leaves a string alone if it's already properly capitalized. These new tests should pass with the code we already have.
+
+Listing 9.7 Some new tests for capitalization (in test/capitalize.js)
+
+Run npm test and you should see our tests pass.
+
+Finally, we'll try to throw one more curveball at our function: the String object. Every JavaScript style guide will warn you against using the String object—it's bad news that can cause unexpected behavior, like they say about == or eval. It's possible that you don't even know about this feature of JavaScript, which is for the best, because you should never use it.
+
+Unfortunately, there are inexperienced programmers out there (and others are, sadly, fools). Some of them might be using your code. You could argue that bugs are their fault, but you could also argue that your code shouldn't be the problem. That's why we should test our function with the String object, just in case. Let's write one last test that uses the String object.
+
+Listing 9.8 Testing with the String object
+
+#A str.valueOf() converts the String object to a “normal” string.
+
+We've got seven tests for our little capitalization function; run npm test one last time to make sure they all pass!
+
+Look at us! We're now pretty sure our capitalization function works, even when passed a variety of odd strings.
+Adding more tests

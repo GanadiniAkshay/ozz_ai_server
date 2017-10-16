@@ -1,0 +1,40 @@
+8.2.5. Performance costs of proxies
+As we already know, a proxy is a surrogate object through which we control access to another object. A proxy can define traps, functions that will be executed whenever a certain operation is performed on a proxy. And, as you’ve also seen, we can use these traps to implement useful functionalities such as logging, performance measurements, autopopulating properties, negative array indexes, and so on. Unfortunately, there’s also a downside. The fact that all our operations have to pass in through the proxy adds a layer of indirection that enables us to implement all these cool features, but at the same time it introduces a significant amount of additional processing that impacts performance.
+To test these performance issues, we can build on the negative array indexes example from listing 8.12 and compare the execution time when accessing items in a normal array versus accessing items through a proxy, as shown in the following listing.
+Listing 8.13. Checking the performance limitations of proxies
+function measure(items){
+const startTime = new Date().getTime();
+#A
+for(let i = 0; i < 500000; i++){
+#B
+items[0] === "Yoshi";
+#B
+items[1] === "Kuma";
+#B
+items[2] === "Hattori";
+#B
+}
+#B
+return new Date().getTime() - startTime;
+#C
+}
+const ninjas = ["Yoshi", "Kuma", "Hattori"];
+#D
+const proxiedNinjas = createNegativeArrayProxy(ninjas);
+#D
+console.log("Proxies are around",
+Math.round(measure(proxiedNinjas)/ measure(ninjas)),
+#E
+"times slower");
+#A - Accesses the items in our collection in a long-running loop
+#B - Gets the current time before running a long-running operation
+#C - Measures the time it took for the long-running code to execute
+#D - Compares the running time when accessing the standard array versus when accessing through a proxy
+#E - Creates a standard array and a proxy for that array
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":14,\"ch\":12},{\"line\":14,\"ch\":63}]]"}
+!@%STYLE%@!
+Because a single operation of the code happens much too quickly to measure reliably, the code has to be executed many times to get a measurable value. Frequently, this count can be in the tens of thousands, or even millions, depending on the nature of the code being measured. A little trial and error lets us choose a reasonable value: in this case 500,000.
+We also need to bracket the execution of the code with two new Date().getTime() timestamps: one before we start executing the target code, and one after. Their difference tells us how long the code took to perform. Finally, we can compare the results by calling the measure function on both the proxied array and the standard array.
+On our machine, the results don’t fare well for proxies. It turns out that in Chrome, proxies are around 50 times slower; in Firefox, they’re about 20 times slower.
+For now, we recommend that you be careful when using proxies. Although they allow you to be creative with controlling access to objects, that amount of control comes with performance issues. You can use proxies with code that’s not performance sensitive, but be careful when using them in code that’s executed a lot. As always, we recommend that you thoroughly test the performance of your code.

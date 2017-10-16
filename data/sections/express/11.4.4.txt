@@ -1,0 +1,11 @@
+
+You can't concatenate CSS files this way. Instead, you should use the @import syntax in your CSS preprocessor (like LESS or Sass). But connect-assets lets you concatenate JavaScript files using specially-formatted comments.
+
+Let's say that your JavaScript file requires jQuery. All you have to do is define a comment that starts with //= require and then connect-assets will concatenate those files for you magically.
+
+Listing 11.29 main.js, which requires jQuery
+
+And that's concatenation! It's that easy.
+
+Now that we've looked at two ways to compile our assets, let's look at how to deploy our applications to the real web with Heroku!
+Concatenating scripts with directives

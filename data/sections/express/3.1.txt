@@ -1,0 +1,9 @@
+
+One of Express's biggest features is called "middleware". Middleware is very similar to the request handlers we saw in "vanilla" Node (accepting a request and sending back a response), but middleware has one important difference: rather than having just one handler, middleware allows for many to happen in sequence.
+
+Middleware has a variety of applications, which we'll explore. For example, one middleware could log all requests, and then continue onto another middleware that sets special HTTP headers for every request, which could then continue further. While we could do this with one large request handler, we'll see that it's often preferable to decompose these disparate tasks into separate middleware functions. If this is confusing now, don't worry—we'll have some helpful diagrams and get into some concrete examples.
+
+Analogs in other frameworks Middleware isn't unique to Express; it's present in a lot of other places in different forms. Middleware is present in other web application frameworks like Python's Django or PHP's Laravel. Ruby web applications also have this concept, often called "Rack middleware". This concept may not be radically new to you, though Express has its own flavor of middleware.
+
+Let's start rewriting out "Hello, World" application using Express's middleware feature. We'll see that it has far fewer lines of code, which can help us speed up development time and reduce the number of potential bugs.
+Middleware

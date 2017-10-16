@@ -1,0 +1,43 @@
+
+There are two views in this application; the 404 page and the homepage. We want our site to look consistent across pages, so let's make a template. We'll need to make a header and a footer.
+
+Let's start with the header. Save the following into a file called header.ejs:
+
+Listing 5.21 views/header.ejs
+
+Next, let's close off the page in footer.ejs:
+
+Listing 5.22 views/footer.ejs
+
+Now that we have our template, let's fill in the simple 404 page (as 404.ejs):
+
+Listing 5.23 views/404.ejs
+
+The index homepage isn't too complex, either. Save this sucker as index.ejs.
+
+Listing 5.24 views/index.ejs
+
+There are a couple of references to the Pure CSS framework in the index code; all they do is apply some styling so our page looks a little better.
+
+Speaking of styling, we'll need to fill in the.css that we specified in the layout. Save the following into public/the.css:
+
+Listing 5.25 public/the.css
+
+This CSS effectively centers all the page's content, both horizontally and vertically. This isn't a CSS book, so don't worry if you don't understand exactly what's going on in the above.
+
+Now we have everything other than our client-side JavaScript! You can try to npm start this app right now. You should be able to see the homepage at http://localhost:3000, the      404 page at http://localhost:3000/some/garbage/url, and the weather should load 12345's temperature as JSON at http://localhost:3000/12345.
+
+Let's finish it off with our client-side JavaScript.
+
+Save this stuff in public/the.js:
+
+Listing 5.26 public/the.js
+
+#A  We don't want the form doing what HTML would normally make it do -- we want to drive!
+
+#B  We spin off an AJAX request. If we've typed "12345" into the ZIP code field, we'll be visiting /12345 to do this request.
+
+#C When the request succeeds, we'll update the header with the current temperature.
+
+#D If there's an error (either on the client or the server), make sure that an error is shown.
+The two views

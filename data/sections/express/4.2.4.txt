@@ -1,0 +1,25 @@
+
+The 404 handler is the last function in our middleware stack. It'll always send a 404 error, no matter what. Add this after the previous middleware:
+
+Listing 4.6  Our final middleware: the 404 handler
+
+#A We've omitted the "next" argument because we won't use it.
+
+#B Set the status code to 404.
+
+#C Send the error "File not found!"
+
+This is the final piece of the puzzle.
+
+Now, when you start your server, you'll see the whole thing in action! If you visit a file that's in the folder, it'll show up. If not, you'll see your 404 error. And all the while, you'll see logs in the console.
+
+For a moment, try moving the 404 handler. Make the first middleware in the stack instead of the last. If you re-run your app, you'll see that you always get a 404 error no matter what. Your app hits the first middleware and never continues on. The order of your middleware stack is important—make sure your requests flow through in the proper order.
+
+Our app works! Here's what it should look like:
+
+Figure 4.7  The first version of our static file app (app.js)
+
+});                                     &nbsp.
+
+But as always, there's more we can do.
+404 handler middleware

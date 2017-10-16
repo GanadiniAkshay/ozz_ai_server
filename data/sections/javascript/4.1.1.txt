@@ -1,0 +1,193 @@
+4.1.1. The arguments parameter
+The arguments parameter is a collection of all arguments passed to a function. It’s useful because it allows us to access all function arguments, regardless of whether the matching parameter is explicitly defined. This allows us to implement function overloading, a feature that JavaScript doesn’t natively support, and variadic functions that accept a variable number of arguments. To be honest, with rest parameters, introduced in the preceding chapter, the need for the arguments parameter has been greatly reduced. Still, it’s important to understand how the arguments parameter works, because you’re bound to run into it when dealing with legacy code.
+The arguments object has a property named length that indicates the exact number of arguments. The individual argument values can be obtained by using array indexing notation; for example, arguments[2] would fetch the third parameter. Take a look at the following listing.
+Listing 4.1. Using the arguments parameter
+function whatever(a, b, c){
+#A
+assert(a === 1, 'The value of a is 1');
+#B
+assert(b === 2, 'The value of b is 2');
+#B
+assert(c === 3, 'The value of c is 3');
+#B
+assert(arguments.length === 5,
+#C
+'We’ve passed in 5 parameters');
+#C
+assert(arguments[0] === a,
+#D
+'The first argument is assigned to a');
+#D
+assert(arguments[1] === b,
+#D
+'The second argument is assigned to b');
+#D
+assert(arguments[2] === c,
+#D
+'The third argument is assigned to c');
+#D
+assert(arguments[3] === 4,
+#E
+'We can access the fourth argument');
+#E
+assert(arguments[4] === 5,
+#E
+'We can access the fifth argument');
+#E
+}
+whatever(1,2,3,4,5);
+#F
+#A - Declares a function with three parameters: a, b, and c
+#B - Tests for correct values
+#C - In all, the function is passed five arguments.
+#D - Checks that the first three arguments match the function parameter
+#E - Checks that the excess arguments can be accessed through the arguments parameter
+#F - Calls a function with five arguments
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we have a whatever function that gets called with five arguments, whatever (1,2,3,4,5), even though it has only three declared parameters, a, b, c:
+function whatever(a, b, c){
+...
+}
+We can access the first three arguments through their respective function parameters, a, b, and c:
+assert(a === 1, 'The value of a is 1');
+assert(b === 2, 'The value of b is 2');
+assert(c === 3, 'The value of c is 3');
+We can also check how many arguments in total were passed to the function by using the arguments.length property.
+The arguments parameter can also be used to access each individual argument through array notation. It’s important to note that this also includes the excess arguments that aren’t associated with any function parameters:
+assert(arguments[0] === a, 'The first argument is assigned to a');
+assert(arguments[1] === b, 'The second argument is assigned to b');
+assert(arguments[2] === c, 'The third argument is assigned to c');
+assert(arguments[3] === 4, 'We can access the fourth argument');
+assert(arguments[4] === 5, 'We can access the fifth argument');
+Throughout this section, we go out of our way to avoid calling the arguments parameter an array. You may be fooled into thinking that it’s an array; after all, it has a length parameter and its entries can be fetched using array notation. But it’s not a JavaScript array, and if you try to use array methods on arguments (for example, the sort method used in the previous chapter), you’ll find nothing but heartbreak and disappointment. Just think of arguments as an array-like construct, and exhibit restraint in its use.
+As we’ve already mentioned, the main point of the arguments object is to allow us to access all arguments that were passed to the function, regardless of whether a particular argument is associated with a function parameter. Let’s see how to do this by implementing a function that can calculate the sum of an arbitrary number of arguments.
+Listing 4.2. Using the arguments object to perform operations on all function arguments
+function sum() {
+#A
+var sum = 0;
+for(var i = 0; i < arguments.length; i++){
+#B
+sum += arguments[i];
+#B
+}
+#B
+return sum;
+}
+assert(sum(1, 2) === 3, "We can add two numbers");
+#C
+assert(sum(1, 2, 3) === 6, "We can add three numbers");
+#C
+assert(sum(1, 2, 3, 4) === 10, "We can add four numbers");
+#C
+#A - A function without any explicitly defined parameters
+#B - Iterates through all arguments passed, and accesses individual items through index notation
+#C - Calls the function with any number of arguments
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we first define a sum function that doesn’t explicitly list any parameters. Regardless of this, we can still access all function arguments through the arguments object. We iterate through all the arguments and calculate their sum.
+Now comes the payoff. We can call the function with any number of arguments, so we test a couple of cases to see if everything works. This is the true power of the arguments object. It allows us to write more versatile and flexible functions that can easily deal with different situations.
+Note
+We mentioned earlier that in a lot of cases we can use the rest parameter instead of the arguments parameter. The rest parameter is a real array, which means that we can use all our favorite array methods on it. This gives it a certain advantage over the arguments object. As an exercise, rewrite listing 4.2 to use the rest parameter instead of the arguments parameter.
+Now that we understand how the arguments object works, let’s explore some of its gotchas.
+Arguments object as an alias to function parameters
+The arguments parameter has one curious feature: It aliases function parameters. If we set a new value to, for example, arguments[0], the value of the first parameter will also be changed. Take a look at the following listing.
+Listing 4.3. The arguments object aliases function parameters
+function infiltrate(person) {
+assert(person === 'gardener',
+#A
+'The person is a gardener');
+#A
+assert(arguments[0] === 'gardener',
+#A
+'The first argument is a gardener');
+#A
+arguments[0] = 'ninja';
+#B
+#B
+assert(person === 'ninja',
+#B
+'The person is a ninja now');
+#B
+assert(arguments[0] === 'ninja',
+#B
+'The first argument is a ninja');
+#B
+person = 'gardener';
+#C
+#C
+assert(person === 'gardener',
+#C
+'The person is a gardener once more');
+#C
+assert(arguments[0] === 'gardener',
+#C
+'The first argument is a gardener again');
+#C
+}
+infiltrate("gardener");
+#A - The person parameter has the value “gardener” sent as a first argument.
+#B - Changing the arguments object will also change the matching parameter.
+#C - The alias works both ways.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+You can see how the arguments object is an alias for the function parameters. We define a function, infiltrate, that takes a single parameter, person, and we invoke it with the argument gardener. We can access the value gardener through the function parameter person and through the arguments object:
+assert(person === 'gardener', 'The person is a gardener');
+assert(arguments[0] === 'gardener', 'The first argument is a gardener');
+Because the arguments object is an alias for the function parameters, if we change the arguments object, the change is also reflected in the matching function parameter:
+arguments[0] = 'ninja';
+assert(person === 'ninja', 'The person is a ninja now');
+assert(arguments[0] === 'ninja', 'The first argument is a ninja');
+The same holds true in the other direction. If we change a parameter, the change can be observed in both the parameter and the arguments object:
+person = 'gardener';
+assert(person === 'gardener',
+'The person is a gardener once more');
+assert(arguments[0] === 'gardener',
+'The first argument is a gardener again');
+Avoiding aliases
+The concept of aliasing function parameters through the arguments object can be confusing, so JavaScript provides a way to opt out of it by using strict mode.
+Strict mode
+Strict mode is an ES5 addition to JavaScript that changes the behavior of JavaScript engines so that errors are thrown instead of silently picked up. The behavior of some language features is changed, and some unsafe language features are even completely banned (more on this later). One of the things that strict mode changes is that it disables arguments aliasing.
+As always, let’s take a look at a simple example.
+Listing 4.4. Using strict mode to avoid arguments aliasing
+"use strict";
+#A
+function infiltrate(person){
+assert(person === 'gardener',
+#B
+'The person is a gardener');
+#B
+assert(arguments[0] === 'gardener',
+#B
+'The first argument is a gardener');
+#B
+arguments[0] = 'ninja';
+#C
+assert(arguments[0] === 'ninja',
+#D
+'The first argument is now a ninja');
+#D
+assert(person === 'gardener',
+#E
+'The person is still a gardener');
+#E
+}
+infiltrate("gardener");
+#A - Enables strict mode
+#B - The person argument and the first argument start with the same value.
+#C - Changes the first argument
+#D - The first argument is changed.
+#E - The value of the person parameter hasn’t changed.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":8,\"ch\":2},{\"line\":8,\"ch\":25}],[{\"line\":3,\"ch\":2},{\"line\":3,\"ch\":31}],[{\"line\":13,\"ch\":2},{\"line\":13,\"ch\":31}],[{\"line\":14,\"ch\":4},{\"line\":14,\"ch\":38}]]"}
+!@%STYLE%@!
+Here we start by placing the simple string use strict as the first line of code. This tells the JavaScript engine that we want to execute the following code in strict mode. In this example, strict mode changes the semantics of our program in a way that the person parameter and the first argument start with the same value:
+assert(person === 'gardener', 'The person is a gardener');
+assert(arguments[0] === 'gardener', 'The first argument is a gardener');
+But, unlike in nonstrict mode, this time around the arguments object doesn’t alias the parameters. If we change the value of the first argument, arguments[0] = 'ninja', the first argument is changed, but the person parameter isn’t:
+assert(arguments[0] === 'ninja', 'The first argument is now a ninja');
+assert(person === 'gardener', 'The person is still a gardener');
+We’ll revisit the arguments object later in this book, but for now, let’s focus on another implicit parameter: this, which is in some ways even more interesting.

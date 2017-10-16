@@ -1,0 +1,13 @@
+
+We've looked at a few Grunt tasks here, but there are loads more. You can find the full list on Grunt's website at http://gruntjs.com/plugins, but here are a few that might be helpful at some point:
+
+·   grunt-contrib-sass is the Sass version of the LESS plugin we used. If you'd rather use Sass or SCSS, give this a look.
+
+·   grunt-contrib-requirejs uses the Require.js module system instead of Browserify. If that sounds better to you, you can use it instead.
+
+·   grunt-contrib-concat simply concatenates files, which is a low-tech but popular solution for lots of problems.
+
+·   grunt-contrib-imagemin minifies images (like JPEGs and PNGs). If you want to save bandwidth, this is a good tool.
+
+·   grunt-contrib-coffee lets you write CoffeeScript instead of JavaScript for your client-side code.
+Other helpful Grunt tasks

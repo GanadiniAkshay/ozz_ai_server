@@ -1,0 +1,116 @@
+3.3.1. Function declarations and function expressions
+The two most common ways of defining functions in JavaScript are by using function declarations and function expressions. These two techniques are so similar that often we don’t even make a distinction between them, but as you’ll see in the following chapters, subtle differences exist.
+Function declarations
+The most basic way of defining a function in JavaScript is by using function declarations (see figure 3.4). As you can see, every function declaration starts with a mandatory function keyword, followed by a mandatory function name and a list of optional comma-separated parameter names enclosed within mandatory parentheses. The function body, which is a potentially empty list of statements, must be enclosed within an opening and a closing brace. In addition to this form, which every function declaration must satisfy, there’s one more condition: A function declaration must be placed on its own, as a separate JavaScript statement (but can be contained within another function or a block of code; you’ll see exactly what we mean by that in the next section).
+Figure 3.4. The function declaration stands on its own, as a separate block of JavaScript code! (It can be contained within other functions.)
+A couple of function declaration examples are shown in the following listing.
+Listing 3.4. Examples of function declarations
+function samurai() {
+#A
+return "samurai here";
+#A
+}
+function ninja() {
+#B
+function hiddenNinja() {
+#C
+return "ninja here";
+#C
+}
+#C
+return hiddenNinja();
+}
+#A - Defines function samurai in the global code
+#B - Defines function ninja in the global code
+#C - Defines function hiddenNinja within the ninja function
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+If you take a closer look, you’ll see something that you might not be accustomed to, if you haven’t had much exposure to functional languages: a function defined within another function!
+function ninja() {
+function hiddenNinja() {
+return "ninja here";
+}
+return hiddenNinja();
+}
+In JavaScript, this is perfectly normal, and we’ve used it here to again emphasize the importance of functions in JavaScript.
+Note
+Having functions contained in other functions might raise some tricky questions regarding scope and identifier resolution, but save them for now, because we’ll revisit this case in detail in chapter 5.
+Function expressions
+As we’ve already mentioned multiple times, functions in JavaScript are first-class objects, which, among other things, means that they can be created via literals, assigned to variables and properties, and used as arguments and return values to and from other functions. Because functions are such fundamental constructs, JavaScript enables us to treat them as any other expressions. So, just as we can use number literals, for example
+var a = 3;
+myFunction(4);
+so too we can use function literals, in the same locations
+var a = function() {};
+myFunction(function(){});
+Such functions that are always a part of another statement (for example, as the right side of an assignment expression, or as an argument to another function) are called function expressions. Function expressions are great because they allow us to define functions exactly where we need them, in the process making our code easier to understand.
+The following listing shows the differences between function declarations and function expressions.
+Listing 3.5. Function declarations and function expressions
+function myFunctionDeclaration(){
+#A
+function innerFunction() {}
+#B
+}
+var myFunc = function(){};
+#C
+myFunc(function(){
+#D
+return function(){};
+#E
+});
+(function namedFunctionExpression () {
+#F
+})();
+#F
++function(){}();
+#G
+-function(){}();
+#G
+!function(){}();
+#G
+~function(){}();
+#G
+#A - Standalone function declaration
+#B - Inner function declaration
+#C - Function expression as a part of a variable declaration assignment
+#D - Function expression as an argument of a function call
+#E - Function expression as a function return value
+#F - Named function expression as part of a function call that will be immediately invoked
+#G - Function expressions that will be immediately invoked, as arguments to unary operators
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":9,\"ch\":10},{\"line\":9,\"ch\":33}]]"}
+!@%STYLE%@!
+This example code begins with a standard function declaration that contains another inner function declaration:
+function myFunctionDeclaration(){
+function innerFunction() {}
+}
+Here you can see how function declarations are separate statements of JavaScript code, but can be contained within the body of other functions.
+In contrast are function expressions, which are always a part of another statement. They’re placed on the expression level, as the right side of a variable declaration (or an assignment):
+var myFunc = function(){};
+Or as an argument to another function call, or as a function return value:
+myFunc(function() {
+return function(){};
+});
+Besides the position in code where they’re placed, there’s one more difference between function declarations and function expressions: For function declarations, the function name is mandatory, whereas for function expressions it’s completely optional.
+Function declarations must have a name defined because they stand on their own. Because one of the basic requirements for a function is that it has to be invokable, we have to have a way to reference it, and the only way to do this is through its name.
+Function expressions, on the other hand, are parts of other JavaScript expressions, so we have alternative ways to invoke them. For example, if a function expression is assigned to a variable, we can use that variable to invoke the function:
+var doNothing = function(){};
+doNothing();
+Or, if it’s an argument to another function, we can invoke it within that function through the matching parameter name:
+function doSomething(action) {
+action();
+}
+Immediate Functions
+Function expressions can even be placed in positions where they look a bit weird at first, such as at a location where we’d normally expect a function identifier. Let’s stop and take a closer look at that construct (see figure 3.5).
+Figure 3.5. A comparison of a standard function call and an immediate call to a function expression
+When we want to make a function call, we use an expression that evaluates to a function, followed by a pair of function call parentheses, which might contain arguments. In the most basic function call, we put an identifier that evaluates to a function, as on the left side of figure 3.5. But the expression to the left of the calling parenthesis doesn’t have to be a simple identifier; it can be any expression that evaluates to a function. For example, a simple way to specify an expression that evaluates to a function is to use a function expression. So on the right side of figure 3.5, we first create a function, and then we immediately invoke that newly created function. This, by the way, is called an immediately invoked function expression (IIFE), or immediate function for short, and is an important concept in JavaScript development because it allows us to mimic modules in JavaScript. We’ll focus on this application of IIFEs in chapter 11.
+Parentheses around function expressions
+One more thing might be nagging you about the way we’ve immediately called our function expression: the parentheses around the function expression itself. Why do we even need those? The reason is purely syntactical. The JavaScript parser has to be able to easily differentiate between function declarations and function expressions. If we leave out the parentheses around the function expression, and put our immediate call as a separate statement function(){}(3), the JavaScript parser will start processing it, and will conclude, because it’s a separate statement starting with the keyword function, that it’s dealing with a function declaration. Because every function declaration has to have a name (and here we didn’t specify one), an error will be thrown. To avoid this, we place the function expression within parentheses, signaling to the JavaScript parser that it’s dealing with an expression, and not a statement.
+There’s also an alternative, even simpler way (yet, strangely, a little less often used) of achieving the same goal: (function(){}(3)). By wrapping the immediate function definition and call within parentheses, you can also notify the JavaScript parser that it’s dealing with an expression.
+The last four expressions in listing 3.5 are variations of the same theme of immediately invoked function expressions often found in various JavaScript libraries:
++function(){}();
+-function(){}();
+!function(){}();
+~function(){}();
+This time, instead of using parentheses around the function expressions to differentiate them from function declarations, we can use unary operators: +, -, !, and ~. We do this to signal to the JavaScript engine that it’s dealing with expressions and not statements. Notice how the results of applying these unary operators aren’t stored anywhere; from a computational perspective, they don’t really matter; only the calls to our IIFEs matter.
+Now that we’ve studied the ins and outs of the two most basic ways of defining functions in JavaScript (function declarations and function expressions), let’s explore a new addition to the JavaScript standard: arrow functions.

@@ -1,0 +1,43 @@
+
+As we discussed earlier in the chapter, HTTPS is HTTP's more secure sister. It adds a secure layer to HTTP, adding more security (although nothing is invincible). This secure layer is called TLS or SSL. The names are used interchangeably, but TLS is technically the successor to SSL.
+
+I won't go into the crazy math involved, but TLS uses what's called public-key cryptography. Public-key crypto works like this: every peer has a public key that they share with everybody and a private key that they share with nobody. If I want to send something to you, I encrypt the message with my private key (probably somewhere on my computer) and your public key (publicly available to anyone). I can then send you messages that look like garbage to any eavesdroppers, and you decrypt it with your private key and my public key. Through crazy cool math, we can have a secure conversation even if everyone is listening to us, and we never had to agree on some kind of secret code beforehand.
+
+If this is a bit confusing, just remember that both peers have a private key and a public key.
+
+In TLS, the public key also has a special property: it's also something called a certificate. If I'm talking to you, you'll present me with your certificate (AKA your public key), and I'll make sure it's actually you by making sure a certificate authority says "yeah, that's you." Your browser has a list of certificate authorities that it trusts; companies like VeriSign and Google run these certificate authorities.
+
+I imagine certificate authorities as a bodyguard. When I'm talking to somebody, I look up at my bodyguard and say "hey, is this person who they say they are?". My bodyguard looks down at me and gives a small nod, or maybe a shake of the head.
+
+NOTE Some hosting providers like Heroku will do all the HTTPS for you so that you don't have to worry about it. This section is only useful if you have to do HTTPS yourself!
+
+First, you'll need to generate your public and private keys. We'll use OpenSSL for this. If you're on Windows, grab a binary from https://www.openssl.org/related/binaries.html. It should come preinstalled on Mac OS X. If you're on a Linux machine with a package manager (like Arch, Gentoo, Ubuntu, or Debian) and it's not already installed, install it with your OS's package manager.
+
+From there, we'll run the following two commands:
+
+Listing 5.16 Using OpenSSL to create your private key and signing request
+
+#A This generates your private key into privatekey.pem.
+
+#B This generates a certificate signing request into request.pem. You'll have to fill out a bunch of information.
+
+The first command simply generates your private key; anyone can do this. The next command generates a certificate signing request. It'll ask you a bunch of information, and then spit out a file into request.pem. From here, you have to actually talk to humans and request a certificate from a certificate authority.
+
+Once they've given you a certificate, you can use Node's built-in HTTPS module with Express. It's very similar to the HTTP module, but you'll have to supply your certificate and private key.
+
+Listing 5.17 Using HTTPS with an Express app
+
+#A First, we require the modules we need.
+
+#B After defining our application, we define an object that contains our private key and our certificate.
+
+#C Now we pass that object into https.createServer, which is otherwise just like the http.createServer that we've seen before.
+
+Other than the fact that we have to pass the private key and certificate as arguments, this is otherwise very similar to the http.createServer we've seen before.
+
+If you want to run both an HTTP server and an HTTPS server, just start both!
+
+Listing 5.18 Using HTTP and HTTPS with Express
+
+All we have to do is run both servers on different ports, and we're done! That's HTTPS.
+Using Express with HTTPS

@@ -1,0 +1,25 @@
+
+In short, you can almost never have too many tests.
+
+As you can likely imagine, successful tests don't necessarily mean that you code works. For example, if you were testing a function, you could test that the function is a function. That's a very valid thing to test, but if it's your only test, then you might be misled into thinking that your code works when all of your tests succeed.
+
+Because of that, you want to test as much of your code as you can. You want to poke at every (reasonable) nook and cranny of your software to make sure it performs as you expect. The more passing tests you have, the more you approach certainty that your code works as you expect. You can never be 100% sure—something might break somewhere along the line that you didn't think of—but if you've thrown everything you can possibly think of at your code, it's probably working.
+
+
+Code Coverage
+
+
+Code Coverage
+
+Testing can make you more confident about your code, but it’s just one method. As we discussed at the beginning of the chapter, there are plenty of methods like peer reviews and code linters. An extension of testing to further boost your confidence is the idea of code coverage.
+
+Code coverage tools see how much of your code is “covered” by your tests. You could imagine writing 10 passing tests for your code but completely ignoring one of your functions which is totally broken! Code coverage tools tell you what parts of your code are untouched by tests and therefore untested. In the Node.js world, the prevailing code coverage tool seems to be Istanbul. We won’t cover it here, but if you’re looking for even more confidence, take a look at Istanbul.
+
+
+ 
+
+
+ 
+
+Lost time is the only reason not to write tests. This is both lost time for the computer—some tests can be computationally expensive—and lost time for you as a human being—it takes time to type the tests!
+Cardinal rule: when in doubt, test

@@ -1,0 +1,17 @@
+
+Not all middleware should be passive, though—the rest of the middleware from our example doesn't work that way; they'll actually need to change the response.
+
+Let's try writing the authentication middleware that we mentioned before. Let's choose a weird authentication scheme for simplicity: you're only authenticated if you visit within the first minute of the hour.
+
+Listing 3.7 Interrupting lottery middleware!!
+
+#A This is the logging middleware, just as before.
+
+#B If you're visiting at the first minute of the hour, call next() to continue onto the “send secret info” middleware.
+
+#C If you're not authorized, send a status code of 403 (“Not authorized”) and respond to the user. Notice that we don't call next() to continue on.
+
+#D Send the secret information!
+
+When a request comes in, it will always go through the logging middleware. Then, if you're visiting at the first minute of the hour, you'll continue onto the next middleware and see the secret information. But if you're visiting at any of the other minutes of the hour, you'll stop and never continue on.
+Middleware code that changes the request and response

@@ -1,0 +1,13 @@
+
+We'll need a library that will let us talk to MongoDB from Node, and therefore from Express. There are a number of lower-level modules, but we'd like something easy-to-use and feature-filled. What should we use?
+
+Look no further than Mongoose (at http://mongoosejs.com/), an officially-supported library for talking to MongoDB from Node.js. To quote its documentation:
+
+Mongoose provides a straight-forward, schema-based solution to modeling your application data and includes built-in type casting, validation, query building, business logic hooks and more, out of the box.
+
+In other words, Mongoose gives us much more than simply talking to the database. Let's learn how it works by creating a simple website with user accounts.
+
+Note: Don't forget about Sequelize
+
+If you want to use SQL with Express and you're looking for the "Mongoose of SQL", don't forget about the Sequelize module I mentioned!
+Talking to MongoDB from Node with Mongoose

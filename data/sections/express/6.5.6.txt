@@ -1,0 +1,7 @@
+
+The final range in the HTTP specification is the 500 range, and while there are several errors in here, the most important one is 500: "Internal Server Error". Unlike 400 errors, which are the client's fault, 500 errors are the server's fault. This can be any number of things, from an exception to a broken connection to a database.
+
+Ideally, you should never be able to cause a 500 error from the client—that means that your client can cause bugs in your server.
+
+If you catch an error and it really does seem to be your fault, then you can respond with a 500 error. Unlike the rest of the status codes where you want to be as descriptive as possible, it's often better to be vague and say "Internal Server Error", that way hackers can't know where the weaknesses in your system lie. We'll talk much more about this in Chapter 9 when we talk about security.
+The 500 range

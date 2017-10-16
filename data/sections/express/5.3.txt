@@ -1,0 +1,27 @@
+
+It's likely that as your application grows, so will your number of routes. Your collaborative cat-photo montage site might start with routes for static files and for images, but you might later add user accounts, chat, forums, and the like. Your number of routes can get unwieldy.
+
+Express 4 added a feature to help ease these growing pains; it added routers. To quote the Express documentation (don't worry if you don't perfectly understand all of this):
+
+A router is an isolated instance of middleware and routes. Routers can be thought of as "mini" applications only capable of performing middleware and routing. Every express application has a builtin app router.
+
+Routers behave like middleware themselves and can be ".use()'d" by the app o in other routers.
+
+In other words, routers allow you to chunk your big app into many mini apps which you can later put together. For small apps, this might be overkill, but as soon as you think to yourself, "this app.js file is getting big", it's time to think about breaking your app down with routers.
+
+NOTE Routers really shine when you're building a bigger application. I don't want to build a huge application in this section, so this example will have some spots that you should fill in with your imagination
+
+Listing 5.9 Routers in action: the main app
+
+#A We require our API router (which is defined below) and then we use it in our main app, just like we use middleware.
+
+As you can see, we use our API router just like middleware. Routers are basically just middleware!
+
+Now, let's go ahead and define our router. Think of it as a sub-application:
+
+Listing 5.10 A sample router definition
+
+This looks a lot like a mini-application; it supports middleware and routes. The main difference is that it can't stand alone; it has to be plugged into a "grown-up" app. Routers can do the same routing that "big" apps can do, they can use middleware, and they can also use the param method to extract parameters.
+
+You could imagine making a router with many sub-routers. Maybe you want to make an API router that further defers to a "users router" and a "messages router", or perhaps something else!
+Using routers to split up your app

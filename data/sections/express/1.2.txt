@@ -1,0 +1,15 @@
+
+Express is a framework, which means you'll have to build your app "the Express way". But "the Express way" isn't too opinionated; it doesn't give you a very rigid structure. That means you can build many different kinds of applications, from video chat applications to blogs to APIs.
+
+It's very rare to build an Express app of any size that only uses Express. Express by itself probably doesn't do everything you need, and you'll probably find yourself with a large number of other libraries that you integrate into your Express applications. (We'll look at many of these libraries throughout the book.) You can have exactly what you need without any extra cruft, and it enables you to confidently understand every part of your application. In this way, it lends itself well to the "do one thing well" philosophy from the Unix world.
+
+But this minimalism is a double-edged sword. On one hand, it's flexible and your apps are free of unused cruft. On the other hand, it does very little for you in comparison to other frameworks. This means that you make mistakes, you have to make far more decisions about your application's architecture, and you have to spend more time hunting for the right third-party modules. You get less out of the box.
+
+While some might like a flexible framework, others might want more rigidity. For example, PayPal likes Express, but built a framework on top of it that more strictly enforces conventions for their many developers. Express doesn't care how you structure your apps, so two developers might make completely different decisions.
+
+Because you're given the reins to steer your app in any direction, you might make an unwise decision that'll bite you later down the line. Sometimes, I look back on my still-learning-Express applications and thought, "Why did I do things this way?"
+
+In order to write less code yourself, you wind up hunting for the right third-party packages to use. Sometimes, it's easy; there's one module that everyone loves and you love it too and it's a match made in heaven. Other times, it's harder to choose, because there are a lot of okay-ish ones or a small number. A bigger framework can save you that time and headache, and you'll simply use what you're given.
+
+There's no right answer to this, and this book isn't going to try to debate the ultimate winner of the fight between big and small frameworks. But the fact of the matter is that Express is a minimalist framework, for better or for worse!
+Express's minimal philosophy

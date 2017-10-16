@@ -1,0 +1,29 @@
+
+Harken back to Chapter 1, where we talked about the motivations for Express. In short, we said that Node.js is powerful but its syntax can be a little cumbersome and it can be a little limited. That's why Express was made—it doesn't fundamentally change Node; it just smooths it out a bit.
+
+In that way, LESS and CSS are a lot like Express and Node. In short, CSS is a powerful layout tool but its syntax can be cumbersome and limited. That's why LESS was made—it doesn't fundamentally change CSS; it just smooths it out a bit.
+
+CSS is a powerful tool for laying out webpages, but it's missing a number of features that people wanted. For example, developers want to reduce repetition in their code by with constant variables instead of hard-coded values; variables are present in LESS but not CSS.  LESS extends CSS and adds a number of powerful features.
+
+Unlikes Express, LESS isn't written in the language it improves (CSS); it's actually it's own language. That means that it has to be compiled down into CSS in order to be used by web browsers—browsers don't “speak” LESS, they speak CSS.
+
+We'll see two different ways to compile LESS to CSS in Express applications. For now, while you're trying LESS, visit http://less2css.org/. On the left of the page, you'll be able to type LESS code, and compiled CSS will appear on the right.
+
+Figure 11.1  less2css.org in action.
+
+We'll go through a few examples in the following sections and you can try them out on that website. When it's time to integrate LESS into our Express apps, we'll move to a better, automated method.
+
+LESS is feature-filled, but it really has five major points:
+
+1. Variables, allowing you to define things like colors once and use them everywhere
+
+2. Functions, allowing you to manipulate variables (like darkening a color by 10%, for example)
+
+3. Nesting selectors, allowing you to structure your stylesheet more like your HTML and reduce repetition
+
+4. Mixins, allowing you to define reusable components and use them in various selectors
+
+5. Includes, allowing you to split your stylesheets into multiple files (much like require in Node)
+
+We'll do a very quick run-through of these major features. LESS is pretty complicated and we won't talk about every detail. If you're interested in the nitty-gritty features of LESS, take a look at its documentation at http://lesscss.org/.
+LESS, a more pleasant way to write CSS

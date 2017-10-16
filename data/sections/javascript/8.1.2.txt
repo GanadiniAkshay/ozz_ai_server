@@ -1,0 +1,60 @@
+8.1.2. Using getters and setters to validate property values
+As we’ve established so far, a setter is a method that’s executed whenever we write a value to the matching property. We can take advantage of setters to perform an action whenever code attempts to update the value of a property. For example, one of the things we can do is validate the passed-in value. Take a look at the following code, which ensures that our skillLevel property can be assigned only integer values.
+Listing 8.5. Validating property value assignments with setters
+function Ninja() {
+let _skillLevel = 0;
+Object.defineProperty(this, 'skillLevel', {
+get: () => _skillLevel,
+set: value => {
+if(!Number.isInteger(value)){
+#A
+throw new TypeError("Skill level should be a number");
+#A
+}
+#A
+_skillLevel = value;
+}
+});
+}
+const ninja = new Ninja();
+ninja.skillLevel = 10;
+#B
+assert(ninja.skillLevel === 10, "The value was updated");
+#B
+try {
+#C
+ninja.skillLevel = "Great";
+#C
+fail("Should not be here");
+#C
+} catch(e){
+#C
+pass("Setting a non-integer value throws an exception");
+#C
+}
+#C
+#A - Checks whether the passed-in value is an integer. If it isn’t, an exception is thrown.
+#B - We can assign an integer value to the property.
+#C - Trying to assign a noninteger value (in this case, a string) results in an exception thrown from the setter method.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":8},{\"line\":6,\"ch\":37}],[{\"line\":16,\"ch\":2},{\"line\":16,\"ch\":23}],[{\"line\":16,\"ch\":2},{\"line\":16,\"ch\":18}],[{\"line\":17,\"ch\":9},{\"line\":17,\"ch\":25}],[{\"line\":20,\"ch\":4},{\"line\":20,\"ch\":20}],[{\"line\":20,\"ch\":4},{\"line\":20,\"ch\":31}]]"}
+!@%STYLE%@!
+This example is a straightforward extension to listing 8.4. The only major difference is that now, whenever a new value is assigned to the skillLevel property, we check whether the passed-in value is an integer. If it isn’t, an exception is thrown, and the private _skillLevel variable won’t be modified. If everything went okay and an integer value is received, we end up with a new value of the private _skillLevel variable:
+set: value => {
+if(!Number.isInteger(value)){
+throw new TypeError("Skill level should be a number");
+}
+_skillLevel = value;
+}
+When testing this code, we first check that all goes okay if we assign an integer:
+ninja.skillLevel = 10;
+assert(ninja.skillLevel === 10, "The value was updated");
+And then we test the situation in which we mistakenly assign a value of another type, such as a string. In that case, we should end up with an exception.
+try {
+ninja.skillLevel = "Great";
+fail("Should not be here");
+} catch(e){
+pass("Setting a non-integer value throws an exception");
+}
+This is how you avoid all those silly little bugs that happen when a value of the wrong type ends up in a certain property. Sure, it adds overhead, but that’s a price that we sometimes have to pay to safely use a highly dynamic language such as JavaScript.
+This is just one example of the usefulness of setter methods; there are many more that we won’t explicitly explore. For example, you can use the same principle to track value history, perform logging, provide change notification, and more.

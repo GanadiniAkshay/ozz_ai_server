@@ -1,0 +1,63 @@
+7.3. Achieving inheritance
+Inheritance is a form of reuse in which new objects have access to properties of existing objects. This helps us avoid the need to repeat code and data across our code base. In JavaScript, inheritance works slightly differently than in other popular object-oriented languages. Consider the following listing, in which we attempt to achieve inheritance.
+Listing 7.7. Trying to achieve inheritance with prototypes
+function Person(){}
+#A
+Person.prototype.dance = function(){};
+#A
+function Ninja(){}
+#B
+Ninja.prototype = { dance: Person.prototype.dance };
+#C
+const ninja = new Ninja();
+assert(ninja instanceof Ninja,
+"ninja receives functionality from the Ninja prototype" );
+assert(ninja instanceof Person, "... and the Person prototype" );
+assert(ninja instanceof Object, "... and the Object prototype" );
+#A - Defines a dancing Person via a constructor and its prototype
+#B - Defines a Ninja
+#C - Attempts to make Ninja a dancing Person by copying the dance method from the Person prototype
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Because the prototype of a function is an object, there are multiple ways of copying functionality (such as properties or methods) to effect inheritance. In this code, we define a Person and then a Ninja. And because a Ninja is clearly a person, we want Ninja to inherit the attributes of Person. We attempt to do so by copying the dance property of the Person prototype’s method to a similarly named property in the Ninja prototype.
+Running our test reveals that although we may have taught the ninja to dance, we failed to make the Ninja a Person, as shown in figure 7.12. We taught the Ninja to mimic the dance of a person, but that hasn’t made the Ninja a Person. That’s not inheritance—it’s just copying.
+Figure 7.12. Our Ninja isn’t really a Person. No happy dance!
+Apart from the fact that this approach isn’t exactly working, we’d also need to copy each property of Person to the Ninja prototype individually. That’s no way to do inheritance. Let’s keep exploring.
+What we really want to achieve is a prototype chain so that a Ninja can be a Person, and a Person can be a Mammal, and a Mammal can be an Animal, and so on, all the way to Object. The best technique for creating such a prototype chain is to use an instance of an object as the other object’s prototype:
+SubClass.prototype = new SuperClass();
+For example:
+Ninja.prototype = new Person();
+This preserves the prototype chain, because the prototype of the SubClass instance will be an instance of the SuperClass, which has a prototype with all the properties of SuperClass, and which will in turn have a prototype pointing to an instance of its superclass, and on and on. In the next listing, we change listing 7.7 slightly to use this technique.
+Listing 7.8. Achieving inheritance with prototypes
+function Person(){}
+Person.prototype.dance = function(){};
+function Ninja(){}
+Ninja.prototype = new Person();
+#A
+const ninja = new Ninja();
+assert(ninja instanceof Ninja,
+"ninja receives functionality from the Ninja prototype");
+assert(ninja instanceof Person, "... and the Person prototype");
+assert(ninja instanceof Object, "... and the Object prototype");
+assert(typeof ninja.dance === "function", "... and can dance!")
+#A - Makes a Ninja a Person by making the Ninja prototype an instance of Person
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":4,\"ch\":16},{\"line\":4,\"ch\":31}],[{\"line\":13,\"ch\":0},{\"line\":13,\"ch\":79}]]"}
+!@%STYLE%@!
+The only change to the code is to use an instance of Person as the prototype for Ninja. Running the tests shows that we’ve succeeded, as shown in figure 7.13. Now we’ll take a closer look at the inner workings by looking at the state of the application after we’ve created the new ninja object, as shown in figure 7.14.
+Figure 7.13. Our Ninja is a Person! Let the victory dance begin.
+Figure 7.14. We’ve achieved inheritance by setting the prototype of the Ninja constructor to a new instance of a Person object.
+Figure 7.14 shows that when we define a Person function, a Person prototype is also created that references the Person function through its constructor property. Normally, we can extend the Person prototype with additional properties, and in this case, we specify that every person, created with the Person constructor, has access to the dance method:
+function Person(){}
+Person.prototype.dance = function(){};
+We also define a Ninja function that gets its own prototype object with a constructor property referencing the Ninja function: function Ninja(){}.
+Next, in order to achieve inheritance, we replace the prototype of the Ninja function with a new Person instance. Now, when we create a new Ninja object, the internal prototype property of the newly created ninja object will be set to the object to which the current Ninja prototype property points to, the previously constructed Person instance:
+function Ninja(){}
+Ninja.prototype = new Person();
+var ninja = new Ninja();
+When we try to access the dance method through the ninja object, the JavaScript runtime will first check the ninja object itself. Because it doesn’t have the dance property, its prototype, the person object, is searched. The person object also doesn’t have the dance property, so its prototype is searched, and the property is finally found. This is how to achieve inheritance in JavaScript!
+Here’s the important implication: When we perform an instanceof operation, we can determine whether the function inherits the functionality of any object in its prototype chain.
+Note
+Another technique that may have occurred to you, and that we advise strongly against, is to use the Person prototype object directly as the Ninja prototype, like this: Ninja.prototype = Person.prototype. Any changes to the Ninja prototype will then also change the Person prototype (because they’re the same object), and that’s bound to have undesirable side effects.
+An additional happy side effect of doing prototype inheritance in this manner is that all inherited function prototypes will continue to live-update. Objects that inherit from the prototype always have access to the current prototype properties.

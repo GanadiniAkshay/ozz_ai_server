@@ -1,0 +1,117 @@
+14.2. The five major development concerns
+Any piece of nontrivial code carries myriad development concerns to worry about. But five major points pose the biggest challenges to our reusable JavaScript code, as illustrated in figure 14.2.
+Figure 14.2. The five major points of concern for the development of reusable JavaScript
+These are the five points:
+Browser bugs
+Browser bug fixes
+External code
+Browser regressions
+Missing features in the browsers
+We’ll want to balance the amount of time we spend on each point against the resulting benefits. Ultimately, these are questions that you’ll have to answer, applying them to your own situation. An analysis of your intended audience, development resources, and schedule are all factors that go into your decision.
+When striving to develop reusable JavaScript code, we must take all the points into consideration but pay closest attention to the most popular browsers that exist right now, because these are most likely to be used by our targeted audience. With other, less popular browsers, we should at least make sure that our code degrades gracefully. For example, if a browser doesn’t support a certain API, at the very least, we should be careful that our code doesn’t throw any exceptions so that the rest of the code can be executed.
+In the following sections, we’ll break down these various concerns to get a better understanding of the challenges we’re up against and how to combat them.
+14.2.1. Browser bugs and differences
+One of the concerns that we’ll need to deal with when developing reusable JavaScript code is handling the various bugs and API differences associated with the set of browsers we’ve decided to support. Even though browsers are much more uniform these days, any features that we provide in our code should be completely and verifiably correct in all browsers we choose to support.
+The way to achieve this is straightforward: We need a comprehensive suite of tests to cover both the common and fringe use cases of the code. With good test coverage, we can feel safe in knowing that the code we develop will work in the supported set of browsers. And assuming that no subsequent browser changes break backward compatibility, we’ll have a warm, fuzzy feeling that our code will even work in future versions of those browsers. We’ll be looking at specific strategies for dealing with browser bugs and differences in section 14.3.
+A tricky point in all of this is implementing fixes for current browser bugs in such a way that they’re resistant to any fixes for those bugs that are implemented in future versions of the browser.
+14.2.2. Browser bug fixes
+Assuming that a browser will forever present a particular bug is foolhardy—most browser bugs eventually get fixed, and counting on the presence of the bug is a dangerous development strategy. It’s best to use the techniques in section 14.3 to make sure that any bug work-arounds are future-proofed as much as possible.
+When writing a piece of reusable JavaScript code, we want to make sure that it can last a long time. As with writing any aspect of a website (CSS, HTML, and so on), we don’t want to have to go back and fix code that’s broken by a new browser release.
+Making assumptions about browser bugs causes a common form of website breakage: specific hacks put in place to work around bugs presented by a browser that break when the browser fixes the bugs in future releases.
+The problem with handling browser bugs is twofold:
+Our code is liable to break when the bug fix is eventually instituted.
+We could end up training browser vendors to not fix bugs for fear of causing websites to break.
+An interesting example of the second situation occurred just recently, with the scrollTop bug (https://dev.opera.com/articles/fixing-the-scrolltop-bug/).
+When dealing with elements in the HTML DOM, we can use the scrollTop and scrollLeft properties to access and modify the current scroll position of the element. But if we use these properties on the root, html element, these properties should, according to specification, instead report (and influence) the scroll position of the viewport. IE 11 and Firefox closely follow this specification. Unfortunately, Safari, Chrome, and Opera don’t. Instead, if you try to modify these properties of the root, html element, nothing happens. To achieve the same effect in these browsers, we have to use the scrollTop and scrollLeft properties on the body element.
+When faced with this inconsistency, web developers have often resorted to detecting the current name of the browser (through the user agent string, more on this later), and then modifying the scrollTop and scrollLeft of the html element if our JavaScript code is being executed in IE or Firefox, and of the body element if the code is being executed in Safari, Chrome, or Opera. Unfortunately, this way of circumventing this bug has proved to be disastrous. Because many pages now explicitly encode “if this is Safari, Chrome, or Opera,” modify the body element, these browsers can’t really fix this bug, because the bug fix would, ironically, cause failures in many web pages.
+This brings up another important point concerning bugs: When determining whether a piece of functionality is potentially a bug, always verify it with the specification!
+A browser bug is also different from an unspecified API. It’s important to refer to browser specifications, because they provide the exact standards that browsers use to develop and improve their code. In contrast, the implementation of an unspecified API could change at any point (especially if the implementation ever attempts to become standardized). In the case of inconsistencies in unspecified APIs, you should always test for your expected output. Always be aware that future changes could occur in these APIs as they become solidified.
+Additionally, there’s a distinction between bug fixes and API changes. Whereas bug fixes are easily foreseen—a browser will eventually fix the bugs in its implementation, even if it takes a long time—API changes are much harder to spot. Standard APIs are unlikely to change (though it’s not completely unheard of); changes are much more likely to occur with unspecified APIs.
+Luckily, this rarely happens in a way that will massively break most web applications. But if it does, it’s effectively undetectable in advance (unless, of course, we test every single API that we ever touch—but the overhead incurred in such a process would be ludicrous). API changes of this sort should be handled like any other regression.
+For our next point of concern, we know that no man is an island, and neither is our code. Let’s explore the ramifications.
+14.2.3. External code and markup
+Any reusable code must coexist with the code that surrounds it. Whether we’re expecting our code to work on pages that we write or on websites developed by others, we need to ensure that it can exist on the page with any other random code.
+This is a double-edged sword: Our code not only must be able to withstand living with potentially poorly written external code, but also must take care not to have adverse effects on the code with which it lives.
+Exactly how much we need to be vigilant about this point of concern depends a great deal on the environment in which we expect the code to be used. For example, if we’re writing reusable code for a single or limited number of websites that we have some level of control over, it might be safe to worry less about effects of external code because we know where the code will operate, and we can, to some degree, fix any problems ourselves.
+Tip
+This is an important enough concern to warrant an entire book on the subject. If you’d like to delve more deeply, we highly recommend Third-Party JavaScript by Ben Vinegar and Anton Kovalyov (Manning, 2013, https://www.manning.com/books/third-party-javascript).
+If we’re developing code that will have a broad level of applicability in unknown (and uncontrollable) environments, we’ll need to make doubly sure that our code is robust. Let’s discuss some strategies to achieve that.
+Encapsulating our code
+To keep our code from affecting other pieces of code on the pages where it’s loaded, it’s best to practice encapsulation. In general, this refers to the act of placing something in, or as if in, a capsule. A more domain-focused definition is “a language mechanism for restricting access to some of the object’s components.” Your Aunt Mathilda might summarize it more succinctly as “Keep your nose in your own business!”
+Keeping an incredibly small global footprint when introducing our code into a page can go a long way toward making Aunt Mathilda happy. In fact, keeping our global footprint to a handful of global variables, or better yet, one, is fairly easy.
+As you saw in chapter 12, jQuery, the most popular client-side JavaScript library, is a good example of this. It introduces one global variable (a function) named jQuery, and one alias for that global variable, $. It even has a supported means to give the $ alias back to whatever other on-page code or other library may want to use it.
+Almost all operations in jQuery are made via the jQuery function. And any other functions that it provides (called utility functions) are defined as properties of jQuery (remember from chapter 3 how easy it is to define functions that are properties of other functions), thus using the name jQuery as a namespace for all its definitions.
+We can use the same strategy. Let’s say that we’re defining a set of functions for our own use, or for the use of others, that we’ll group under a namespace of our own choosing—say, ninja.
+We could, like jQuery, define a global function named ninja()that performs various operations based on what we pass to the function. For example:
+var ninja = function(){ /* implementation code goes here */ }
+Defining our own utility functions that use this function as their namespace is easy:
+ninja.hitsuke = function(){ /* code to distract guards with fire here */ }
+If we didn’t want or need ninja to be a function but only to serve as a namespace, we could define it as follows:
+var ninja = {};
+This creates an empty object in which we can define properties and functions in order to keep from adding these names to the global namespace.
+Other practices that we want to avoid, in order to keep our code encapsulated, are modifying any existing variables, function prototypes, or even DOM elements. Any aspect of the page that our code modifies, outside itself, is a potential area for collision and confusion.
+The other side of the two-way street is that even if we follow best practices and carefully encapsulate our code, we can’t be assured that code we haven’t written is going to be as well-behaved.
+Dealing with less-than-exemplary code
+There’s an old joke that’s been going around since Grace Hopper removed that moth from a relay back in the Cretaceous period: “The only code that doesn’t suck is the code you write yourself.” This may seem cynical, but when our code coexists with code that we can’t control, we should assume the worst, just to be safe.
+Some code, even if well-written, might intentionally be doing things like modifying function prototypes, object properties, and DOM element methods. This practice, well-meant or otherwise, can lay traps for us to step into.
+In these circumstances, our code could be doing something innocuous, such as using JavaScript arrays, and no one could fault us for making the simple assumption that JavaScript arrays are going to act like JavaScript arrays. But if some other on-page code modifies the way that arrays work, our code could end up not working as intended, through absolutely no fault of our own.
+Unfortunately, there aren’t many steadfast rules when dealing with situations of this nature, but we can take some mitigating steps. The next few sections introduce these defensive steps.
+Coping with greedy IDs
+Most browsers exhibit an anti-feature (we can’t call it a bug because the behavior is absolutely intended) that can cause our code to trip and fall unexpectedly. This feature causes element references to be added to other elements by using the id or name attributes of the original element. And when that id or name conflicts with properties that are already part of the element, bad things can happen.
+Take a look at the following HTML snippet to observe the nastiness that can ensue as a result of these greedy IDs:
+<form id="form" action="/conceal">
+<input type="text" id="action"/>
+<input type="submit" id="submit"/>
+</form>
+Now, in the browsers, let’s call this:
+var what = document.getElementById('form').action;
+Rightly, we’d expect this to be the value of the form’s action attribute. And in most cases, it would be. But if we inspect the value of variable what, we find that it’s instead a reference to the input#action element! Huh?
+Let’s try something else:
+document.getElementById('form').submit();
+This statement should cause the form to be submitted, but instead, we get a script error:
+Uncaught TypeError: Property 'submit' of object #<HTMLFormElement> is not a function
+What’s going on?
+The browsers have added properties to the <form> element for each of the input elements within the form that reference the element. This might seem handy at first, until we realize that the name of the added property is taken from the id or name values of the input elements. And if that value just happens to be an already-used property of the form element, such as action or submit, those original properties are replaced by the new property. This is usually referred to as DOM clobbering.
+So, before the input#submit element is created, the reference form.action points to the value of the action attribute for the <form>. Afterward, it points to the input#submit element. The same thing happens to form.submit. Yeesh!
+This is a remnant from way back, from a time when browsers didn’t have a rich set of API methods for fetching elements from the DOM. Browser vendors added this feature to give easy access to form elements. Nowadays we can easily access any element in the DOM, so we’re left with only the unfortunate side effects of the feature.
+In any case, this particular “feature” of the browsers can cause numerous and mystifying problems in our code, and we should keep it in mind when debugging. When we encounter properties that have seemingly been inexplicably transformed into something other than what we expect, DOM clobbering is a likely culprit.
+Luckily, we can avoid this problem in our own markup by avoiding simple id and name values that can conflict with standard property names, and we can encourage others to do the same. The value submit is especially to be avoided, as it’s a common source of frustrating and perplexing buggy behavior.
+Loading order of style sheets and scripts
+Often we’ll expect CSS rules to already be available by the time our code executes. One of the best ways to ensure that CSS rules provided by style sheets are defined when our JavaScript code executes is to include the external style sheets prior to including the external script files.
+Not doing so can cause unexpected results, because the script attempts to access the as-yet-undefined style information. Unfortunately, this issue can’t easily be rectified with pure JavaScript and should instead be handled with user documentation.
+These last few sections have covered some basic examples of how externalities can affect how our code works, frequently in unintentional and confounding ways. Issues with our code will often pop up when other users try to integrate it into their sites, at which point we should be able to diagnose the issues and build appropriate tests to handle them. At other times, we’ll discover such problems when we integrate others’ code into our pages, and hopefully the tips in these sections will help to identify the causes.
+It’s unfortunate that there are no better and deterministic solutions to handling these integration issues other than to take some smart first steps and to write our code defensively. We’ll now move on to the next point of concern.
+14.2.4. Regressions
+Regressions are one of the hardest problems we’ll encounter in creating reusable and maintainable JavaScript code. These are bugs, or non-backward-compatible API changes (mostly to unspecified APIs), that browsers have introduced and that cause code to break in unpredictable ways.
+Note
+Here we’re using the term regression in its classical definition: a feature that used to work but no longer functions as expected. This is usually unintentional, but it’s sometimes caused by deliberate changes that break existing code.
+Anticipating changes
+There are some API changes that, with some foresight, we can proactively detect and handle, as shown in listing 14.1. For example, with Internet Explorer 9, Microsoft introduced support for DOM level 2 event handlers (bound using the addEventListener method), while previous versions of IE were using the IE-specific built-in attachEvent method. For code written prior to IE 9, simple feature detection was able to handle that change.
+Listing 14.1. Anticipating an upcoming API change
+function bindEvent(element, type, handle) {
+if (element.addEventListener) {
+element.addEventListener(type, handle, false);
+#A
+}
+else if (element.attachEvent) {
+element.attachEvent("on" + type, handle);
+#B
+}
+}
+#A - Binds using the standard API
+#B - Binds using a proprietary API
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we future-proof our code knowing (or hoping against hope) that someday Microsoft will bring Internet Explorer into line with DOM standards. If the browser supports the standards-compliant API, we use feature detection to infer that and use the standard API, the addEventListener method. If not, we check to see that the IE-proprietary method attachEvent is available and use that. If all else fails, we do nothing.
+Most future API changes, alas, aren’t that easy to predict, and there’s no way to predict upcoming bugs. This is but one of the important reasons that we’ve stressed testing throughout this book. In the face of unpredictable changes that will affect our code, the best that we can hope for is to be diligent in monitoring our tests for each browser release, and to quickly address issues that regressions may introduce.
+Having a good suite of tests and keeping close track of upcoming browser releases is absolutely the best way to deal with future regressions of this nature. It doesn’t have to be taxing on your normal development cycle, which should already include routine testing. Running these tests on new browser releases should always be factored into the planning of any development cycle.
+You can get information on upcoming browser releases from the following locations:
+Microsoft Edge (a successor to IE): http://blogs.windows.com/msedgedev/
+Firefox: http://ftp.mozilla.org/pub/firefox/nightly/latest-trunk/
+WebKit (Safari): https://webkit.org/nightly/
+Opera: https://dev.opera.com/
+Chrome: http://chrome.blogspot.hr/
+Diligence is important. Because we can never fully predict the bugs that will be introduced by a browser, it’s best to make sure that we stay on top of our code and quickly avert any crises that may arise.
+Thankfully, browser vendors are doing a lot to make sure that regressions of this nature don’t occur, and browsers often have test suites from various JavaScript libraries integrated into their main browser test suite. This ensures that no future regressions will be introduced that affect those libraries directly. Although this won’t catch all regressions (and certainly won’t in all browsers), it’s a great start and shows good progress by the browser vendors toward preventing as many issues as possible.
+In this section, we’ve gone through four major points of concern for the development of reusable JavaScript: browser bugs, browser bug fixes, external code, and browser regressions. The fifth point—missing features in the browsers—deserves a special mention, so we cover it in the next section, alongside other implementation strategies relevant for cross-browser web applications.

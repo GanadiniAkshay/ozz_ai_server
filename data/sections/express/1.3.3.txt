@@ -1,0 +1,9 @@
+
+Express applications can often be pretty small, even fitting in just one file. As your applications get larger, though, you'll start to want to break things up into multiple folders and files. Express is unopinionated about how you scale your app, but it provides one important feature that's super helpful: sub-applications. In Express lingo, these mini-applications are called routers.
+
+Express allows you to define routers that can be used in larger applications. Writing these sub-applications is almost exactly like writing “normal-sized” ones, but it allows you to further compartmentalize your app into smaller pieces. For example, you might have an administration panel in your app, and that can function pretty differently from the rest of your app. You could put the admin panel code side-by-side with the rest of your middleware and routes, but you can also create a sub-application for your admin panel. Figure 1.4 shows how an Express application might be broken up with routers.
+
+Figure 1.4  An example diagram showing how a large application could be broken up into routers.
+
+This feature doesn't really shine until your applications get large, but when they do, it's hugely helpful.
+Sub-applications

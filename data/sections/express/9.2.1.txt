@@ -1,0 +1,11 @@
+
+Testing in Node.js applications has three major parts: the “real” code (written by you), the testing code (written by you), and the test runner (usually a third-party module, probably not written by you).
+
+1. The “real” code is whatever you want to test. This might be a function, or a database model, or an Express server. In a Node.js context, this is anything that assigns anything to module.exports.
+
+2. The test code tests your “real” code. These will require whatever you want to test and then start asking questions about it. Does the function return what it should return? Do your objects behave as they should behave?
+
+3. The test runner is an executable that runs on your computer. This is an executable that looks as your test code and runs it. Test runners will commonly print out things like “these tests succeeded, these tests failed and here's how” and “the tests took 100 milliseconds to run” and things like that. We'll be using Mocha in this chapter, but you might've used Jasmine or Qunit in your JavaScript career. You might've used Rspec or Junit in another life.
+
+Both the real code and your test code live in the same repository. We'll also define Mocha (our test runner) as a dependency, and we'll install it locally to our repository.
+How does Node.js testing work?

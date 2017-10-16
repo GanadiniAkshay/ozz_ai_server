@@ -1,0 +1,7 @@
+
+The 100 range is weird.
+
+There are only two official status codes in the 100 range: 100 ("Continue") and 101 ("Switching Protocols"). You will likely never deal with these yourself. If you do, check the specification or the list on Wikipedia.
+
+Look at that! Already one-fifth of the way through the status codes.
+The 100 range

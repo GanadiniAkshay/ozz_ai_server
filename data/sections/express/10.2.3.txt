@@ -1,0 +1,39 @@
+
+It's very common for websites to have query strings. For example, almost every search engine you've ever used features a query string of some sort. A search for "crockford backflip video" might look something like this:
+
+In Express, you can grab the query by using req.query, like so:
+
+Listing 10.2  Grabbing req.query (note: contains bugs!)
+
+#A This variable will now contain the string "crockford backflip video".
+
+This is all well and good, unless the input isn't exactly as you expect. For example, if a user visits the /search route with no query named q, then we'll be calling .replace on an undefined variable! This can crash our server.
+
+You'll always want to make sure that your users are giving you the data you expect, and if they aren't, you'll need to do something about it. One simple option is to just provide a default case, so if they don't give anything, assume the query is empty. For example:
+
+Listing 10.3  Don't assume your queries exist (note: still contains bugs!)
+
+#A Now, if req.query.q is undefined, we'll fall back to non-errant behavior. Alternatively, you could redirect if nothing has been typed, or give some other behavior.
+
+This fixes one important bug: if we're expecting a query string isn't there, we don't have undefined variables.
+
+But there's another important gotcha with Express's parsing of query strings. In addition to the variables potentially being undefined, variables can also be of the wrong type (but still be defined)!
+
+If a user visits /search?q=abc, then req.query.q will be a string. It'll still be a string if they visit /search?q=abc&name=douglas. But if they specify the q variable twice, like this:
+
+…then req.query.q will be the array ["abc", "xyz"]. Now, if you try to call .replace on it, it'll fail again because that method isn't defined on arrays. Oh no!
+
+Personally, I think that this is a design flaw of Express. This behavior should be allowed, but I don't think that it should be enabled by default. Until they change it (and I'm not sure they have plans to), you'll need to assume that your queries could be arrays.
+
+To solve this problem (and others), I wrote the arraywrap package (at https://www.npmjs.org/package/arraywrap). It's a very small module; the whole thing is only 11 lines of code. It's a function that takes one argument. If the argument isn't already an array, it wraps it in an array. If the argument is an array, it just returns the argument and does nothing.
+
+You can install it with npm install arraywrap --save and then you can use it to coerce all of your query strings to arrays, like so:
+
+Listing 10.4  Don't assume your queries aren't arrays
+
+#A Now things work if we supply a single variable, supply no variables, or supply multiple variables.
+
+Now, if someone gives you more queries than you expect, you just take the first one and ignore the rest. Alternatively, you could detect if the query was an array and do something different there.
+
+This brings us to a big point of the chapter: never trust user input. Assume that every route will be broken in some way. Assume your users could give you bad data or no data at all!
+Perilous parsing of query strings

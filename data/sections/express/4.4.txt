@@ -1,0 +1,23 @@
+
+Two different Express applications can have pretty different middleware stacks. Our example app’s stack is just one of many possible middleware configurations, and there are lots out there that you can use.
+
+There's only one piece of middleware that's bundled with Express, and that's express.static. We'll be installing and using lots of other middleware throughout this book.
+
+While it's not bundled with Express, the Express team maintains a number of middleware modules:
+
+·   body-parser for parsing request bodies. For example, when a user submits a form. See more at https://github.com/expressjs/body-parser.
+
+·   cookie-parser does what it says on the tin: parses cookies from users. It needs to be paired with another Express-supported middleware like express-session. Once you've done this, you can keep track of users, providing them with user accounts and other features. We'll explore this in greater detail in Chapter 7. https://github.com/expressjs/cookie-session has more details.
+
+·   compression will compress responses to save on bytes. See more at https://github.com/expressjs/compression
+
+You can find the full list on the Express homepage at http://expressjs.com/resources/middleware.html. There are also a huge number of third-party middleware modules that we'll explore. To name a few:
+
+·   Helmet is a bit of middleware that helps to secure your applications. It doesn't magically make you more secure, but a small amount of work can protect you from a lot of hacks. Read more at https://github.com/helmetjs/helmet. (I maintain this module, by the way, so I have to promote it!)
+
+·   connect-assets will compile and minify your CSS and JavaScript assets. It'll also work with CSS preprocessors like SASS, SCSS, LESS, and Stylus, should you choose to use them. See https://github.com/adunkman/connect-assets.
+
+·   Winston is a more powerful alternative to Morgan that does more robust logging (to files or databases, for example). See more at https://github.com/flatiron/winston.
+
+This is hardly an exhaustive list. I also recommend a number of helpful modules in Appendix C if you're thirsty for even more helpers.
+Other useful middleware

@@ -1,0 +1,63 @@
+
+Here's a complex example of rendering a view from a response, using two different view engines: Jade and EJS. This should illustrate how crazy this can get:
+
+Listing 7.3 Complex rendering example
+
+Here's what happens when you call render in these three cases. While it looks complicated at a high level, it's just a number of straightforward steps:
+
+1. Express builds up the context object every time you call render. It first adds all the properties from app.locals, an object available to every request. Then it adds all the properties in res.locals, overwriting anything added from app.locals if it was present. Finally, it adds the properties of the object passed to render (once again overwriting any previously-added properties). At the end of the day, if we visit /about, we'll create a context object with three properties: appName, userAgent, and currentUser. /contact will only have appName in its context, while the 404 handler will have appName and urlAttempted. These context objects will get passed to the view engines when it's time to render.
+
+2. Next, we decide whether view caching is enabled. "View caching" might sound like Express caches the entire view rendering process, but it doesn't; it only caches the lookup of the view file and its assignment to the proper view engine. For example, it will cache the lookup of views/my_view.ejs and figure out that this view uses EJS, but it won't cache the actual render of the view. A bit misleading!
+
+It decides whether view caching is enabled in two ways, only one of which is documented.
+
+The documented way: if app.enabled("view cache") is truthy. By default, this is disabled in development mode and enabled in production, but you can change it yourself with app.enable("view cache") or app.disable("view cache").
+
+The undocumented way: if the context object generated in the previous step has a truthy property called cache, then caching will be enabled for that view. This overrides any application settings. This enables you to cache on a view-by-view basis, but I think it's more important to know that it's there so that you can avoid doing it unintentionally!
+
+3. Next, we have to look up where the view file resides and what view engine to use. In this case, we want to turn "about" into /path/to/my/app/views/about.jade + Jade and "contact.ejs" into /path/to/my/app/views/contact.ejs + EJS. The 404 handler should associate 404.html with EJS by looking at our earlier call to app.engine. If we've already done this lookup before and view caching is enabled, we'll pull from the cache and skip to the final step. If not, we'll continue on.
+
+4. If you don't supply a file extension (like with "about"), Express appends the default you specify. In this case, "about" becomes "about.jade" but "contact.ejs" and "404.html" stay the same. If you don't supply an extension and don't supply a default view engine, Express will throw an error. Otherwise, it'll continue on.
+
+5. Now that we definitely have a file extension, Express looks at the extension to determine which engine to use. If it matches any engine you've already specified, it'll use that. In this case, it'll match Jade for about.jade because it's the default. contact.ejs will try to require("ejs") based on the file extension. We explicitly assigned 404.html to EJS's renderFile function, so it'll use that.
+
+6. Express looks the file up in your views directory. If it doesn't find the file, it throws an error, but it'll continue if it finds something.
+
+7. If view caching is enabled, we cache all this lookup logic for next time.
+
+8. Finally, we render the view! This calls out to the view engine and is literally one line in Express's source code. This is where the view engine takes over and produces actual HTML (or whatever you'd like).
+
+This turns out to be a bit hairy, but the 99% case is "I pick one view engine and stick with it", so you're likely to be shielded from most of this complexity.
+
+
+Rendering non-HTML views
+
+
+Rendering non-HTML views
+
+Express's default content-type is HTML, so if you don't do anything special, res.render will render your responses and send them to the client as HTML. Most of the time, I find this to be enough. But it doesn't have to be this way! You can render plain text, XML, JSON, or whatever you want. Just change the content-type by changing the parameter to res.type:
+
+ 
+
+app.get("/", function(req, res) {
+
+  res.type("text");
+
+  res.render("myview", {
+
+    currentUser: "Gilligan"
+
+  });
+
+});
+
+ 
+
+There are often better ways to render some of these things—res.json, for example, should be used instead of a view that renders JSON—but this option is totally available!
+
+
+ 
+
+
+ 
+A complicated view rendering

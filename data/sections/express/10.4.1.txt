@@ -1,0 +1,7 @@
+
+It might sound a bit crazy, but you can often easily audit the code of your dependencies. While some modules like Express have a relatively large surface area, many of the modules you'll install are only a small number of lines, and you can understand them quickly. It's a fantastic way to learn, too!
+
+Just as you might look through your own code for bugs or errors, you can look through other people's code for bugs and errors. If you spot them, you can avoid the module. If you're feeling generous, you can often submit patches because these packages are all open source.
+
+If you've already installed the module, you can find its source code in your node_modules directory. You can almost always find modules on GitHub with a simple search, or from a link on the npm registry.
+Auditing the code

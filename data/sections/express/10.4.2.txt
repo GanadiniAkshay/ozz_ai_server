@@ -1,0 +1,25 @@
+
+It's (almost) always a good idea to have the latest versions of things. People tune performance, fix bugs, and improve APIs. You could manually go through each of your dependencies to find out which versions were out of date, or you could use a tool built into npm: npm outdated.
+
+Let's say that your project has Express 4.2.0 installed, but the latest version is 4.11.1 (which I'm sure will be out of date by the time you read this). In your project directory, run npm outdated --depth 0 and you'll see an output something like this:
+
+If you have other outdated packages, this command will report those too. Go into your package.json, update the versions, and run npm install to get the latest versions!  It's a good idea to check for outdated packages frequently.
+
+
+What's that depth thing?
+
+
+What's that depth thing?
+
+npm outdated --depth 0 will tell you all of the modules that are outdated that you installed. npm outdated without the depth flag tells you modules that are outdated, even ones you didn't directly install. For example, Express depends on a module called cookie. If cookie gets updated but Express doesn't update to the latest version of cookie, then you'll get a warning about cookie, even though it isn't really your "fault".
+
+There's not much I can do if Express doesn't update to the latest version (that's largely out of my control), other than update to the latest version of Express (which is in my control). The --depth flag only shows actionable information, where leaving it out gives you a bunch of information you can't really use.
+
+
+ 
+
+
+ 
+
+Another side note: you'll want to make sure that you're on the latest version of Node, too. Check nodejs.org and make sure you're on the latest version.
+Keeping your dependencies up to date

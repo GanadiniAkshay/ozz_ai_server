@@ -1,0 +1,14 @@
+
+In theory, Express could be used to build any web application. It can process incoming requests and respond to them, so it can do things that you can do in most of the other frameworks mentioned above. Why would you choose Express over something else?
+
+One of the benefits of writing code in Node.js is the ability to share JavaScript code between the browser and the server. This is helpful from a code perspective because you can literally run the same code on client and server. It's also very helpful from a mental perspective; you don't have to get your mind in "server mode" and then switch your mind into "client mode"—it's all the same thing. That means that a frontend developer can easily write backend code without having to learn a whole new language and its paradigms, and vice-versa.
+
+Express helps you do this, and people have come up with a fancy name for an all-JavaScript stack: the MEAN stack. Like the "LAMP" stack stands for Linux, Apache, MySQL, and PHP, "MEAN" stands for MongoDB (a JavaScript-friendly database), Express, Angular (a frontend JavaScript framework), and Node.js. People like the MEAN stack because it's full-stack JavaScript and you get all of the aforementioned benefits.
+
+Express is often used to power single-page applications, or SPAs. SPAs are very JavaScript-heavy on the frontend, and they usually require a server component. The server is usually required to simply serve the HTML, CSS, and JavaScript, but there’s often a REST API, too. Express can do both of these things quite well; it’s great at serving HTML and other files, and it’s great at building APIs. Because the learning curve is relatively low for frontend developers, they can whip up a simple SPA server without too much new learning.
+
+When you write applications with Express, you can't get away from using Node.js, so you're going to have the E and the N parts of the stack, but the other two are up to you because Express is unopinionated. Want to replace Angular with Backbone.js on the frontend? Now it's the MEBN stack. Want to use SQL instead of MongoDB? Now it's the SEAN stack. While MEAN is a common bit of lingo thrown around and a popular configuration, you can choose whichever you want. In this book, we'll cover the MongoDB database, so we'll get the "MEN" stack.
+
+Express also fits in side-by-side with a lot of real-time features. While other programming environments can support real-time features like WebSockets and WebRTC, Node.js seems to get more of that than other languages and frameworks. That means that you can  Because Node gets it, Express gets it too.
+
+What Express is used for use used use use use

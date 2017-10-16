@@ -1,0 +1,25 @@
+
+In HTML, your elements are nested. Everything goes inside the <html> tag, and then your content will go into the <body> tag. Inside the body, you might have a <header> with a <nav> for navigation. Your CSS doesn't exactly mirror this; if you wanted to style your header and the navigation inside of your header, you might write some CSS like this:
+
+Listing 11.7 CSS example with no nesting
+
+In LESS, Listing 11.7 would be improved to this:
+
+Listing 11.8 A simple LESS nesting example
+
+#A Notice how the styling for the nav is inside of another selector.
+
+LESS improves CSS to allow for nested rulesets. This means that your code will be shorter, more readable, and a better mirror of your HTML.
+
+Nesting the parent selectors
+
+Nested rulesets can refer to their parent element. This is useful in lots of places, and a good example is links and their hover states. You might have a selector for a, a:visited, a:hover, and a:active. In CSS, you might do this with four separate selectors. In LESS, you'll define an outer selector and then three inner selectors, one for each link state. It might look something like this:
+
+Listing 11.9 Referring to parent selectors in LESS
+
+  &:active {  #A     color: #ff0099;
+
+#A In LESS, you use the & sign to refer to the parent selector.
+
+LESS nesting can do simple things like nesting your selectors to match your HTML, but it can also nest selectors in relation to the parent selectors.
+Nesting

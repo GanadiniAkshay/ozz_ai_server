@@ -1,0 +1,29 @@
+2.3.2. Registering event handlers
+As we’ve already mentioned, event handlers are functions that we want executed whenever a particular event occurs. In order for this to happen, we have to notify the browser that we’re interested in an event. This is called event-handler registration. In client-side web applications, there are two ways to register events:
+By assigning functions to special properties
+By using the built-in addEventListener method
+For example, writing the following code assigns a function to the special onload property of the window object:
+window.onload = function(){};
+An event handler for the load event (when the DOM is ready and fully built) is registered. (Don’t worry if the notation on the right side of the assignment operator looks a bit funky; we’ll talk at great length about functions in later chapters.) Similarly, if we want to register a handler for the click event on the document’s body, we can write something along these lines:
+document.body.onclick = function(){};
+Assigning functions to special properties is an easy and straightforward way of registering event handlers, and you’ve probably run into it already. But we don’t recommend that you register event handlers this way, because doing so comes with a drawback: It’s only possible to register one function handler for a particular event. This means it’s easy to overwrite previous event-handler functions, which can be a little frustrating. Luckily, there’s an alternative: The addEventListener method enables us to register as many event-handler functions as we need. To show you an example, the following listing goes back to an excerpt of the example from listing 2.1.
+Listing 2.3. Registering event handlers
+<script>
+document.body.addEventListener("mousemove", function() {
+#A
+var second = document.getElementById("second");
+addMessage(second, "Event: mousemove");
+});
+document.body.addEventListener("click", function(){
+#B
+var second = document.getElementById("second");
+addmessage(second, "Event: click");
+});
+</script>
+#A - Registers a handler for the mousemove event
+#B - Registers a handler for the click event
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This example uses the built-in addEventListener method on an HTML element to specify the type of event (mousemove or click) and the event-handler function. This means whenever the mouse is moved over the page, the browser calls a function that adds a message, "Event: mousemove", to the list element with the ID second (a similar message, "Event: click", is added to the same element whenever the body is clicked).
+Now that you know how to set up event handlers, let’s recall the simple flowchart you saw earlier and take a closer look at how events are handled.

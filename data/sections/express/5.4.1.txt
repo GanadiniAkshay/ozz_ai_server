@@ -1,0 +1,57 @@
+
+We've sent static files with middleware before, but don't roll your eyes yet—we're going to dive just a little deeper.
+
+We went over this in Chapter 2, so I won't preach the benefits of this stuff. I'll just review the code example we used before:
+
+Listing 5.11 A simple example of express.static
+
+#A Set up the path where our static files will sit, using Node's path module.
+
+#B Send static files from the publicPath directory.
+
+Recall that path.resolve helps keep our path resolution cross-platform (things are different on Windows and Mac and Linux). Also recall that this is much better than doing it all yourself! If any of this is unclear, go back and take a look at Chapter 2.
+
+Now let's go deeper.
+
+CHANGING THE PATHS FOR CLIENTS
+
+It's common that you'll want to serve files at the root of your site. For example, if your URL is http://jokes.edu and you're serving jokes.txt, the path will be http://jokes.edu/jokes.txt.
+
+But you might also want to mount some static files at a different URL for clients. For example, you might want a folder full of offensive-but-hilarious photos to look like it's in a folder called "offensive", so a user might visit http://jokes.edu/offensive/photo123.jpg. How might we do this?
+
+Express to the rescue: middleware can be "mounted" at a given prefix. In other words, you can make a middleware only respond if it starts with /offensive.
+
+Here's how that's done:
+
+Listing 5.12 Mounting static file middleware
+
+Now web browsers and other clients can visit your offensive photos at a path other than the root. Note that this can be done for any middleware, not just the static file middleware.
+
+ROUTING WITH MULTIPLE STATIC FILE DIRECTORIES
+
+I frequently find myself with static files in multiple directories. For example, I sometimes have static files in a folder called "public" and another in a folder called "user_uploads". How can we do this with Express?
+
+Express already solves this problem with the built-in middleware feature, and because express.static is middleware, we can just apply it multiple times.
+
+Here's how we might do that:
+
+Listing 5.13 Serving static files from multiple directories
+
+#A Note that this depends on the "path" module, so make sure you require it before you use it!
+
+Now, let's quickly imagine four scenarios, and see how the above code deals with them:
+
+1. The user requests a resource that isn't in the public folder or the user uploads folder. In that case, both static middleware functions will continue onto the next routes and middleware.
+
+2. The user requests a resource that's in the public folder. In that case, the first middleware will send the file and no following routes or middleware functions will be called.
+
+3. The user requests a resource that's in the user uploads folder, but not the public folder. The first middleware will continue on (it's not in "public"), so the second middleware will pick it up. After that, no other middleware or route will be called.
+
+4. The user requests a resource that's in both the public folder and the uploads folder. In this case, because the public-serving middleware is first, you'll get the file in "public" and you'll never be able to reach the matching file in the user uploads folder.
+
+As always, you can mount middleware at different paths to avoid the issue presented in #4. Here's how you might do that:
+
+Listing 5.14 Serving static files from multiple directories without conflict
+
+Now, if "image.jpg" is in both folders, you'll be able to grab it from the public folder at /public/image.jpg and from the uploads folder in /uploads/image.jpg.
+Static files with middleware

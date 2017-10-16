@@ -1,0 +1,65 @@
+9.1.5. Reusing built-in array functions
+There are times when we may want to create an object that contains a collection of data. If the collection was all we were worried about, we could use an array. But in certain cases, there may be more state to store than just the collection itself—perhaps we need to store some sort of metadata regarding the collected items.
+One option may be to create a new array every time you wish to create a new version of such an object, and add the metadata properties and methods to it. Remember, we can add properties and methods to an object as we please, including arrays. Generally, however, this can be slow, not to mention tedious.
+Let’s examine the possibility of using a normal object and giving it the functionality we desire. Methods that know how to deal with collections already exist on the Array object; can we trick them into working on our own objects? Turns out that we can, as shown in the following listing.
+Listing 9.13. Simulating array-like methods
+<body>
+<input id="first"/>
+<input id="second"/>
+<script>
+const elems = {
+length: 0,
+#A
+add: function(elem){
+#B
+Array.prototype.push.call(this, elem);
+#B
+},
+#B
+gather: function(id){
+#C
+this.add(document.getElementById(id));
+#C
+},
+#C
+find: function(callback){
+#D
+return Array.prototype.find.call(this, callback);
+#D
+}
+#D
+};
+elems.gather("first");
+assert(elems.length === 1 && elems[0].nodeType,
+"Verify that we have an element in our stash");
+elems.gather("second");
+assert(elems.length === 2 && elems[1].nodeType,
+"Verify the other insertion");
+elems.find(elem => elem.id === "second");
+assert(found && found.id === "second",
+"We've found our element");
+</script>
+</body>
+#A - Stores the count of elements. The array needs a place to store the number of items it’s storing.
+#B - Implements the method to add elements to a collection. The prototype for Array has a method to do this, so why not use it instead of reinventing the wheel?
+#C - Implements the gather method to find elements by their id values and add them to the collection
+#D - Implements the method to find elements in the collection. Similar to the add method, it reuses the existing find method accessible to arrays.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we create a “normal” object and instrument it to mimic some of the behaviors of an array. First we define a length property to record the number of elements that are stored, just like an array. Then we define a method to add an element to the end of the simulated array, calling this method add:
+add: function(elem){
+Array.prototype.push.call(this, elem);
+}
+Rather than write our own code, we can use a native method of JavaScript arrays: Array.prototype.push.
+Normally, the Array.prototype.push method would operate on its own array via its function context. But here, we’re tricking the method to use our object as its context by using the call method (remember chapter 4) and forcing our object to be the context of the push method. (Notice how we could’ve just as easily used the apply method.) The push method, which increments the length property (thinking that it’s the length property of an array), adds a numbered property to the object referencing the passed element. In a way, this behavior is almost subversive (how fitting for ninjas!), but it exemplifies what we can do with mutable object contexts.
+The add method expects an element reference to be passed for storage. Although sometimes we may have such a reference around, more often than not we won’t, so we also define a convenience method, gather, that looks up the element by its id value and adds it to storage:
+gather: function(id){
+this.add(document.getElementById(id));
+}
+Finally, we also define a find method that lets us find an arbitrary item in our custom object, by taking advantage of the built-in array find method:
+find: function(callback){
+return Array.prototype.find.call(this, callback);
+}
+The borderline nefarious behavior we demonstrated in this section not only reveals the power that malleable function contexts give us, but also shows how we can be clever in reusing code that’s already written, instead of constantly reinventing the wheel.
+Now that we’ve spent some time with arrays, let’s move on to two new types of collections introduced by ES6: maps and sets.

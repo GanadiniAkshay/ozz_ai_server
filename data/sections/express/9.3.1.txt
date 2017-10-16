@@ -1,0 +1,69 @@
+
+Because it's the simplest, we'll start by testing the plain text API.
+
+In plain English, this test will need to send a request to our server at the/plain route, so the server knows that we want plain text in the first place. We'll want to assert that (1) the response is a valid IP address (2) the responses come back as plain text. Let's codify this English into Mocha tests.
+
+Create a folder called test for all your tests, and create a file for testing the plain text API; I called mine txt.js. Inside, put the following skeleton:
+
+Listing 9.13 Skeleton of plain text tests (in test/txt.js)
+
+#A We'll require our app, because that's what will be testing. We'll put it inside app.js in the root of our project (but because this is TDD, we haven't actually done this yet).
+
+#B There will be two tests. One makes sure we get a plain text response, and another makes sure we get an IP address.
+
+So far, this is just a skeleton, but it's not too different from what we had before when we were testing our capitalization module. We're requiring our app (which we haven't written yet!), describing a suite of tests (plain text mode, in this case), and then defining two tests.
+
+Let's fill in the first test, to make sure that our application returns a plain text response. Remember: what we're testing doesn't exist yet. We're going to write the tests, watch them fail, and then “fill in” the real code to make our tests pass.
+
+Our first test will need to make a request to the server, making sure to set the Accept header to text/plain, and once it gets a response from the server, our test should ensure that it comes back as text/plain. The Supertest module will help us with this, so require it at the top of your file. Then we’ll use Supertest to make requests to our server and see if it gives us the response we want.
+
+Listing 9.14 Using Supertest to check the response (in test/txt.js)
+
+#A When running asynchronous tests like these, our function is passed a callback. We call that callback when we're all done running our code.
+
+#B Supertest builds up the request. We're testing our app, visiting the “/” URL, and setting an HTTP header.
+
+#C Supertest then checks the response, making sure the Content-Type matches “text/plain” and that we get a status code of 200.
+
+Notice how we use Supertest to test our application. It's not quite like Chai in that it reads like English, but it should be pretty straightforward. Here's what we're doing with Supertest, line by line:
+
+1. We wrap our app up by calling supertest with app as an argument. This returns a Supertest object.
+
+2. Next, we call get on that Supertest object with the route we want to request; in this case, we want the application's root (at “/”).
+
+3. Next, we set an option on this request; in this case, we're setting the HTTP Accept header to text/plain. We can call set multiple times if we want to set multiple headers, but we don't need to for this test.
+
+4. In the first call to expect, we say “I want the Content-Type to match 'text/plain'”. Notice that this is a regular expression, not a string. We want to be a little flexible here; the Content-Type could be “text/plain”, or it could be “text/plain; charset=utf-8” or something like that. We care to test for the plain text content type, but not for the specific character set because it's just numbers in this case.
+
+5. In the second call to expect, we're making sure we get the HTTP status code of 200, meaning “OK”.  You could imagine writing a test for a nonexistent resource, where you'd expect the status code to be 404, or any of the other many HTTP status codes.
+
+6. Finally, we call end with done. done is a callback function passed to us by Mocha which we use to signal that asynchronous tests (like this one) are all done.
+
+Next, let's fill in our second test to make sure that our application is returning an IP address. It'll look pretty similar to the above, but we'll actually test the response body. First, we'll require the is-ip module, which will test a string to make sure it's a valid IP address. Add the require to the top of your file, and then we'll use this module with Supertest to make sure our application is returning an IP address. Let's fill in our second test:
+
+Listing 9.15 Testing that our app returns an IP address (in test/txt.js)
+
+#A This request setup is the same as before.
+
+#B We call expect with a function that throws an error if we don't get a valid IP.
+
+#C Once again, we call “done” when we're done.
+
+The first three lines of this test and the last line should look similar to before; we set up Supertest to test our app, and when we're done testing things, we call done.
+
+The middle part calls expect with a function this time. This function throws an error if res.text (the text that our application returns) isn't an IP according to the is-ip module. If it is a valid IP address, then the function simply finishes with no fuss.
+
+One last thing: we've got some duplicate code here. In this test, we're always making the same request to our server; the same application, the same route, and the same headers. What if we didn't have to repeat ourselves? Enter Mocha's beforeEach feature:
+
+Listing 9.16 Reducing repetition in our code with beforeEach (in test/txt.js)
+
+#A We can use beforeEach to run the same code before every test in this describe block. In this case, we're reassigning the request variable to a new Supertest object.
+
+#B We can use the variable in tests without repeating ourselves.
+
+As you can see, we're using beforeEach to remove repeated code. The benefits of this really start to show as you have many tests with the same setup every time.
+
+Now that we've written our two tests, let's run them with npm test as a sanity check. Because we haven't even made the file where our app will live, you should get an error that contains something like “Cannot find module '../app'”. This is exactly what we expect at this point: we've written the tests but no real code, so how in the world could our tests pass? This is the “red” step in the red-green-refactor cycle.
+
+Let's write our application to make these tests go from red (failing) to green (passing).
+Testing a simple API

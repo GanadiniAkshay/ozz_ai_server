@@ -1,0 +1,17 @@
+11.3. Summary
+Large, monolithic code bases are far more likely to be difficult to understand and maintain than smaller, well-organized ones. One way of improving the structure and organization of our programs is to break them into smaller, relatively loosely coupled segments or modules.
+Modules are larger units of organizing code than objects and functions, and they allow us to divide programs into clusters that belong together.
+In general, modules foster understandability, ease maintenance, and improve the reusability of code.
+Pre-ES6 JavaScript has no built-in modules, and developers had to be creative with existing language features to enable code modularization. One of the most popular ways of creating modules is by combining immediately invoked functions with closures.
+Immediate functions are used because they create a new scope for defining module variables that aren’t visible from outside that scope.
+Closures are used because they enable us to keep module variables alive.
+The most popular pattern is the module pattern, which usually combines an immediate function with a return of a new object that represents the module’s public interface.
+In addition to the module pattern, two popular module standards exist: Asynchronous Module Definition, designed to enable modules in the browser; and CommonJS, which is more popular in server-side JavaScript.
+AMD can automatically resolve dependencies, and modules are asynchronously loaded, thereby avoiding blocking.
+CommonJS has a simple syntax, synchronously loads modules (and is therefore more appropriate for the server), and has many packages available through node’s package manager (npm).
+ES6 modules are designed to take into account the features of AMD and CommonJS. These modules have a simple syntax influenced by CommonJS, and provide asynchronous module loading as in AMD.
+ES6 modules are file based, one module per file.
+We export identifiers so that they can be referenced by other modules by using the new export keyword.
+We import identifiers exported from other modules by using the import keyword.
+A module can have a single default export, which we use if we want to represent that whole module through a single export.
+Both imports and exports can be renamed with the as keyword.

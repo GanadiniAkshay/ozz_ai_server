@@ -1,0 +1,11 @@
+
+If you're like me, you saw the internet in its early days; awkward animated GIFs, crufty code, and Times New Roman on every page. In this chapter, we'll resurrect one component from that bygone era: the guestbook. A guestbook is pretty simple: users can write new entries in the online guestbook, and they can browse others' entries.
+
+Let's use all that we've learned to build a more real application for this guestbook. It turns out that all of these things will come in handy! Our site will have two pages:
+
+1. A homepage that lists all of the previously-posted guestbook entries
+
+2. A page with an "add new entry" form
+
+That's it! Before we start, we have to get set up. Ready?
+Example: putting it all together in a guestbook

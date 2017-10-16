@@ -1,0 +1,27 @@
+
+MongoDB (often shortened to Mongo) is a popular database that's wiggled its way into the hearts of many Node developers. Its pairing with Express is beloved enough to have spawned the acronym "MEAN", for MongoDB, Express, Angular (a front-end JavaScript framework), and Node. In this book, we'll be discussing everything but the "A" of that acronym...the MEN stack, if you will.
+
+At this point, you may be saying, "There are a lot of choices for databases out there, like SQL or Apache Cassandra Couchbase. Why choose MongoDB?" That's a good question!
+
+In general, Web applications store their data in one of two kinds of databases: relational and non-relational.
+
+Typically, relational databases are a lot like spreadsheets. Their data is structured, and each entry is generally a row in a table. They are a bit like strongly-typed languages such as Java, where each entry must fit into rigid requirements (called a schema). Most relational databases can be controlled with some derivative of SQL, the Structured Query Language; you likely have heard of MySQL or SQL Server or PostgreSQL. "Relational databases" and "SQL databases" are often terms used interchangeably.
+
+Non-relational databases, on the other hand, are often called "NoSQL" databases. I like to imagine "NoSQL" as both a different technology and a fist-up cry against the status quo. Perhaps "NoSQL" is tattooed on a protester's arm. In any case, it's different from relational databases in that it is generally unstructured. Each entry can contain, well, whatever you want. This is very much like JavaScript in this way; JavaScript is generally less rigid. In general, NoSQL databases "feel" more like JavaScript.
+
+For this reason, we choose a NoSQL database. The NoSQL database we'll choose is called MongoDB. But why choose that?
+
+For one, MongoDB is popular. That isn't in itself a merit, but this has a few benefits. You won't have trouble finding help online. It's also useful to know; it's used in lots of places by lots of people. Mongo is also a mature project. It's been around since 2007 and is trusted by companies like eBay, Craigslist, and Orange. You won't be using buggy, unsupported software.
+
+Mongo is popular in part because it's mature, feature-filled, and reliable. It's written in performant C++ and is trusted by lots and lots of users.
+
+While Mongo isn't written in JavaScript, its native shell is written in JavaScript. That means that when you open Mongo to play around in the command line, you send it commands with JavaScript. It's pretty nice to be able to "talk to" the database with a language you're already using!
+
+I also chose Mongo for this chapter because I think it's easier to learn than SQL, especially for a JavaScript developer. SQL is a powerful programming language unto itself, but you already know JavaScript!
+
+I hardly believe that Mongo is the right choice for all Express applications. Relational databases are incredibly important and can be used well with Express, and other NoSQL databases like CouchDB are also powerful. But Mongo fits well with the Express ecosystem and is relatively easy to learn (compared to SQL), which is why I choose it for this chapter.
+
+NOTE If you're like me, you know SQL and want to use it for use SQL for some Express projects. This chapter will discuss Mongo, but if you're looking for a helpful SQL tool, check out Sequelize at http://sequelizejs.com/. It interfaces with many SQL databases and has a number of helpful features.
+
+In this chapter, we'll deal heavily with a module called Mongoose; for your reference as you read, Mongoose is to MongoDB as Sequelize is to SQL. Keep that in mind if you want to use SQL!
+Why MongoDB?

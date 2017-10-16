@@ -1,0 +1,17 @@
+1. JavaScript is everywhere
+This chapter covers
+The core language features of JavaScript
+The core items of a JavaScript engine
+Three best practices in JavaScript development
+Let’s talk about Bob. After spending a few years learning how to create desktop applications in C++, he graduated as a software developer in the early 2000s and then went out into the wide world. At that point, the web had just hit its stride, and everybody wanted to be the next Amazon. So the first thing he did was learn web development.
+He learned some PHP so that he could dynamically generate web pages, which he usually sprinkled with JavaScript in order to achieve complex functionality such as form validation and even dynamic on-page clocks! Fast-forward a couple of years, and smartphones had become a thing, so anticipating a large new market opening up, Bob went ahead and learned Objective-C and Java to develop mobile apps that run on iOS and Android.
+Over the years, Bob has created many successful applications that all have to be maintained and extended. Unfortunately, jumping daily between all these different programming languages and application frameworks has really started to wear down poor Bob.
+Now let’s talk about Ann. Two years ago, Ann graduated with a degree in software development, specializing in web- and cloud-based applications. She has created a few medium-sized web applications based on modern Model–view–controller (MVC) frameworks, along with accompanying mobile applications that run on iOS and Android. She has created a desktop application that runs on Linux, Windows, and OS X, and has even started building a serverless version of that application entirely based in the cloud. And everything she has done has been written in JavaScript.
+That’s extraordinary! What took Bob 10 years and 5 languages to do, Ann has achieved in 2 years and in just one language. Throughout the history of computing, it has been rare for a particular knowledge set to be so easily transferable and useful across so many different domains.
+What started as a humble 10-day project back in 1995 is now one of the most widely used programming languages in the world. JavaScript is quite literally everywhere, thanks to more-powerful JavaScript engines and the introduction of frameworks such as Node, Apache Cordova, Ionic, and Electron, which have taken the language beyond the humble web page. And, like HTML, the language itself is now getting long overdue upgrades intended to make JavaScript even more suitable for modern application development.
+In this book, we’re going to make sure you know all you need to know about JavaScript so that, whether you’re like Ann or like Bob, you can develop all sorts of applications on a green field or a brown field.
+Do you know?
+Q1:
+What are Babel and Traceur, and why are they important to today’s JavaScript developers?
+Q2:
+What are the core parts of any web browser’s JavaScript API used by web applications?

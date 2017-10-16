@@ -1,0 +1,25 @@
+
+We've talked about some view engines like EJS and Jade already, but there are plenty more that you might want to choose. You might've heard of Mustache, Handlebars, or Underscore.js's templating. You might also want to use a Node port of other templating languages like Jinja2 or HAML.
+
+Many of these view engines will "just work" with Express, like EJS and Jade. Others, however, don't have an Express-compatible API, and need to be wrapped in something Express can understand.
+
+Enter Consolidate.js (at https://github.com/tj/consolidate.js), a library that wraps a ton of view engines to be compatible with Express. It has support for the classics like EJS, Jade, Mustache, Handlebars, and Hogan. It supports a ton of others, too, in case you're using a more obscure/hipster view engine. You can see the whole list of supported engines on the project's page.
+
+For example, let's say you're using Walrus, a JavaScript view engine that's not compatible with Express out of the box. We'll need to use Consolidate to make this compatible with Express.
+
+After installing Walrus and Consolidate (with npm install walrus consolidate), you'll be able to use Walrus with Express!
+
+Listing 7.4 Rendering with Walrus
+
+#A First, we must require the Consolidate library. For readability, we place it in a variable called "engines".
+
+#B Next, we specify .wal files as our default view file extension.
+
+#C Here, we associate.wal files with the Walrus view engine.
+
+#D As usual, we specify our views directory.
+
+#E Finally, we render the view! This will render views/index.wal.
+
+I recommend using Consolidate instead of trying to wrangle non-compatible view engines yourself.
+Making all view engines compatible with Express: Consolidate.js

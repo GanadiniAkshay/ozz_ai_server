@@ -1,0 +1,25 @@
+
+Now that it's time to write some “real” code, create app.js in the root of your project and fill in the following:
+
+Listing 9.17 First draft of app.js
+
+#A We write some code to return the IP address.
+
+#B Export the app for testing.
+
+The last line is the only thing that might seem new: we export the app. Normally, when you're just running a file (like node app.js), you don't need to export the app because you don't think of it as a module. But when you're testing the application, you'll need to export it so that the outside world can poke at it and test it.
+
+If you run npm test now, you'll see something like the following output:
+
+This is good! We're not all the way done because only half of our tests pass, but it looks like we're returning an IP address. Add just one more line to make all of our tests pass:
+
+Listing 9.18 Making app.js return plain text
+
+#A The new line: make sure the Content-Type is some variant of plain text.
+
+Now, when you run npm test, you'll see all of your tests pass!
+
+This is great; we're now returning the plain text responses we desire. Now we’re done with the “green” step in the red-green-refactor cycle. In this case the final refactor step is simple: we don’t have to do anything. Our code is so short and sweet that it doesn’t really need much of a clean up yet.
+
+But wait, didn't we also want to return HTML responses, too? Our tests shouldn't be passing yet, should they? You're right, wise reader. Let's write some more tests and go back to the “red” step.
+Filling in the code for our first tests

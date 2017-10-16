@@ -1,0 +1,3 @@
+5.6. Exploring how closures work
+We started this chapter with closures, a mechanism that allows a function to access all variables that are in scope when the function itself is created. You’ve also seen some of the ways closures can help you—for example, by allowing us to mimic private object variables or by making our code more elegant when dealing with callbacks.
+Closures are irrevocably tightly coupled with scopes. Closures are a straightforward side effect of the way scoping rules work in JavaScript. So in this section, we’ll revisit the closure examples from the beginning of the chapter. But this time you’ll take advantage of execution contexts and lexical environments that will enable you to grasp how closures work under the hood.

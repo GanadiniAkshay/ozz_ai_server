@@ -1,0 +1,348 @@
+12.3. Styling attribute headaches
+As with general attributes, getting and setting styling attributes can be a headache. As with the attributes and properties in the previous section, we again have two approaches for handling style values: the attribute value, and the element property created from it.
+The most commonly used of these is the style element property, which isn’t a string but an object that holds properties corresponding to the style values specified in the element markup. In addition, you’ll see that there’s a method for accessing the computed style information of an element, where computed style means the style that will be applied to the element after evaluating all inherited and applied style information.
+This section outlines the things you need to know when working with styles in browsers. Let’s start with a look at where style information is recorded.
+12.3.1. Where are my styles?
+The style information located in the style property of a DOM element is initially set from the value specified for the style attribute in the element markup. For example, style="color:red;" results in that style information being placed into the style object. During page execution, the script can set or modify values in the style object, and these changes will actively affect the display of the element.
+Many script authors are disappointed to find that no values from on-page <style> elements or external style sheets are available in the element’s style object. But we won’t stay disappointed for long—you’ll soon see a way to obtain this information.
+For now, let’s see how the style property gets its values. Examine the following code.
+Listing 12.6. Examining the style property
+<style>
+#A
+div { font-size: 1.8em; border: 0 solid gold; }
+</style>
+<div style="color:#000;" title="Ninja power!">
+#B
+忍者パワー
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+const div = document.querySelector("div");
+assert(div.style.color === 'rgb(0, 0, 0)' ||
+#C
+div.style.color === '#000',
+'color was recorded');
+assert(div.style.fontSize === '1.8em',
+#D
+'fontSize was recorded');
+assert(div.style.borderWidth === '0',
+#E
+'borderWidth was recorded');
+div.style.borderWidth = "4px";
+#F
+assert(div.style.borderWidth === '4px',
+#G
+'borderWidth was replaced');
+});
+</script>
+#A - Declares an in-page style sheet that applies font size and border information
+#B - This test element should receive multiple styles from various places, including its own style attribute and the style sheet.
+#C - Tests that the inlined color style was recorded
+#D - Tests that the inherited font size style was recorded
+#E - Tests that the inherited border width style was recorded
+#F - Replaces the border width style
+#G - Tests the border width style change was recorded
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we set up a <style> element to establish an internal style sheet whose values will be applied to the elements on the page. The style sheet specifies that all <div> elements will appear in a font size that’s 1.8 times bigger than the default, with a solid gold border of 0 width. Any elements to which this is applied will possess a border, but it won’t be visible because it has a width of 0.
+<style>
+div { font-size: 1.8em; border: 0 solid gold; }
+</style>
+Then we create a <div> element with an inlined style attribute that colors the text of the element black:
+We then begin the testing. After obtaining a reference to the <div> element, we test that the style attribute receives a color property that represents the color assigned to the element. Note that even though the color is specified as #000 in the inline style, it’s normalized to RGB notation when set in the style property in most browsers (so we check both formats).
+assert(div.style.color === 'rgb(0, 0, 0)' ||
+div.style.color === '#000',
+'color was recorded');
+Looking ahead, in figure 12.1, we see that this test passes.
+Figure 12.1. By running this test, we can see that inline and assigned styles are recorded, but inherited styles aren’t.
+Then we naïvely test that the fontsize styling and the border width specified in the inline style sheet have been recorded in the style object. But even though we can see in figure 12.1 that the fontsize style has been applied to the element, the test fails. This is because the style object doesn’t reflect any style information inherited from CSS style sheets:
+assert(div.style.fontSize === '1.8em',
+'fontSize was recorded');
+assert(div.style.borderWidth === '0',
+'borderWidth was recorded');
+Moving on, we use an assignment to change the value of the borderWidth property in the style object to 4 pixels wide and test that the change is applied. We can see in figure 12.1 that the test passes and that the previously invisible border is applied to the element. This assignment causes a borderWidth property to appear in the style property of the element, as proven by the test.
+div.style.borderWidth = "4px";
+assert(div.style.borderWidth === '4px',
+'borderWidth was replaced');
+It should be noted that any values in an element’s style property take precedence over anything inherited by a style sheet (even if the style sheet rule uses the !important annotation).
+One thing that you may have noted in listing 12.6 is that CSS specifies the font size property as font-size, but in script you reference it as fontSize. Why is that?
+12.3.2. Style property naming
+CSS attributes cause relatively few cross-browser difficulties when it comes to accessing the values provided by the browser. But differences between how CSS names styles and how we access those in script do exist, and some style names differ across browsers.
+CSS attributes that span more than one word separate the words with a hyphen; examples are font-weight, font-size, and background-color. You may recall that property names in JavaScript can contain a hyphen, but including a hyphen prevents the property from being accessed via the dot operator.
+Consider this example:
+const fontSize = element.style['font-size'];
+The preceding is perfectly valid. But the following isn’t:
+const fontSize = element.style.font-size;
+The JavaScript parser would see the hyphen as a subtraction operator, and nobody would be happy with the outcome. Rather than forcing page developers to always use the general form for property access, multiword CSS style names are converted to camel case when used as a property name. As a result, font-size becomes fontSize, and backgroundcolor becomes backgroundColor.
+We can either remember to do this, or write a simple API to set or get styles that automatically handle the camel casing, as shown in the following listing.
+Listing 12.7. A simple method for accessing styles
+<div style="color:red;font-size:10px;background-color:#eee;"></div>
+<script>
+function style(element,name,value){
+#A
+name = name.replace(/-([a-z])/ig, (all,letter) => {
+#B
+return letter.toUpperCase();
+});
+if (typeof value !== 'undefined') {
+#C
+element.style[name] = value;
+}
+return element.style[name];
+#D
+}
+document.addEventListener("DOMContentLoaded", () => {
+const div = document.querySelector("div");
+assert(style(div,'color') === "red", style(div,'color'));
+assert(style(div,'font-size') === "10px", style(div,'font-size'));
+assert(style(div,'background-color') ===
+"rgb(238, 238, 238)",style(div,'background-color'));
+});
+</script>
+#A - Defines the style function that will assign a value to a style property in case a value is provided, and in case it isn’t, it will simply return the value of the style property. We can use this function for both setting and getting the value of a style property.
+#B - Converts name to camel case
+#C - The new value of the style property is set, if a value is provided.
+#D - Always returns the value of the style property
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+The style function has two important characteristics:
+It uses a regular expression to convert the name parameter to camel-case notation. (If the regex-driven conversion operation has you scratching your head, you might want to review the material in chapter 10.)
+It can be used both as a setter and a getter, by inspecting its own argument list. For example, we can obtain the value of the font-size property with style(div, 'font-size'), and we can set a new value with style(div, 'font-size', '5px').
+Consider the following code:
+function style(element,name,value){
+...
+if (typeof value !== 'undefined') {
+element.style[name] = value;
+}
+return element.style[name];
+}
+If a value argument is passed to the function, the function acts as a setter, setting the passed value as the value of the attribute. If the value argument is omitted and only the first two arguments are passed, it acts as a getter, retrieving the value of the specified attribute. In either case, the value of the attribute is returned, which makes it easy to use the function in either of its modes in a function-call chain.
+The style property of an element doesn’t include any style information that an element inherits from style sheets in scope for the element. Many times it would be handy to know the full computed style that’s been applied to an element, so let’s see if there’s a way to obtain that.
+12.3.3. Fetching computed styles
+At any point in time, the computed style of an element is a combination of all the built-in styles provided by the browser, all the styles applied to it via style sheets, the element’s style attribute, and any manipulations of the style property by script. Figure 12.2 shows how browser developer tools differentiate between styles.
+Figure 12.2. The final style associated with an element can come from many things: the browser builtin styles (user agent style sheet), the styles assigned through the style property, and styles from the CSS rules defined in CSS code.
+The standard method, implemented by all modern browsers, is the getComputedStyle method. This method accepts an element whose styles are to be computed and returns an interface through which property queries can be made. The returned interface provides a method named getPropertyValue for retrieving the computed style of a specific style property.
+Unlike the properties of an element’s style object, the getPropertyValue method accepts CSS property names (such as font-size and background-color) rather than the camel-cased versions of those names.
+The following listing shows a simple example.
+Listing 12.8. Fetching computed style values
+<style>
+div {
+background-color: #ffc; display: inline; font-size: 1.8em;
+border: 1px solid crimson; color: green;
+}
+</style>
+<div style="color:crimson;" id="testSubject" title="Ninja power!">
+#A
+忍者パワー
+</div>
+<script>
+function fetchComputedStyle(element,property) {
+#B
+const computedStyles = getComputedStyle(element);
+#C
+if (computedStyles) {
+#D
+property = property.replace(/([A-Z])/g,'-$1').toLowerCase();
+return computedStyles.getPropertyValue(property);
+}
+}
+document.addEventListener("DOMContentLoaded", () => {
+const div = document.querySelector("div");
+report("background-color: " +
+fetchComputedStyle(div,'background-color'));
+#E
+report("display: " +
+fetchComputedStyle(div,'display'));
+report("font-size: " +
+fetchComputedStyle(div,'fontSize'));
+report("color: " +
+fetchComputedStyle(div,'color'));
+report("border-top-color: " +
+fetchComputedStyle(div,'borderTopColor'));
+report("border-top-width: " +
+fetchComputedStyle(div,'border-top-width'));
+});
+</script>
+#A - Creates a test subject with a style attribute
+#B - Defines a function that will get the computed value of a style property
+#C - Uses the built-in getComputedStyle method to obtain a descriptor object
+#D - Replaces camel-case notation with dashes
+#E - Tests that we can obtain the values of various style properties, using different notations
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+To test the function that we’ll be creating, we set up an element that specifies style information in its markup and a style sheet that provides style rules to be applied to the element. We expect that the computed styles will be the result of applying both the immediate and the applied styles to the element.
+We then define the new function, which accepts an element and the style property that we want to find the computed value for. And to be especially friendly (after all, we’re ninjas—making things easier for those using our code is part of the job), we’ll allow multiword property names to be specified in either format: dashed or camel-cased. In other words, we’ll accept both backgroundColor and background-color. We’ll see how to accomplish that in a little bit.
+The first thing we want to do is to obtain the computed style interface, which we store in a variable, computedStyles, for later reference. We want to do things this way because we don’t know how expensive making this call may be, and it’s likely best to avoid repeating it needlessly.
+const computedStyles = getComputedStyle(element);
+if (computedStyles) {
+property = property.replace(/([A-Z])/g,'-$1').toLowerCase();
+return computedStyles.getPropertyValue(property);
+}
+If that succeeds (and we can’t think of any reason why it wouldn’t, but it frequently pays to be cautious), we call the getPropertyValue() method of the interface to get the computed style value. But first we adjust the name of the property to accommodate either the camel-cased or dashed version of the property name. The getPropertyValue method expects the dashed version, so we use the String’s replace() method, with a simple but clever regular expression, to insert a hyphen before every uppercase character and then lowercase the whole thing. (Bet that was easier than you thought it would be.)
+To test the function, we make calls to the function, passing various style names in various formats, and display the results, as shown in figure 12.3.
+Figure 12.3. Computed styles include all styles specified with the element as well as those inherited from style sheets.
+Note that the styles are fetched regardless of whether they’re explicitly declared on the element or inherited from the style sheet. Also note that the color property, specified in both the style sheet and directly on the element, returns the explicit value. Styles specified by an element’s style attribute always take precedence over inherited styles, even if marked !important.
+We need to be aware of one more topic when dealing with style properties: amalgam properties. CSS allows us to use a shortcut notation for the amalgam of properties such as the border-properties. Rather than forcing us to specify colors, widths, and border styles individually and for all four borders, we can use a rule such as this:
+border: 1px solid crimson;
+We used this exact rule in listing 12.8. This saves a lot of typing, but we need to be aware that when we retrieve the properties, we need to fetch the low-level individual properties. We can’t fetch border, but we can fetch styles such as border-top-color and border-top-width, just as we did in the example.
+It can be a bit of a hassle, especially when all four styles are given the same values, but that’s the hand we’ve been dealt.
+12.3.4. Converting pixel values
+An important point to consider when setting style values is the assignment of numeric values that represent pixels. When setting a numeric value for a style property, we must specify the unit in order for it to work reliably across all browsers. For example, let’s say that we want to set the height style value of an element to 10 pixels. Either of the following is a safe way to do this across browsers:
+element.style.height = "10px";
+element.style.height = 10 + "px";
+The following isn’t safe across browsers:
+element.style.height = 10;
+You might think it’d be easy to add a little logic to the style() function of listing 12.7 to tack a px to the end of a numeric value coming into the function. But not so fast! Not all numeric values represent pixels! Some style properties take numeric values that don’t represent a pixel dimension. The list includes the following:
+z-index
+font-weight
+opacity
+zoom
+line-height
+For these (and any others you can think of), go ahead and extend the function of listing 12.6 to automatically handle nonpixel values. Also, when attempting to read a pixel value out of a style attribute, the parseFloat method should be used to make sure that you get the intended value under all circumstances.
+Now let’s take a look at a set of important style properties that can be tough to handle.
+12.3.5. Measuring heights and widths
+Style properties such as height and width pose a special problem, because their values default to auto when not specified, so that the element sizes itself according to its contents. As a result, we can’t use the height and width style properties to get accurate values unless explicit values are provided in the attribute string.
+Thankfully, the offsetHeight and offsetWidth properties provide just that: a fairly reliable means to access the height and width of an element. But be aware that the values assigned to these two properties include the padding of the element. This information is usually exactly what we want if we’re attempting to position one element over another. But sometimes we may want to obtain information about the element’s dimensions with and without borders and padding.
+Something to watch out for, however, is that in highly interactive sites, elements will likely spend some of their time in a nondisplayed state (with the display style being set to none), and when an element isn’t part of the display, it has no dimensions. Any attempt to fetch the offsetWidth or offsetHeight properties of a nondisplayed element will result in a value of 0.
+For such hidden elements, if we want to obtain the nonhidden dimensions, we can employ a trick to momentarily unhide the element, grab the values, and hide it again. Of course, we want to do so in such a way that we leave no visible clue that this is going on behind the scenes. How can we make a hidden element not hidden without making it visible?
+Employing our ninja skills, we can do it! Here’s how:
+Change the display property to block.
+Set visibility to hidden.
+Set position to absolute.
+Grab the dimension values.
+Restore the changed properties.
+Changing the display property to block allows us to grab the values of offsetHeight and offsetWidth, but that makes the element part of the display and therefore visible. To make the element invisible, we’ll set the visibility property to hidden. But (there’s always another but) that will leave a big hole where the element is positioned, so we also set the position property to absolute to take the element out of the normal display flow.
+All that sounds more complicated than the implementation, which is shown in the following listing.
+Listing 12.9. Grabbing the dimensions of hidden elements
+<div>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Suspendisse congue facilisis dignissim. Fusce sodales,
+odio commodo accumsan commodo, lacus odio aliquet purus,
+<img src="../images/ninja-with-pole.png" id="withPole" alt="ninja pole"/>
+<img src="../images/ninja-with-shuriken.png"
+id="withShuriken" style="display:none" alt="ninja shuriken" />
+vel rhoncus elit sem quis libero. Cum sociis natoque
+penatibus et magnis dis parturient montes, nascetur
+ridiculus mus. In hac habitasse platea dictumst. Donec
+adipiscing urna ut nibh vestibulum vitae mattis leo
+rutrum. Etiam a lectus ut nunc mattis laoreet at
+placerat nulla. Aenean tincidunt lorem eu dolor commodo
+ornare.
+</div>
+<script
+(function(){
+#A
+const PROPERTIES = {
+#B
+position: "absolute",
+visibility: "hidden",
+display: "block"
+};
+window.getDimensions = element => {
+#C
+const previous = {};
+#D
+for (let key in PROPERTIES) {
+previous[key] = element.style[key];
+element.style[key] = PROPERTIES[key];
+#E
+}
+const result = {
+#F
+width: element.offsetWidth,
+height: element.offsetHeight
+};
+for (let in PROPERTIES) {
+#G
+element.style[key] = previous[key];
+}
+return result;
+};
+})();
+document.addEventListener("DOMContentLoaded", () => {
+setTimeout(() => {
+const withPole = document.getElementById('withPole'),
+withShuriken = document.getElementById('withShuriken');
+assert(withPole.offsetWidth === 41,
+"Pole image width fetched; actual: " +
+withPole.offsetWidth + ", expected: 41");
+#H
+assert(withPole.offsetHeight === 48,
+"Pole image height fetched: actual: " +
+withPole.offsetHeight + ", expected 48");
+assert(withShuriken.offsetWidth === 36,
+#I
+"Shuriken image width fetched; actual: " +
+withShuriken.offsetWidth + ", expected: 36");
+assert(withShuriken.offsetHeight === 48,
+"Shuriken image height fetched: actual: " +
+withShuriken.offsetHeight + ", expected 48");
+const dimensions = getDimensions(withShuriken);
+#J
+assert(dimensions.width === 36,
+#K
+"Shuriken image width fetched; actual: " +
+dimensions.width + ", expected: 36");
+assert(dimensions.height === 48,
+"Shuriken image height fetched: actual: " +
+dimensions.height + ", expected 48");
+},3000);
+});
+</script>
+#A - Creates a private scope
+#B - Defines target properties
+#C - Creates the new function
+#D - Remembers settings
+#E - Replaces settings
+#F - Fetches dimensions
+#G - Restores settings
+#H - Tests visible element
+#I - Tests hidden element
+#J - Uses new function
+#K - Retests hidden element
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+That’s a long listing, but most of it is test code; the implementation of the new dimension-fetching function spans only a dozen or so lines of code.
+Let’s take a look at it piece by piece. First, we set up elements to test: a <div> element containing a bunch of text with two images embedded within it, left-justified by styles in an external style sheet. These image elements will be the subjects of our tests; one is visible, and one is hidden.
+Prior to running any script, the elements appear as shown in figure 12.4. If the second image weren’t hidden, it would appear as a second ninja just to the right of the visible one.
+Figure 12.4. We’ll use two images—one visible, one hidden—for testing the fetching of dimensions of hidden elements.
+Then we set about defining our new function. We’re going to use a hash for some important information, but we don’t want to pollute the global namespace with this hash; we want it to be available to the function in its local scope, but no further than that.
+We accomplish that by enclosing the hash definition and function declaration within an immediate function, which creates a local scope. The hash isn’t accessible outside the immediate function, but the getDimensions function that we also define within the immediate function has access to the hash via its closure. Nifty, eh?
+(function(){
+const PROPERTIES = {
+position: "absolute",
+visibility: "hidden",
+display: "block"
+};
+window.getDimensions = element => {
+const previous = {};
+for (let key in PROPERTIES) {
+previous[key] = element.style[key];
+element.style[key] = PROPERTIES[key];
+}
+const result = {
+width: element.offsetWidth,
+height: element.offsetHeight
+};
+for (let key in PROPERTIES) {
+element.style[key] = previous[key];
+}
+return result;
+};
+})();
+Our new dimension-fetching function is then declared, accepting the element that’s to be measured. Within that function, we first create a hash named previous in which we’ll record the previous values of the style properties that we’ll be stomping on, so that we can restore them later. Looping over the replacement properties, we then record each of their previous values and replace those values with the new ones.
+That accomplished, we’re ready to measure the element, which has now been made part of the display layout, invisible, and absolutely positioned. The dimensions are recorded in a hash assigned to local variable result.
+Now that we’ve pilfered what we came for, we erase our tracks by restoring the original values of the style properties that we modified, and we return the results as a hash containing width and height properties.
+All well and good, but does it work? Let’s find out.
+In a load handler, we perform the tests in a callback to a 3-second timer. Why, you ask? The load handler ensures that we don’t perform the test until we know that the DOM has been built, and the timer enables us to watch the display while the test is running, to make sure no display glitches occur while we fiddle with the properties of the hidden element. After all, if the display is disturbed in any way when we run our function, it’s a bust.
+In the timer callback, we first get a reference to our test subjects (the two images) and assert that we can obtain the dimensions of the visible image by using the offset properties. This test passes, which we can see if we peek ahead to figure 12.5.
+Figure 12.5. By temporarily adjusting the style properties of hidden elements, we can successfully fetch their dimensions.
+Then we make the same test on the hidden element, incorrectly assuming that the offset properties will work with a hidden image. Not surprisingly, because we’ve already acknowledged that this won’t work, the test fails.
+Next, we call our new function on the hidden image, and then retest with those results. Success! Our test passes, as shown in figure 12.5.
+If we watch the display of the page while the test is running—remember, we delay running the test until 3 seconds after the DOM is loaded—we can see that the display isn’t perturbed in any way by our behind-the-scenes adjustments of the hidden element’s properties.
+Tip
+Checking the offsetWidth and offsetHeight style properties for zeroes can serve as an incredibly efficient means of determining the visibility of an element.

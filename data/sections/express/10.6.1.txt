@@ -1,0 +1,11 @@
+
+If a hacker wants to break into your site, they've got a lot of things to try. If they know that your site is powered by Express and they know that Express or Node have some kind of security flaw, they can try to exploit it. It'd be better to leave hackers in the dark about this!
+
+By default, however, Express publicizes itself. In every request, there's an HTTP header that identifies your site as powered by Express. X-Powered-By: Express is sent with every request, by default. This can easily be disabled with a setting:
+
+Listing 10.20  Disabling X-Powered-By: Express
+
+#A Disabling the x-powered-by option disables the setting of the header.
+
+Disabling this will make it just a little harder for hackers. It'll hardly make you invincible—there are plenty of other avenues for attack—but it can help a little!
+No Express here!

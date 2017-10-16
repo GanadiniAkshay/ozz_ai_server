@@ -1,0 +1,83 @@
+5.5.3. Registering identifiers within lexical environments
+One of the driving principles behind the design of JavaScript as a programming language was its ease of use. That’s one of the main reasons for not specifying function return types, function parameter types, variable types, and so on. And you already know that JavaScript code is executed line by line, in a straightforward fashion. Consider the following:
+firstRonin = "Kiyokawa";
+secondRonin = "Kondo";
+The value Kiyokawa is assigned to the identifier firstRonin, and then the value Kondo is assigned to the identifier secondRonin. There’s nothing weird about that, right? But take a look at another example:
+const firstRonin = "Kiyokawa";
+check(firstRonin);
+function check(ronin) {
+assert(ronin === "Kiyokawa", "The ronin was checked! ");
+}
+In this case, we assign the value Kiyokawa to the identifier firstRonin, and then we call the check function with the identifier firstRonin as a parameter. But hold on a second—if the code is executed line by line, should we be able to call the check function? Our program execution hasn’t reached its declaration, so the JavaScript engine shouldn’t even know about it.
+But if we check, as shown in figure 5.13, you see that all is fine and well. JavaScript isn’t too picky about where we define our functions. We can choose to place function declarations before or even after their respective calls. This isn’t something that the developer should need to fuss about.
+Figure 5.13. The function is indeed visible, even before the execution reaches its definition.
+The process of registering identifiers
+But ease of use aside, if code is executed line by line, how did the JavaScript engine know that a function named check exists? It turns out that the JavaScript engine “cheats” a little, and that execution of JavaScript code occurs in two phases.
+The first phase is activated whenever a new lexical environment is created. In this phase, the code isn’t executed, but the JavaScript engine visits and registers all declared variables and functions within the current lexical environment. The second phase, JavaScript execution, starts after this has been accomplished; the exact behavior depends on the type of variable (let, var, const, function declaration) and the type of environment (global, function, or block).
+The process is as follows:
+If we’re creating a function environment, the implicit arguments identifier is created, along with all formal function parameters and their argument values. If we’re dealing with a nonfunction environment, this step is skipped.
+If we’re creating a global or a function environment, the current code is scanned (without going into the body of other functions) for function declarations (but not function expressions or arrow functions!). For each discovered function declaration, a new function is created and bound to an identifier in the environment with the function’s name. If that identifier name already exists, its value is overwritten. If we’re dealing with block environments, this step is skipped.
+The current code is scanned for variable declarations. In function and global environments, all variables declared with the keyword var and defined outside other functions (but they can be placed within blocks!) are found, and all variables declared with the keywords let and const defined outside other functions and blocks are found. In block environments, the code is scanned only for variables declared with the keywords let and const, directly in the current block. For each discovered variable, if the identifier doesn’t exist in the environment, the identifier is registered and its value initialized to undefined. But if the identifier exists, it’s left with its value.
+These steps are summarized in figure 5.14.
+Figure 5.14. The process of registering identifiers, depending on the type of environment
+Now we’ll go through the implications of these rules. You’ll see some common JavaScript conundrums that can lead to weird bugs that are easy to create but tricky to understand. Let’s start with why we’re able to call a function before it’s even declared.
+Calling functions before their declarations
+One of the features that makes JavaScript pleasant to use is that the order of function definitions doesn’t matter. Those who have used Pascal may not remember its rigid structural requirements fondly. In JavaScript, we can call a function even before it’s formally declared. Check out the following listing.
+Listing 5.9. Accessing a function before its declaration
+assert(typeof fun === "function",
+"fun is a function even though its definition isn't reached yet!");
+#A
+assert(typeof myFunExp === "undefined",
+#B
+"But we cannot access function expressions");
+#B
+#B
+assert(typeof myArrow === "undefined",
+#B
+"Nor arrow functions");
+#B
+function fun(){}
+#C
+var myFunExpr = function(){};
+#D
+var myArrow = (x) => x;
+#D
+#A - We can access a function that isn’t yet defined, if the function is defined as a function declaration.
+#B - We can’t access functions that are defined as function expressions or arrow functions.
+#C - The fun function is defined as a function declaration.
+#D - myFunExpr points to a function expression, and myArrow to an arrow function.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We can access the function fun even before we’ve defined it. We can do this because fun is defined as a function declaration, and the second step (listed previously in this section) indicates that functions created with function declarations are created and their identifiers registered when the current lexical environment is created, before any JavaScript code is executed. So even before we start executing our assert call, the fun function already exists.
+The JavaScript engine does this to make things easier for us as developers, allowing us to forward-reference functions and not burdening us with an exact order for placing functions. Functions already exist at the time our code starts executing.
+Notice that this holds only for function declarations. Function expressions and arrow functions aren’t part of this process, and are created when the program execution reaches their definitions. This is why we can’t access the myFunExp and myArrow functions.
+Overriding functions
+The next conundrum to tackle is the problem of overriding function identifiers. Let’s take a look at another example.
+Listing 5.10. Overriding function identifiers
+assert(typeof fun === "function", "We access the function");
+#A
+var fun = 3;
+#B
+assert(typeof fun === "number", "Now we access the number");
+#C
+function fun(){}
+#D
+assert(typeof fun === "number", "Still a number");
+#E
+#A - fun refers to a function.
+#B - Defines a variable fun and assigns a number to it
+#C - fun refers to a number.
+#D - A fun function declaration
+#E - fun still refers to a number.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, a variable declaration and a function declaration have the same name: fun. If you run this code, you’ll see that both asserts pass. In the first assert, the identifier fun refers to a function; and in the second and third, fun refers to a number.
+This behavior follows as a direct consequence of the steps taken when registering identifiers. In the second step of the outlined process, functions defined with function declarations are created and associated to their identifiers before any code is evaluated; and in the third step, variable declarations are processed, and the value undefined is associated to identifiers that haven’t yet been encountered in the current environment.
+In this case, because the identifier fun has been encountered in the second step when function declarations are registered, the value undefined isn’t assigned to the variable fun. This is why the first assertion, testing whether fun is a function, passes. After that, we have an assignment statement, var fun = 3, which assigns the number 3 to the identifier fun. By doing this, we lose the reference to the function, and from then on, the identifier fun refers to a number.
+During the actual program execution, function declarations are skipped, so the definition of the fun function doesn’t have any impact on the value of the fun identifier.
+Variable hoisting
+If you’ve read a bunch of JavaScript blogs or books explaining identifier resolution, you’ve probably run into the term hoisting—for example, variable and function declarations are hoisted, or lifted, to the top of a function or global scope.
+As you’ve seen, though, that’s a simplistic view. Variables and function declarations are technically not “moved” anywhere. They’re visited and registered in lexical environments before any code is executed. Although hoisting, as it’s most often defined, is enough to provide a basic understanding of how JavaScript scoping works, we’ve gone much deeper than that by looking at lexical environments, taking another step on the path of becoming a true JavaScript ninja.
+In the next section, all the concepts that we’ve explored so far in this chapter will help you better understand closures.

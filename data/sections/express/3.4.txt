@@ -1,0 +1,41 @@
+
+Websites are built with HTML. They've been built that way for a long, long time. While single-page apps are en vogue (and totally possible with Express), it's often the case that you want the server to dynamically generate HTML. You might want to serve HTML that greets the currently logged-in user, or maybe you want to dynamically generate a data table.
+
+There are a number of different view engines out there. There's EJS (which stands for "embedded JavaScript"), Handlebars, Jade, and more. There are even ports of templating languages from other programming worlds, like Swig and HAML. All of these have one thing in common: at the end of the day, they spit out HTML.
+
+For the rest of these examples, we'll use EJS. I chose EJS because it's a popular option made by the people who created Express. I hope you'll like it, but if you don't, there are plenty of alternatives which we'll discuss in Chapter 7.
+
+Here's what it looks like to set up views:
+
+Listing 3.15 Setting up views with Express
+
+#A This tells Express that your views will be in a folder called views. We could put it in another path, but "views" is a common name.
+
+#B This tells Express that you're going to use the EJS templating engine.
+
+The first block is the same as always: require what we need to. Then we say "our views are in a folder called views". After that, we say "use EJS". EJS (documentation at https://github.com/tj/ejs) is a templating language that compiles to HTML.
+
+Now, we've set up these views. How do we use them? What is this EJS business?
+
+Let's start by making a file called index.ejs and put it into a directory called views. It might look like this:
+
+Listing 3.16 A simple EJS file
+
+This should look exactly like HTML to you, but for the one weird bit inside the body tag. EJS is a superset of HTML, so everything that's valid HTML is valid EJS. But EJS also adds a few new features, like variable interpolation. <%= message %> will interpolate a variable called message, which we'll pass when we render the view from Express. Here's what that looks like:
+
+Listing 3.17 Rendering a view from Express
+
+Express adds a method to response, called render. It basically looks at the view engine and views //the?// directory (which we defined earlier) and renders index.ejs with the variables you pass in.
+
+The code in Listing 3.17 would render the following HTML:
+
+Listing 3.18 A simple EJS file, rendered
+
+#A Notice that this is the variable we specified in the render method above.
+
+The last step is to install EJS, because it's not bundled with Express. Install it with npm install ejs --save.
+
+EJS is a popular solution to views, but there are a number of other options.
+
+We'll explore other options in later chapters.
+Views

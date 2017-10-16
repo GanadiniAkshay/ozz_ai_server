@@ -1,0 +1,43 @@
+
+Understanding the big concepts in Node will help you understand the built-in module that's most important to Express: its HTTP module. It's the module that makes it possible to develop web servers with Node, and it's what Express is built on.
+
+Node's http module has various features (making requests to other servers, for instance) but we'll use its HTTP server component: a function called http.createServer. This function takes a callback that's called every time a request comes into your server, and it returns a server object. Here's a very simple server that sends "hello world" with every request (which you can save into myserver.js if you'd like to run it):
+
+Listing 2.12 A simple "hello world" web server with Node
+
+#A Require Node's built-in HTTP module.
+
+#B Define a function that'll handle incoming HTTP requests.
+
+#C Create a server that uses your function to handle requests.
+
+#D Start the server listening on port 3000.
+
+This code is split up into four chunks above.
+
+The first chunk simply requires the HTTP module and puts it into a variable called http. We saw this above with the URL module and the file system module—this is exactly the same.
+
+Next, we define a request handler function. Nearly every bit of code in this book is either a request handler function or a way to call one, so listen up! These request handler functions take two arguments: an object that represents the request (often shortened to req) and an object that represents the response (often shortened to res). The request object has things like the URL that the browser requested (did they request the homepage or the about page?), or the type of browser visiting your page (called the user-agent), or things like that. You call methods on the response object and Node will package up the bytes and send them across the internet.
+
+The rest of the code points Node's built-in HTTP server at the request handler function and starts it on port 3000.
+
+What about HTTPS? Node also comes with a module called https. It's very similar to the http module, and creating a web server with it is almost identical. If you decide to swap things out later, it should take less than 2 minutes if you know how to do HTTPS. If you don't know much about HTTPS, don't worry about this.
+
+You can try saving the code above into a file called myserver.js. To run the server, type node myserver.js (or just node myserver). Now, if you visit http://localhost:3000 in your browser, you'll see something like Figure 2.??.
+
+Figure 2.2 A simple, simple Hello world app.
+
+You'll also notice that something appears in your console every time you visit a page. Try visiting a few other URLs: http://localhost:3000/ or http://localhost:3000/hello/world or http://localhost:3000/what?is=anime. The output will change in the console, but your server won't do anything different and will always just say "Hello, world!" Figure 2.?? shows what your console might look like:
+
+Figure 2.3 The console from your "hello world" app might look something like this.
+
+Notice that the request URL doesn't include "localhost:3000" anywhere. That might be a little unintuitive, but this is pretty helpful, as it turns out. This allows you to deploy your application anywhere, from your local server to your favorite .com address. It'll work without any changes!
+
+One could imagine parsing the request URL. You could imagine doing something like this:
+
+Listing 2.13  Parsing the request URL with a request handler function
+
+You could imagine building your entire site in this one request handler function. For very small sites, this might be easy, but you could imagine this function getting huge and unwieldy pretty quickly. You might want a framework to help you clean up this HTTP server…things could get messy!
+
+That's where Express will come in.
+Building a web server with Node: the HTTP Module

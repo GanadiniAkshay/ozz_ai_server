@@ -1,0 +1,54 @@
+8.2.2. Using proxies for measuring performance
+Besides being used for logging property accesses, proxies can be used for measuring the performance of function invocations, without even modifying the source code of a function. Say we want to measure the performance of a function that calculates whether a number is a prime, as shown in the following listing.
+Listing 8.10. Measuring performance with proxies
+function isPrime(number){
+#A
+if(number < 2) { return false; }
+#A
+#A
+for(let i = 2; i < number; i++) {
+#A
+if(number % i === 0) { return false; }
+#A
+}
+#A
+#A
+return true;
+#A
+}
+#A
+isPrime = new Proxy(isPrime, {
+#B
+apply: (target, thisArg, args) => {
+#C
+console.time("isPrime");
+#D
+const result = target.apply(thisArg, args);
+#E
+console.timeEnd("isPrime");
+#F
+return result;
+}
+});
+isPrime(1299827);
+#G
+#A - Defines a primitive implementation of the isPrime function
+#B - Wraps the isPrime function within a proxy
+#C - Provides an apply trap that will be called whenever a proxy is called as a function
+#D - Starts a timer called isPrime
+#E - Invokes the target function
+#F - Stops the timer and outputs the result
+#G - Calls the function. The call works the same as if we’d called the original function.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":11,\"ch\":2},{\"line\":11,\"ch\":37}],[{\"line\":1,\"ch\":33},{\"line\":1,\"ch\":34}],[{\"line\":4,\"ch\":42},{\"line\":4,\"ch\":43}],[{\"line\":5,\"ch\":2},{\"line\":5,\"ch\":3}],[{\"line\":8,\"ch\":0},{\"line\":8,\"ch\":1}],[{\"line\":19,\"ch\":2},{\"line\":19,\"ch\":3}],[{\"line\":20,\"ch\":0},{\"line\":20,\"ch\":1}]]"}
+!@%STYLE%@!
+In this example, we have a simple isPrime function. (The exact function doesn’t matter; we’re using it as an example of a function whose execution can last a nontrivial amount of time.)
+Now imagine that we need to measure the performance of the isPrime function, but without modifying its code. We could wrap the function into a proxy that has a trap that will be called whenever the function is called:
+isPrime = new Proxy(isPrime, {
+apply: (target, thisArg, args) => {
+...
+}
+});
+We use the isPrime function as the target object of a newly constructed proxy. In addition, we supply a handler with an apply trap that will be executed on function invocation.
+Similarly, as in the previous example, we’ve assigned the newly created proxy to the isPrime identifier. In that way, we don’t have to change any of the code that calls the function whose execution time we want to measure; the rest of the program code is completely oblivious to our changes. (How’s that for some ninja stealth action?)
+Whenever the isPrime function is called, that call is rerouted to our proxy’s apply trap, which will start a stopwatch with the built-in console.time method (remember chapter 1), call the original isPrime function, log the elapsed time, and finally return the result of the isPrime invocation.

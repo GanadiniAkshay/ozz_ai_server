@@ -1,0 +1,100 @@
+4.3.1. Using arrow functions to get around function contexts
+Besides allowing us to create functions in a more elegant way than standard function declarations and function expressions, the arrow functions introduced in the previous chapter have one feature that makes them particularly good as callback functions: Arrow functions don’t have their own this value. Instead, they remember the value of the this parameter at the time of their definition. Let’s revisit our problem with button-click callbacks in the following listing.
+Listing 4.13. Using arrow functions to work around callback function contexts
+<button id="test">Click Me!</button>
+#A
+<script>
+function Button(){
+#B
+this.clicked = false;
+this.click = () => {
+#C
+this.clicked = true;
+assert(button.clicked,"The button has been clicked");//
+#D
+};
+}
+var button = new Button();
+var elem = document.getElementById("test");
+#E
+elem.addEventListener("click", button.click);
+#E
+</script>
+#A - A button element to which we’ll assign an event handler
+#B - A constructor function that creates objects that retain state regarding our button. With it, we’ll track whether the button has been clicked.
+#C - Declares the arrow function that we’ll use as the click handler. Because it’s a method of the object, we use this within the function to get a reference to the object.
+#D - Within the method, we test that the button state has been correctly changed after a click.
+#E - Establishes the click handler on the button
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":4,\"ch\":17},{\"line\":4,\"ch\":22}]]"}
+!@%STYLE%@!
+The only change, when compared to listing 4.10, is that listing 4.13 uses an arrow function:
+this.click = () = > {
+this.clicked = true;
+assert(button.clicked, "The button has been clicked");
+};
+Now, if we run the code, we’ll get the output shown in figure 4.6.
+Figure 4.6. Arrow functions don’t have their own context. Instead, the context is inherited from the function in which they’re defined. The this parameter in our arrow function callback refers to the button object.
+As you can see, all is well now. The button object keeps track of the clicked state. What happened is that our click handler was created inside the Button constructor as an arrow function:
+function Button(){
+this.clicked = false;
+this.click = () => {
+this.clicked = true;
+assert(button.clicked, "The button has been clicked");
+};
+}
+As we already mentioned, arrow functions don’t get their own implicit this parameter when we call them; instead they remember the value of the this parameter at the time they were created. In our case, the click arrow function was created inside a constructor function, where the this parameter is the newly constructed object, so whenever we (or the browser) call the click function, the value of the this parameter will always be bound to the newly constructed button object.
+Caveat: Arrow functions and object literals
+Because the value of the this parameter is picked up at the moment that the arrow function is created, some seemingly strange behaviors can result. Let’s go back to our button-click handler example. Let’s say we’ve come to the conclusion that we don’t need a constructor function, because we have only one button. We replace it with a simple object literal, in the following way.
+Listing 4.14. Arrow functions and object literals
+<button id="test">Click Me!</button>
+<script>
+assert(this === window, "this === window");
+#A
+var button = {
+#B
+clicked: false,
+click: () => {
+#C
+this.clicked = true;
+assert(button.clicked,"The button has been clicked");
+#D
+assert(this === window, "In arrow function this === window");
+#E
+assert(window.clicked, "clicked is stored in window");
+#F
+}
+}
+var elem = document.getElementById("test");
+elem.addEventListener("click", button.click);
+</script>
+#A - The value of the this parameter in global code is the global window object.
+#B - The button object is defined as an object literal.
+#C - Our arrow function is a property of an object literal.
+#D - Test whether the button was clicked.
+#E - The value of this in our arrow function is the global window object.
+#F - clicked is stored on window.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+If we run listing 4.14, we’ll again be disappointed, because the button object has once more failed to track the clicked state. See figure 4.7.
+Figure 4.7. If an arrow function is defined within an object literal that’s defined in global code, the value of the this parameter associated with the arrow function is the global window object.
+Luckily, we’ve scattered a couple of assertions throughout our code that will help. For example, we’ve placed the following directly in global code, in order to check the value of the this parameter:
+assert(this === window, "this === window");
+Because the assertion passes, we can be sure that in global code this refers to the global window object.
+We follow this by specifying that the button object literal has a click arrow function property:
+var button = {
+clicked: false,
+click: () => {
+this.clicked = true;
+assert(button.clicked,"The button has been clicked");
+assert(this === window, "In arrow function this === window");
+assert(window.clicked, "Clicked is stored in window");
+};
+}
+Now, we’ll again revisit our little rule: Arrow functions pick up the value of the this parameter at the moment of their creation. Because the click arrow function is created as a property value on an object literal, and the object literal is created in global code, the this value of the arrow function will be the this value of the global code. And, as we’ve seen from the first assertion placed in our global code
+assert(this === window, "this === window");
+the value of the this parameter in global code is the global window object. Therefore, our clicked property will be defined on the global window object, and not on our button object. Just to be sure, in the end, we check that the window object has been assigned a clicked property:
+assert(window.clicked, "Clicked is stored in window");
+As you can see, failing to keep in mind all the consequences of arrow functions can lead to some subtle bugs, so be careful!
+Now that we’ve explored how arrow functions can be used to circumvent the problem of function contexts, let’s continue with another method for fixing the same problem.

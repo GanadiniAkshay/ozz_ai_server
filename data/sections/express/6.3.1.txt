@@ -1,0 +1,47 @@
+
+The HTTP spec defines methods like this:
+
+The Method token indicates the method to be performed on the resource identified by the Request-URI. The method is case-sensitive.
+
+Ugh, that's hard to read.
+
+A human might understand it this way: a client sends an HTTP request to the server with a method. They can choose any method they want, but there are really only a handful that you use. The server sees that method and responds accordingly.
+
+There's nothing baked into HTTP that prevents it from defining any method you want, but web applications typically use the following four:
+
+1. GET is probably the most common HTTP method anyone uses. As the name suggests, it gets resources. When you load someone's homepage, you GET it. When you load an image, you GET it. GET methods shouldn't change the state of your app; the other methods do that.
+
+Idempotence is important to GET requests. "Idempotent" is a fancy word that means "doing it once should be no different than doing it many times". If you GET an image once and then refresh 500 times, the image shouldn't ever change. That's not to say that the response can never change -- a page could change based on a changing stock price, or a new time of day -- but GETs shouldn't cause that change.
+
+2. POST is another common one, and is generally used to request a change to the state of the server. You POST a blog entry; you POST a photo to your favorite social network; you POST when you sign up for a new account on a website. POST is used to create records on servers, not modify existing records -- that's what PUT and DELETE are for, as discussed below.
+
+POST is also used for actions, like "buy this item".
+
+POST, unlike GET, is non-indempotent. That means that the state will change the first time you POST, and the second time, and the third time, and so on.
+
+3. PUT has the worst name of the four, in my opinion; I think a name like "update" or "change" would suit it better. If I've published (POSTed) a job profile online and later want to update it, I would PUT those changes. I could PUT changes to a document, or to a blog entry, or something else. (We don't use PUT to delete entries, though; that's what DELETE is for, as we'll see next.)
+
+PUT has another interesting part; if you try to PUT changes to a record that doesn't exist, the server can (but doesn't have to) create that record. You probably wouldn't want to update a profile that doesn't exist, but you might want to update a page on a personal website whether it exists or not.
+
+PUT is idempotent, which wasn't immediately intuitive to me, but it eventually made sense. Let's say I'm "Evan Hahn" on a website but I want to change it to "Max Fightmaster". I don't PUT "change name from Evan Hahn to Max Fightmaster"; I PUT "change my name to Max Fightmaster; I don't care what it was before". This allows it to be idempotent; I could do this once or 500 times, and my name would still be Max Fightmaster.
+
+4. DELETE is probably the easiest to describe. Like PUT, you basically specify "DELETE record 123". You could DELETE a blog entry, or DELETE a photo, or DELETE a comment. That's it!
+
+DELETE is idempotent in the same way that PUT is. Let's say I've accidentally published (POSTed) an embarrassing photo of me wearing a lampshade over my head. If I don't want it on there, I can DELETE it. Now it's gone! It doesn't matter whether I ask for it to be deleted once or 500 times; it's going to be gone. (Phew!)
+
+There's nothing that strictly enforces these constraints -- you could theoretically use GET requests to do what POST requests should do, for example -- but it's bad practice and against the HTTP specification. It's not what people expect. Many browsers also have different behaviors depending on the type of HTTP request, so you always make an effort to use the right ones.
+
+HTTP specifies a number of other verbs, but I've never had a need to stray very far from those four.
+
+"Verbs" or "methods"? The specification for HTTP 1.0 and 1.1 uses the word "method" when describing this concept, so I suppose that's technically correct. "Verb" is also used. For our purposes, I'll mostly call them "verbs" because that's what the Express documentation says. Know that you can use both (and that the nitpicky should call them "methods").
+
+In Express, you've already seen how to handle different HTTP methods. To refresh your memory, here's a simple application that responds to each different method with a little message:
+
+Listing 6.4 Handling different HTTP verbs
+
+If you start this application (if it's saved as app.js, run node app.js), you can use the handy cURL command-line tool to try sending different requests. cURL sends GET requests by default, but you can use its -X argument to send other verbs. For example, curl -X PUT http://localhost:3000 will send a PUT request.
+
+Figure 6.5 Using the cURL tool to send different requests to our server.
+
+This should all be review from previous chapters: you can handle different HTTP methods with different handlers.
+HTTP verbs (also known as HTTP methods)

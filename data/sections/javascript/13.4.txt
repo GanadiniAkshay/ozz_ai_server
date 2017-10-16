@@ -1,0 +1,15 @@
+13.4. Summary
+An event-loop task represents an action performed by the browser. Tasks are grouped into two categories:
+Macrotasks are discrete, self-contained browser actions such as creating the main document object, handling various events, and making URL changes.
+Microtasks are smaller tasks that should be executed as soon as possible. Examples include promise callbacks and DOM mutation changes.
+Because of the single-threaded execution model, tasks are processed one at a time, and after a task starts executing, it can’t be interrupted by another task. The event loop usually has at least two event queues: a macrotask queue and a microtask queue.
+Timers provide the ability to asynchronously delay the execution of a piece of code by at least some number of milliseconds.
+Use the setTimeout function to execute a callback once after the specified delay has elapsed.
+Use the setInterval function to initiate a timer that will try to execute the callback at the specified delay interval, until canceled.
+Both functions return an ID of the timer that we can use to cancel a timer through the clearTimeout and clearInterval functions.
+Use timers to break up computationally expensive code into manageable chunks that won’t clog the browser.
+The DOM is a hierarchical tree of elements, and an event that occurs on an element (the target) is usually propagated through the DOM. There are two propagation mechanisms:
+In event capturing, the event trickles down from the top element all the way to the target element.
+In event bubbling, the event bubbles up from the target element all the way to the top element.
+When calling event handlers, the browser also passes in an event object. Access the element on which the event has occurred through the event’s target property. Within the handler, use the this keyword to refer to the element on which the handler has been registered.
+Use custom events, created through the built-in CustomEvent constructor, and dispatched with the dispatchEvent method, to reduce coupling between different parts of your application.

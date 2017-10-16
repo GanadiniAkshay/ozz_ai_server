@@ -1,0 +1,45 @@
+7.2.3. Object typing via constructors
+Although it’s great to know how JavaScript uses the prototype to find the correct property references, it’s also handy to know which function constructed an object instance. As you’ve seen earlier, the constructor of an object is available via the constructor property of the constructor function prototype. For example, figure 7.11 shows the state of the application when we instantiate an object with the Ninja constructor.
+Figure 7.11. The prototype object of each function has a constructor property that references the function.
+By using the constructor property, we can access the function that was used to create the object. This information can be used as a form of type checking, as shown in the next listing.
+Listing 7.5. Examining the type of an instance and its constructor
+function Ninja(){}
+const ninja = new Ninja();
+assert(typeof ninja === "object",
+#A
+"The type of the instance is object.");
+assert(ninja instanceof Ninja,
+#B
+"instanceof identifies the constructor." );
+assert(ninja.constructor === Ninja,
+#C
+"The ninja object was created by the Ninja function.");
+#A - Tests the type of ninja via typeof. This tells us it’s an object, but not much else.
+#B - Tests the type of ninja via instanceof. This provides more information—that it was constructed from Ninja.
+#C - Tests the type of ninja via the constructor reference. This gives a reference to the constructor function.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We define a constructor and create an object instance using it. Then we examine the type of the instance by using the typeof operator. This doesn’t reveal much, as all instances will be objects, thus always returning object as the result. Much more interesting is the instanceof operator, which gives us a way to determine whether an instance was created by a particular function constructor. You’ll learn more about how the instanceof operator works later in the chapter.
+In addition, we can use the constructor property, that we now know is accessible to all instances, as a reference to the original function that created it. We can use this to verify the origin of the instance (much as we can with the instanceof operator).
+Additionally, because this is just a reference to the original constructor, we can instantiate a new Ninja object using it, as shown in the next listing.
+Listing 7.6. Instantiating a new object using a reference to a constructor
+function Ninja(){}
+const ninja = new Ninja();
+const ninja2 = new ninja.constructor();
+#A
+assert(ninja2 instanceof Ninja, "It's a Ninja!");
+#B
+assert(ninja !== ninja2, "But not the same Ninja!");
+#C
+#A - Constructs a second Ninja from the first
+#B - Proves the new object’s Ninja-ness
+#C - They aren’t the same object, but two distinct instances.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we define a constructor and create an instance using that constructor. Then we use the constructor property of the created instance to construct a second instance. Testing shows that a second Ninja has been constructed and that the variable doesn’t merely point to the same instance.
+What’s especially interesting is that we can do this without even having access to the original function; we can use the reference completely behind the scenes, even if the original constructor is no longer in scope.
+Note
+Although the constructor property of an object can be changed, doing so doesn’t have any immediate or obvious constructive purpose (though we might be able to think of some malicious ones). The property’s reason for being is to indicate from where the object was constructed. If the constructor property is overwritten, the original value is lost.
+That’s all useful, but we’ve just scratched the surface of the superpowers that prototypes confer on us. Now things get interesting.

@@ -1,0 +1,11 @@
+
+Any Express application will depend on at least one third-party module: Express. If the rest of this book has shown you anything, it's that you'll be depending on lots of third-party modules. This has the huge advantage that you don't have to write a lot of boilerplate code, but it does come with one cost: you're putting your trust in these modules. What if the module creates a security problem?
+
+There are three big ways that you can keep your dependencies safe:
+
+1. Audit the code yourself
+
+2. Make sure you're on the latest versions
+
+3. Check against the Node Security Project
+Keeping your dependencies safe

@@ -1,0 +1,110 @@
+8.2. Using proxies to control access
+A proxy is a surrogate through which we control access to another object. It enables us to define custom actions that will be executed when an object is being interacted with—for example, when a property value is read or set, or when a method is called. You can think of proxies as almost a generalization of getters and setters; but with each getter and setter, you control access to only a single object property, whereas proxies enable you to generically handle all interactions with an object, including even method calls.
+We can use proxies when we’d traditionally use getters and setters, such as for logging, data validation, and computed properties. But proxies are even more powerful. They allow us to easily add profiling and performance measurements to our code, autopopulate object properties in order to avoid pesky null exceptions, and to wrap host objects such as the DOM in order to reduce cross-browser incompatibilities.
+Note
+Proxies are introduced by ES6. For current browser support, see http://mng.bz/9uEM.
+In JavaScript, we can create proxies by using the built-in Proxy constructor. Let’s start simple, with a proxy that intercepts all attempts to read and write to properties of an object.
+Listing 8.7. Creating proxies with the Proxy constructor
+const emperor = { name: "Komei" };
+#A
+const representative = new Proxy(emperor, {
+#B
+get: (target, key) => {
+#C
+report("Reading " + key + " through a proxy");
+#C
+return key in target ? target[key]
+#C
+: "Don't bother the emperor!"
+#C
+},
+#C
+set: (target, key, value) => {
+#C
+report("Writing " + key + " through a proxy");
+#C
+target[key] = value;
+#C
+}
+#C
+});
+assert(emperor.name === "Komei", "The emperor's name is Komei");
+#D
+assert(representative.name === "Komei",
+#D
+"We can get the name property through a proxy");
+#D
+assert(emperor.nickname === undefined,
+#E
+"The emperor doesn’t have a nickname ");
+#E
+assert(representative.nickname === "Don't bother the emperor!",
+#F
+"The proxy jumps in when we make inproper requests");
+#F
+representative.nickname = "Tenno";
+#G
+assert(emperor.nickname === "Tenno",
+#G
+"The emperor now has a nickname");
+#G
+assert(representative.nickname === "Tenno",
+#G
+"The nickname is also accessible through the proxy");
+#G
+#A - The emperor is our target object.
+#B - Creates a proxy with the Proxy constructor that takes in the object the proxy wraps...
+#C - ...and an object with traps that will be called when reading (get) and writing (set) to properties.
+#D - Accesses the name property both through the emperor object and through the proxy object
+#E - Accessing a non-existing property directly on the object returns undefined.
+#F - Accessing a property through a proxy detects that the object doesn’t exist in our target object, so a warning message is returned.
+#G - Adds a property through the proxy. The property is accessible both through the target object and through the proxy.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":1,\"ch\":23},{\"line\":1,\"ch\":32}]]"}
+!@%STYLE%@!
+We first create our base emperor object that has only a name property. Next, by using the built-in Proxy constructor, we wrap our emperor object (or target object, as it’s commonly called) into a proxy object named representative. During proxy construction, as a second argument, we also send an object that specifies traps, functions that will be called when certain actions are performed on an object:
+const representative = new Proxy(emperor, {
+get: (target, key) => {
+report("Reading " + key + " through a proxy");
+return key in target ? target[key]
+: "Don't bother the emperor!"
+},
+set: (target, key, value) => {
+report("Writing " + key + " through a proxy");
+target[key] = value;
+}
+});
+In this case, we’ve specified two traps: a get trap that will be called whenever we try to read a value of a property through the proxy, and a set trap that will be called whenever we set a property value through the proxy. The get trap performs the following functionality: If the target object has a property, that property is returned; and if the object doesn’t have a property, we return a message warning our user not to bother the emperor with frivolous details.
+get: (target, key) => {
+report("Reading " + key + " through a proxy");
+return key in target ? target[key]
+: "Don't bother the emperor!"
+}
+Next, we test that we can access the name property both directly through the target emperor object as well as through our proxy object:
+assert(emperor.name === "Komei", "The emperor's name is Komei");
+assert(representative.name === "Komei",
+"We can get the name property through a proxy");
+If we access the name property directly through the emperor object, the value Komei is returned. But if we access the name property through the proxy object, the get trap is implicitly called. Because the name property is found in the target emperor object, the value Komei is also returned. See figure 8.4.
+Figure 8.4. Accessing the name property directly (on the left) and indirectly, through a proxy (on the right)
+Note
+It’s important to emphasize that proxy traps are activated in the same way as getters and setters. As soon as we perform an action (for example, accessing a property value on a proxy), the matching trap gets implicitly called, and the JavaScript engine goes through a similar process as if we’ve explicitly invoked a function.
+On the other hand, if we access a nonexisting nickname property directly on the target emperor object, we’ll get, unsurprisingly, an undefined value. But if we try to access it through our proxy object, the get handler will be activated. Because the target emperor object doesn’t have a nickname property, the proxy’s get trap will return the Don't bother the emperor! message.
+We’ll continue the example by assigning a new property through our proxy object: representative.nickname = "Tenno". Because the assignment is done through a proxy, and not directly, the set trap, which logs a message and assigns a property to our target emperor object, is activated:
+set: (target, key, value) => {
+report("Writing " + key + " through a proxy");
+target[key] = value;
+}
+Naturally, the newly created property can be accessed both through the proxy object and the target object:
+assert(emperor.nickname === "Tenno",
+"The emperor now has a nickname");
+assert(representative.nickname === "Tenno",
+"The nickname is also accessible through the proxy");
+This is the gist of how to use proxies: Through the Proxy constructor, we create a proxy object that controls access to the target object by activating certain traps, whenever an operation is performed directly on a proxy.
+In this example, we’ve used the get and set traps, but many other built-in traps allow us to define handlers for various object actions (see http://mng.bz/ba55). For example:
+The apply trap will be activated when calling a function, and the construct trap when using the new operator.
+The get and set traps will be activated when reading/writing to a property.
+The enumerate trap will be activated for for-in statements.
+getPrototypeOf and setPrototypeOf will be activated for getting and setting the prototype value.
+We can intercept many operations, but going through all of them is outside the scope of this book. For now, we turn our attention to a few operations that we can’t override: equality (== or ===), instanceof, and the typeof operator.
+For example, the expression x == y (or a stricter x === y) is used to check whether x and y refer to identical objects (or are of the same value). This equality operator has some assumptions. For example, comparing two objects should always return the same value for the same two objects, which isn’t something that we can guarantee if that value is determined by a user-specified function. In addition, the act of comparing two objects shouldn’t give access to one of those objects, which would be the case if equality could be trapped. For similar reasons, the instanceof and the typeof operators can’t be trapped.
+Now that we know how proxies work and how to create them, let’s explore some of their practical aspects, such as how to use proxies for logging, performance measurement, autopopulating properties, and implementing arrays that can be accessed with negative indexes. We’ll start with logging.

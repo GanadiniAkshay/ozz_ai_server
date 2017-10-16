@@ -1,0 +1,21 @@
+
+Writing reliable code can be difficult. Even small software can have be too complex for one person, which can create bugs. Developers have come up with a number of tricks to try to squash these errors. Compilers and syntax checkers automatically scan your code for potential bugs; peer code reviews let other people look at what's written to see if they can spot errors; style guides can keep teams of developers on the same page. These are all helpful tricks we play that keep our code more reliable and bug-free.
+
+Another powerful way to tackle bugs is with automated testing. Automated testing lets us codify (literally!) how we want our software to behave, and lets us say “My code works!” with much more confidence. It lets us refactor code without worrying if we broke something, and gives us easy feedback about where our code fails.
+
+We want these benefits for our Express applications! By the end of this chapter, you'll:
+
+·   Understand the motivation for testing at a high level
+
+·   Understand the different types of testing
+
+·   Be able to do test-driven development, understanding and using the red-green-refactor model of development
+
+·   Write, run, and organize  tests for general Node.js code to make sure your functions and models work as intended (using tools called Mocha and Chai)
+
+·   Test your Express applications  to make sure your servers are behaving as they should (with a module called Supertest)
+
+·   Test HTML responses to make sure your views are generating the correct HTML (using a jQuery-like module called  Cheerio)
+
+Let's get started putting this components together.
+ Testing Express Applications

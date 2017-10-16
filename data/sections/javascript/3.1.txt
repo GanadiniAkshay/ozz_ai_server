@@ -1,0 +1,45 @@
+3.1. What’s with the functional difference?
+One of the reasons that functions and functional concepts are so important in JavaScript is that functions are primary modular units of execution. Except for the global JavaScript code executed in the page-building phase, all of the script code that we’ll write for our pages will be within a function.
+Because most of our code will run as the result of a function invocation, you’ll see that having functions that are versatile and powerful constructs gives us a great deal of flexibility and sway when writing code. Significant chunks of this book explain just how the nature of functions as first-class objects can be exploited to our great benefit. But first, let’s take a look at some of the actions we can take with objects. In JavaScript, objects enjoy certain capabilities:
+They can be created via literals: var ninja = {};
+They can be assigned to variables, array entries, and properties of other objects:
+var ninja = {};
+#A
+ninjaArray.push({});
+#B
+ninja.data = {};
+#C
+#A - Assigns a new object to a variable
+#B - Adds a new object to an array
+#C - Assigns a new object as a property of another object
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+They can be passed as arguments to functions:
+function hide(ninja){
+ninja.visibility = false;
+}
+hide({});
+#A
+#A - A newly created object passed as an argument to a function
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":5,\"ch\":0},{\"line\":5,\"ch\":63}]]"}
+!@%STYLE%@!
+They can be returned as values from functions:
+function returnNewNinja() {
+return {};
+#A
+}
+#A - Returns a new object from a function
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":4,\"ch\":0},{\"line\":4,\"ch\":41}]]"}
+!@%STYLE%@!
+They can possess properties that can be dynamically created and assigned:
+var ninja = {};
+ninja.name = "Hanzo";
+#A
+#A - Creates a new property on an object
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":3,\"ch\":0},{\"line\":3,\"ch\":40}]]"}
+!@%STYLE%@!
+It turns out that, unlike in many other programming languages, in JavaScript we can do almost the exact same things with functions also.

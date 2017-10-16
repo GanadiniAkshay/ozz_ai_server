@@ -1,0 +1,19 @@
+
+In the first chapter, we talked about what Node.js is. We discussed that it's JavaScript, it is asynchronous in nature, and that it has a rich set of third-party modules. If you're like me, you didn't totally understand these things when you first started with Node. This chapter aims to give the intro to Node that I wish I had: short and sweet.
+
+We'll talk about
+
+·   Installing Node
+
+·   How to use its module system
+
+·   How to install third-party packages
+
+·   Some examples of its fancy "evented I/O".
+
+·   Some tricks for running your Node code nicely.
+
+NOTE I'm going to assume that you know a fair bit of JavaScript and that you don't want an extremely thorough knowledge of Node from this chapter. I'm also going to assume that you have a working understanding of how to use the command line. If this whirlwind introduction to Node is a little too whirlwind, check out Node.js in Action at http://www.manning.com/cantelon/ for more.
+
+Let's get started.
+ The Basics of Node.js

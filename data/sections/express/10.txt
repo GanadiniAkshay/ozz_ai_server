@@ -1,0 +1,21 @@
+
+In Chapter 8, I told you that I had three favorite chapters.  The first was Chapter 3, where I discussed the foundations of Express in an attempt to give you a solid understanding of the framework. The second favorite was Chapter 8, where your applications used databases to become “more real”. Welcome to my final favorite: the chapter about security.
+
+I probably don’t have to tell you that computer security is important, and becoming more so by the day. You’ve surely seen news headlines about data breaches, cyber-warfare, and “hacktivism”. As our world moves more and more into the digital sphere, our digital security becomes more and more important.
+
+Keeping your Express applications secure should (hopefully) be important—who wants to be hacked? In this chapter, we’ll discuss the various ways your applications could be subverted and how to defend yourself. More specifically, we’ll talk about:
+
+·   How the “security mindset” can help you spot security holes
+
+·   Keeping your code bug-free (insofar as possible!)
+
+·   Protecting your users against cross-site scripting, cross-site request forgery, and man-in-the-middle attacks
+
+·   Handling the inevitable server crash
+
+·   Auditing your third-party code
+
+·   Various minor security tactics; fixing browser bugs, preventing “clickjacking”, etc.
+
+This chapter doesn’t have as much of a singular flow as the others. We’ll find ourselves exploring a topic and then jumping to another, and while there may be some similarities, most of these attacks are relatively disparate.
+ Security

@@ -1,0 +1,16 @@
+6.4.1. Looking forward—the async function
+Notice that we still had to write some boilerplate code; we had to develop an async function that takes care of handling promises and requesting values from the generator. Although we can write this function only once and then reuse it throughout our code, it would be even nicer if we didn’t have to think about it. The people in charge of JavaScript are well aware of the usefulness of the combination of generators and promises, and they want to make our lives even easier by building in direct language support for mixing generators and promises.
+For these situations, the current plan is to include two new keywords, async and await, that would take care of this boilerplate code. Soon, we’ll be able to write something like this:
+(async function (){
+try {
+const ninjas = await getJSON("data/ninjas.json");
+const missions = await getJSON(missions[0].missionsUrl);
+console.log(missions);
+}
+catch(e) {
+console.log("Error: ", e);
+}
+})()
+We use the async keyword in front of the function keyword to specify that this function relies on asynchronous values, and at every place where we call an asynchronous task, we place the await keyword that says to the JavaScript engine, please wait for this result without blocking. In the background, everything happens as we’ve discussed previously throughout the chapter, but now we don’t need to worry about it.
+Note
+Async functions will appear in the next installment of JavaScript. Currently no browser supports it, but you can use transpilers such as Babel or Traceur if you wish to use async in your code today.

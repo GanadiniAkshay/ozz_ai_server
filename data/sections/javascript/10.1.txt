@@ -1,0 +1,39 @@
+10.1. Why regular expressions rock
+Let’s say we want to validate that a string, perhaps entered into a form by a website user, follows the format for a nine-digit U.S. postal code. We all know that the U.S. Postal Service has little sense of humor and insists that a postal code (also known as a ZIP code) follows this specific format:
+99999-9999
+Each 9 represents a decimal digit, and the format is 5 decimal digits, followed by a hyphen, followed by 4 decimal digits. If you use any other format, your package or letter gets diverted into the black hole of the hand-sorting department, and good luck predicting how long it will take to emerge again.
+Let’s create a function that, given a string, verifies that the U.S. Postal Service will stay happy. We could resort to performing a comparison on each character, but we’re a ninja and that’s too inelegant a solution, resulting in a lot of needless repetition. Rather, consider the following solution.
+Listing 10.1. Testing for a specific pattern in a string
+function isThisAZipCode(candidate) {
+if (typeof candidate !== "string" ||
+#A
+candidate.length != 10) return false;
+#A
+for (let n = 0; n < candidate.length; n++) {
+let c = candidate[n];
+switch (n) {
+#B
+case 0: case 1: case 2: case 3: case 4:
+case 6: case 7: case 8: case 9:
+if (c < '0' || c > '9') return false;
+break;
+case 5:
+if (c != '-') return false;
+break;
+}
+}
+return true;
+#C
+}
+#A - Short-circuits obviously bogus candidates
+#B - Performs tests based on character index
+#C - If all succeeds, we’re good!
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This code takes advantage of the fact that we have only two checks to make, depending on the position of the character within the string. We still need to perform up to nine comparisons at runtime, but we have to write each comparison only once.
+Even so, would anyone consider this solution elegant? It’s more elegant than the brute-force, noniterative approach, but it still seems like an awful lot of code for such a simple check. Now consider this approach:
+function isThisAZipCode(candidate) {
+return /^\d{5}-\d{4}$/.test(candidate);
+}
+Except for some esoteric syntax in the body of the function, that’s a lot more succinct and elegant, no? That’s the power of regular expressions, and it’s just the tip of the iceberg. Don’t worry if that syntax looks like someone’s pet iguana walked across the keyboard; we’re about to recap regular expressions before you learn how to use them in ninja-like fashion on your pages.

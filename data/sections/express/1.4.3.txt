@@ -1,0 +1,37 @@
+
+The first few chapters of this book talk about “core” Express—that is, things that are baked into the framework. In very broad strokes, this is routes and middleware. But more than half of the book covers how to integrate Express with third-party modules.
+
+There are loads of third-party modules for Express. Some are made specifically for Express and are compatible with its routing and middleware features. Others aren’t made for Express specifically and work well in Node.js, so they also work well with Express.
+
+In this book, we’ll pick a number of third-party integrations and show some examples. But because Express is unopinonated, none of the contents of this book are the only options. If I cover Third-Party Tool X in this book, but you prefer alternative Third-Party Tool Y, you can swap them out.
+
+Express has some small features for rendering HTML. If you’ve ever used “vanilla” PHP or a templating language like ERB, Jinja2, HAML, or Razor, you’ve dealt with rendering HTML on the server. Express doesn’t come with any templating languages built in, but it plays nicely with almost every Node-based templating engine, as we’ll see. Some popular templating languages come with Express support, while others need a simple helper library. In this book, we’ll look at two options: EJS (which looks a lot like HTML) and Jade (which tries to fix HTML with a radical new syntax).
+
+Express doesn’t have any notion of a database. You can persist your application’s data however you choose; in files, in a relational SQL database, or in another kind of data storage mechanism. In this book, we’ll cover the popular MongoDB database for data storage. As we talked about above, you should never feel “boxed in” with Express—if you want to use another data store, Express will let you.
+
+Users often want their applications to be secure. There are a number of helpful libraries and modules (some for “raw” Node and some for Express) that can tighten the belt of your Express applications. We’ll explore all of this in the chapter about security (which is one of my favorite chapters, personally). We’ll also talk about testing our Express code to make sure that the code powering our apps is robust.
+
+An important thing to note: there’s no such thing as an “Express module”—only a Node module. A Node module can be compatible with Express and work well with its API, but they’re all just JavaScript served from the npm registry and you install them in just the same way.
+
+
+Getting help when you need it
+
+
+Getting help when you need it
+
+I really hope this book is helpful and chock-full of knowledge, but there's only so much wisdom one author can jam into a book. At some point, you're going to need to spread your wings and find answers. Let me do my best to guide you:
+
+For API documentation and simple guides, the official http://expressjs.com/  is the place to go. You can also find example applications all throughout the Express repository, at https://github.com/strongloop/express/tree/master/examples . I found these examples helpful when trying to find the "right" way to do things. There are loads of examples in there; check them out!
+
+For Node modules, you'll be using Node's built-in npm tool and installing things from the registry at https://www.npmjs.org/ . If you need help finding good modules, I'd give Substack's "finding modules" a read at http://substack.net/finding_modules. It's a great summary of how to find quality Node packages.
+
+Express used to be built on another package called Connect, and is still largely compatible with Connect-made modules. If you can't find a module for Express, you might have luck searching for Connect. This also applies if you're searching for answers to questions.
+
+And as always, use your favorite search engine.
+
+
+ 
+
+
+ 
+Third-party modules for Node and Express

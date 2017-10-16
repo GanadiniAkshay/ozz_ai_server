@@ -1,0 +1,151 @@
+10.4. Capturing matching segments
+The height of usefulness with respect to regular expressions is realized when we capture the results that are found so that we can do something with them. Determining whether a string matches a pattern is an obvious first step and often all that we need, but determining what was matched is also useful in many situations.
+10.4.1. Performing simple captures
+Say we want to extract a value that’s embedded in a complex string. A good example of such a string is the value of the CSS transform property, through which we can modify the visual position of an HTML element.
+Listing 10.4. A simple function for capturing an embedded value
+<div id="square" style="transform:translateY(15px);"></div>
+#A
+<script>
+function getTranslateY(elem){
+const transformValue = elem.style.transform;
+if(transformValue){
+const match = transformValue.match(/translateY\(([^\)]+)\)/);
+#B
+return match ? match[1] : "";
+#B
+}
+return "";
+}
+const square = document.getElementById("square");
+assert(getTranslateY(square) === "15px",
+"We've extracted the translateY value");
+</script>
+#A - Defines the test subject
+#B - Extracts the translateY value from the string
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We define an element that specifies the style that will translate its position by 15 px:
+"transform:translateY(15px);"
+Unfortunately, the browser doesn’t offer an API for easily fetching the amount by which the element is translated. So we create our own function:
+function getTranslateY(elem){
+const transformValue = elem.style.transform;
+if(transformValue){
+const match = transformValue.match(/translateY\(([^\)]+)\)/);
+return match ? match[1] : "";
+}
+return "";
+}
+The transform parsing code may seem confusing at first:
+const match = transformValue.match(/translateY\(([^\)]+)\)/);
+return match ? match[1] : "";
+But it’s not too bad when we break it down. To start, we need to determine whether a transform property even exists for us to parse. If not, we’ll return an empty string. If the transform property is resident, we can get down to the opacity value extraction. The match method of a regular expression returns an array of captured values if a match is found, or null if no match is found.
+The array returned by match includes the entire match in the first index, and then each subsequent capture following. So the zeroth entry would be the entire matched string of translateY(15px), and the entry at the next position would be 15px.
+Remember that the captures are defined by parentheses in the regular expression. Thus, when we match the transform value, the value is contained in the [1] position of the array, because the only capture we specified in our regex was created by the parentheses that we embedded after the translateY portion of the regex.
+This example uses a local regular expression and the match method. Things change when we use global expressions. Let’s see how.
+10.4.2. Matching using global expressions
+As we saw in the previous section, using a local regular expression (one without the global flag) with the String object’s match methods returns an array containing the entire matched string, along with any matched captures in the operation.
+But when we supply a global regular expression (one with the g flag included), match returns something different. It’s still an array of results, but in the case of a global regular expression, which matches all possibilities in the candidate string rather than just the first match, the array returned contains the global matches; captures within each match aren’t returned in this case.
+We can see this in action in the following code and tests.
+Listing 10.5. Differences between global and local searches with match
+const html = "<div class='test'><b>Hello</b> <i>world!</i></div>";
+const results = html.match(/<(\/?)(\w+)([^>]*?)>/);
+#A
+assert(results[0] === "<div class='test'>", "The entire match.");
+assert(results[1] === "", "The (missing) slash.");
+assert(results[2] === "div", "The tag name.");
+assert(results[3] === " class='test'", "The attributes.");
+const all = html.match(/<(\/?)(\w+)([^>]*?)>/g);
+#B
+assert(all[0] === "<div class='test'>", "Opening div tag.");
+assert(all[1] === "<b>", "Opening b tag.");
+assert(all[2] === "</b>", "Closing b tag.");
+assert(all[3] === "<i>", "Opening i tag.");
+assert(all[4] === "</i>", "Closing i tag.");
+assert(all[5] === "</div>", "Closing div tag.");
+#A - Matches using a local regex
+#B - Matches using a global regex
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We can see that when we do a local match, html.match(/<(\/?)(\w+)([^>]*?)>/), a single instance is matched and the captures within that match are also returned. But when we use a global match, html.match(/<(\/?)(\w+)([^>]*?)>/g), what’s returned is the list of matches.
+If captures are important to us, we can regain this functionality while still performing a global search by using the regular expression’s exec method. This method can be repeatedly called against a regular expression, causing it to return the next matched set of information every time it’s called. A typical pattern for use is shown in the following listing.
+Listing 10.6. Using the exec method to do both capturing and a global search
+const html = "<div class='test'><b>Hello</b> <i>world!</i></div>";
+const tag = /<(\/?)(\w+)([^>]*?)>/g;
+let match, num = 0;
+while ((match = tag.exec(html)) !== null) {
+#A
+assert(match.length === 4,
+"Every match finds each tag and 3 captures.");
+num++;
+}
+assert(num === 6, "3 opening and 3 closing tags found.");
+#A - Repeatedly calls exec
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":10,\"ch\":0},{\"line\":10,\"ch\":26}]]"}
+!@%STYLE%@!
+In this example, we repeatedly call the exec method:
+while ((match = tag.exec(html)) !== null) {...}
+This retains state from the previous invocation so that each subsequent call progresses to the next global match. Each call returns the next match and its captures.
+By using either match or exec, we can always find the exact matches (and captures) that we’re looking for. But we’ll need to dig further if we want to refer to the captures themselves within the regex.
+10.4.3. Referencing captures
+We can refer to portions of a match that we’ve captured in two ways: one within the match itself, and one within a replacement string (where applicable). For example, let’s revisit the match in listing 10.6 (in which we match an opening or closing HTML tag) and modify it in the following listing to also match the inner contents of the tag itself.
+Listing 10.7. Using backreferences to match the contents of an HTML tag
+const html = "<b class='hello'>Hello</b> <i>world!</i>";
+const pattern = /<(\w+)([^>]*)>(.*?)<\/\1>/g;
+#A
+let match = pattern.exec(html);
+#B
+assert(match[0] === "<b class='hello'>Hello</b>",
+#C
+"The entire tag, start to finish.");
+assert(match[1] === "b", "The tag name.");
+assert(match[2] === " class='hello'", "The tag attributes.");
+assert(match[3] === "Hello", "The contents of the tag.");
+match = pattern.exec(html);
+assert(match[0] === "<i>world!</i>",
+"The entire tag, start to finish.");
+assert(match[1] === "i", "The tag name.");
+assert(match[2] === "", "The tag attributes.");
+assert(match[3] === "world!", "The contents of the tag.");
+#A - Uses capture backreference
+#B - Runs the pattern on the test string
+#C - Tests various captures that are captured by the defined pattern
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We use \1 to refer to the first capture within the expression, which in this case is the name of the tag. Using this information, we can match the appropriate closing tag, referring to whatever the capture matched. (This all assumes, of course, that there aren’t any embedded tags of the same name within the current tag, so this is hardly an exhaustive example of tag matching.)
+Additionally, we can get capture references within the replace string of a call to the replace method. Instead of using the backreference codes, as in listing 10.7, we use the syntax of $1, $2, $3, up through each capture number. Here’s an example:
+assert("fontFamily".replace(/([A-Z])/g, "-$1").toLowerCase() ===
+"font-family", "Convert the camelCase into dashed notation.");
+In this code, the value of the first capture (in this case, the capital letter F) is referenced in the replace string (via $1). This allows us to specify a replace string without even knowing what its value will be until matching time. That’s a powerful ninja-esque weapon to wield.
+The ability to reference regular-expression captures helps make a lot of code that would otherwise be difficult, quite easy. The expressive nature that it provides ends up allowing for some terse statements that could otherwise be rather obtuse, convoluted, and lengthy.
+Because both captures and expression grouping are specified using parentheses, there’s no way for the regular-expression processor to know which sets of parentheses we added to the regex for grouping and which were intended to indicate captures. It treats all sets of parentheses as both groups and captures, which can result in the capture of more information than we really intended, because we needed to specify some grouping in the regex. What can we do in such cases?
+10.4.4. Noncapturing groups
+As we noted, parentheses serve a double duty: They not only group terms for operations, but also specify captures. This usually isn’t an issue, but in regular expressions in which lots of grouping is going on, it could cause lots of needless capturing, which may make sorting through the resulting captures tedious.
+Consider the following regex:
+const pattern = /((ninja-)+)sword/;
+Here, the intent is to create a regex that allows the prefix ninja- to appear one or more times before the word sword, and we want to capture the entire prefix. This regex requires two sets of parentheses:
+The parentheses that define the capture (everything before the string sword)
+The parentheses that group the text ninja- for the + operator
+This all works fine, but it results in more than the single intended capture because of the inner set of grouping parentheses.
+To indicate that a set of parentheses shouldn’t result in a capture, the regular expression syntax lets us put the notation ?: immediately after the opening parenthesis. This is known as a passive subexpression.
+Changing this regular expression to
+const pattern = /((?:ninja-)+)sword/;
+causes only the outer set of parentheses to create a capture. The inner parentheses have been converted to a passive subexpression.
+To test this, take a look at the following code.
+Listing 10.8. Grouping without capturing
+const pattern = /((?:ninja-)+)sword/;
+#A
+const ninjas = "ninja-ninja-sword".match(pattern);
+assert(ninjas.length === 2,"Only one capture was returned.");
+assert(ninjas[1] === "ninja-ninja-",
+"Matched both words, without any extra capture.");
+#A - Uses a passive subexpression
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":7,\"ch\":0},{\"line\":7,\"ch\":33}]]"}
+!@%STYLE%@!
+Running these tests, we can see that the passive subexpression /((?:ninja-)+)sword/ prevents unnecessary captures.
+Wherever possible in our regular expressions, we should strive to use noncapturing (passive) groups in place of capturing when the capture is unnecessary, so that the expression engine will have much less work to do in remembering and returning the captures. If we don’t need captured results, there’s no need to ask for them! The price that we pay is that already-complex regular expressions can become a tad more cryptic.
+Now let’s turn our attention to another way that regular expressions give us ninja powers: using functions with the String object’s replace method.

@@ -1,0 +1,6 @@
+2.2. The page-building phase
+Before a web application can be interacted with or even displayed, the page must be built from the information in the response received from the server (usually HTML, CSS, and JavaScript code). The goal of this page-building phase is to set up the UI of a web application, and this is done in two distinct steps:
+Parsing the HTML and building the Document Object Model (DOM)
+Executing JavaScript code
+Step 1 is performed when the browser is processing HTML nodes, and step 2 is performed whenever a special type of HTML element—the script element (that contains or refers to JavaScript code)—is encountered. During the page-building phase, the browser can switch between these two steps as many times as necessary, as shown in figure 2.3.
+Figure 2.3. The page-building phase starts when the browser receives the code of the page. It’s performed in two steps: parsing the HTML and building the DOM, and executing JavaScript code.

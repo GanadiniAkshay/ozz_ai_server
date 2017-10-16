@@ -1,0 +1,63 @@
+3.2.2. Self-memoizing functions
+As noted earlier, memoization (no, that’s not a typo) is the process of building a function that’s capable of remembering its previously computed values. In a nutshell, whenever a function computes its result, we store that result alongside the function arguments. In this way, when another invocation occurs for the same set of arguments, we can return the previously stored result, instead of calculating it anew. This can markedly increase performance by avoiding needless complex computations that have already been performed. Memoization is particularly useful when performing calculations for animations, searching data that doesn’t change that often, or any time-consuming math.
+As an example, let’s look at a simplistic (and certainly not particularly efficient) algorithm for computing prime numbers. Although this is a simple example of a complex calculation, this technique is readily applicable to other expensive computations (such as deriving the MD5 hash for a string) that are too complex to present here.
+From the outside, the function appears to be just like any normal function, but we’ll surreptitiously build in an answer cache in which the function will save the answers to the computations it performs. Look over the following code.
+Listing 3.3. Memoizing previously computed values
+function isPrime(value){
+if (!isPrime.answers){
+#A
+isPrime.answers = {};
+#A
+}
+#A
+if (isPrime.answers[value] !== undefined) {
+#B
+return isPrime.answers[value];
+#B
+}
+#B
+var prime = value !== 1; // 1 is not a prime
+for (var i = 2; i < value; i++) {
+if (value % i === 0) {
+prime = false;
+break;
+}
+}
+return isPrime.answers[value] = prime;
+#C
+}
+assert(isPrime(5), "5 is prime!" );
+#D
+assert(isPrime.answers[5], "The answer was cached!" );
+#D
+#A - Creates the cache
+#B - Checks for cached values
+#C - Stores the computed value
+#D - Tests that it all works
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Within the isPrime function, we start by checking whether the answers property that we’ll use as a cache has been created, and if not, we create it:
+if (!isPrime.answers) {
+isPrime.answers = {};
+}
+The creation of this initially empty object will occur only on the first call to the function; after that, the cache will exist.
+Then we check whether the result for the passed value has already been cached in answers:
+if (isPrime.answers[value] !== undefined) {
+return isPrime.answers[value];
+}
+Within this cache, we’ll store the computed answer (true or false) using the argument value as the property key. If we find a cached answer, we return it.
+If no cached value is found, we go ahead and perform the calculations needed to determine whether the value is prime (which can be an expensive operation for larger values) and store the result in the cache as we return it:
+return isPrime.answers[value] = prime;
+Our cache is a property of the function itself, so it’s kept alive for as long as the function itself is alive.
+Finally, we test that the memoization is working!
+assert(isPrime(5), "5 is prime!" );
+assert(isPrime.answers[5], "The answer was cached!" );
+This approach has two major advantages:
+The end user enjoys performance benefits for function calls asking for a previously computed value.
+It happens seamlessly and behind the scenes; neither the end user nor the page author needs to perform any special requests or do any extra initialization in order to make it all work.
+But it’s not all roses and violins; its disadvantages may need to be weighed against its advantages:
+Any sort of caching will certainly sacrifice memory in favor of performance.
+Purists may consider that caching is a concern that shouldn’t be mixed with the business logic; a function or a method should do one thing and do it well. But don’t worry; in chapter 8, you’ll see how to tackle this complaint.
+It’s difficult to load-test or measure the performance of an algorithm such as this one, because our results depend on the previous inputs to the function.
+Now that you’ve seen some of the practical use cases of first-class functions, let’s explore the various ways of defining functions.

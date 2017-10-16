@@ -1,0 +1,5 @@
+
+As we’ve seen, routing is one of Express's big features, allowing you to map different requests to different request handlers. In this chapter, we'll go far more in depth. We'll look at routing in detail, how to use Express with HTTPS, Express 4's new routers feature, and more. We'll also build a couple of routing-centric applications, one of which will be a running example throughout the book.
+
+In this chapter, I'll tell you everything there is to know about routing in Express!
+ Routing

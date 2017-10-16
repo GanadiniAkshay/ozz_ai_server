@@ -1,0 +1,63 @@
+
+Now, npm start up your app and visit http://localhost:3000, and see our guestbook.
+
+Figure 3.4 The guestbook homepage
+
+
+Figure 3.5 The guestbook homepage
+
+
+Look at that! What a beautiful little guestbook. It reminds me of the 1990s.
+
+
+Let's review the different parts of this little project:
+
+
+·   We use a middleware function to log all requests, which helps us do debugging. We also use a middleware at the end to serve the 404 page.
+
+
+·   We use Express's routing to direct users to the homepage, the "add a new entry" view, and the POST for adding a new entry.
+
+
+·   We use Express and EJS to render pages. It lets us dynamically create HTML; we use this to dynamically display the content.
+
+
+3.6    Summary
+
+
+In this chapter you saw that:
+
+
+·   Express is a library that sits on top of Node and abstracts away a lot of that complexity
+
+
+·   Express has four main features:
+
+
+-   Middleware for letting a request flow through multiple headers
+
+
+-   Routing for handling a request at a specific spot
+
+
+-   Convenience methods and properties
+
+
+-   Views for dynamically rendering HTML
+
+
+·   Many templating engines have been ported to work with Express. The default one is called EJS.
+
+
+Figure 3.5 The guestbook homepage
+
+Look at that! What a beautiful little guestbook. It reminds me of the 1990s.
+
+Let's review the different parts of this little project:
+
+·   We use a middleware function to log all requests, which helps us do debugging. We also use a middleware at the end to serve the 404 page.
+
+·   We use Express's routing to direct users to the homepage, the "add a new entry" view, and the POST for adding a new entry.
+
+·   We use Express and EJS to render pages. It lets us dynamically create HTML; we use this to dynamically display the content.
+Start it up!

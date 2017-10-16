@@ -1,0 +1,237 @@
+9.1.4. Common operations on arrays
+In this section, we’ll explore some of the most common operations on arrays:
+Iterating (or traversing) through arrays
+Mapping existing array items to create a new array based on them
+Testing array items to check whether they satisfy certain conditions
+Finding specific array items
+Aggregating arrays and computing a single value based on array items (for example, calculating the sum of an array)
+We’ll start with the basics: array iterations.
+Iterating over arrays
+One of the most common operations is iterating over an array. Going back to Computer Science 101, an iteration is most often performed in the following way:
+const ninjas = ["Yagyu", "Kuma", "Hattori"];
+for(let i = 0; i < ninjas.length; i++){
+assert(ninjas[i] !== null, ninjas[i]);
+#A
+}
+#A - Reports the value of each ninja
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":0},{\"line\":6,\"ch\":36}]]"}
+!@%STYLE%@!
+This example is as simple as it looks. It uses a for loop to check every item in the array; the results are shown in figure 9.4.
+Figure 9.4. The output of checking the ninjas with a for loop
+You’ve probably written something like this so many times that you don’t even have to think about it anymore. But just in case, let’s take a closer look at the for loop.
+To go through an array, we have to set up a counter variable, i, specify the number up to which we want to count (ninjas.length), and define how the counter will be modified (i++). That’s an awful lot of bookkeeping to perform such a common action, and it can be a source of annoying little bugs. In addition, it makes our code more difficult to read. Readers have to look closely at every part of the for loop, just to be sure it goes through all the items and doesn’t skip any.
+To make life easier, all JavaScript arrays have a built-in forEach method we can use in such situations. Look at the following example.
+Listing 9.5. Using the forEach method
+const ninjas = ["Yagyu", "Kuma", "Hattori"];
+ninjas.forEach(ninja => {
+#A
+assert(ninja !== null, ninja);
+#A
+));
+#A
+#A - Uses the built-in forEach method to iterate over the array
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":2,\"ch\":7},{\"line\":2,\"ch\":14}],[{\"line\":6,\"ch\":23},{\"line\":6,\"ch\":30}],[{\"line\":6,\"ch\":0},{\"line\":6,\"ch\":63}]]"}
+!@%STYLE%@!
+We provide a callback (in this case, an arrow function) that’s called immediately, for each item in the array. That’s it—no more fussing about the start index, the end condition, or the exact nature of the increment. The JavaScript engine takes care of all that for us, behind the scenes. Notice how much easier to understand this code is, and how it has fewer bug-spawning points.
+We’ll continue by taking things up a notch and seeing how we can map arrays to other arrays.
+Mapping arrays
+Imagine that you have an array of ninja objects. Each ninja has a name and a favorite weapon, and you want to extract an array of weapons from the ninjas array. Armed with the knowledge of the forEach method, you might write something like the following listing.
+Listing 9.6. Naïve extraction of a weapons array
+const ninjas = [
+{name: "Yagyu", weapon: "shuriken"},
+{name: "Yoshi", weapon: "katana"},
+{name: "Kuma", weapon: "wakizashi"}
+];
+const weapons = [];
+#A
+ninjas.forEach(ninja => {
+#A
+weapons.push(ninja.weapon);
+#A
+});
+#A
+assert(weapons[0] === "shuriken"
+&& weapons[1] === "katana"
+&& weapons[2] === "wakizashi"
+&& weapons.length === 3,
+"The new array contains all weapons");
+#A - Creates a new array and uses a forEach loop over ninjas to extract individual ninja weapons
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":0},{\"line\":6,\"ch\":19}],[{\"line\":7,\"ch\":0},{\"line\":7,\"ch\":25}],[{\"line\":8,\"ch\":2},{\"line\":8,\"ch\":29}],[{\"line\":9,\"ch\":0},{\"line\":9,\"ch\":3}],[{\"line\":17,\"ch\":0},{\"line\":17,\"ch\":96}]]"}
+!@%STYLE%@!
+This isn’t all that bad: We create a new, empty array, and use the forEach method to iterate over the ninjas array. Then, for each ninja object, we add the current weapon to the weapons array.
+As you might imagine, creating new arrays based on the items in an existing array is surprisingly common—so common that it has a special name: mapping an array. The idea is that we map each item from one array to a new item of a new array. Conveniently, JavaScript has a map function that does exactly that, as shown in the following listing.
+Listing 9.7. Mapping an array
+const ninjas = [
+{name: "Yagyu", weapon: "shuriken"},
+{name: "Yoshi", weapon: "katana"},
+{name: "Kuma", weapon: "wakizashi"}
+];
+const weapons = ninjas.map(ninja => ninja.weapon);
+#A
+assert(weapons[0] === "shuriken"
+&& weapons[1] === "katana"
+&& weapons[2] === "wakizashi"
+&& weapons.length == 3, "The new array contains all weapons");
+#A - The built-in map method takes a function that’s called for each item in the array.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":0},{\"line\":6,\"ch\":50}],[{\"line\":13,\"ch\":0},{\"line\":13,\"ch\":87}]]"}
+!@%STYLE%@!
+The built-in map method constructs a completely new array and then iterates over the input array. For each item in the input array, map places exactly one item in the newly constructed array, based on the result of the callback provided to map. The inner workings of the map function are shown in figure 9.5.
+Figure 9.5. The map function calls the provided callback function (fc) on each array item, and creates a new array with callback return values.
+Now that we know how to map arrays, let’s see how to test array items for certain conditions.
+Testing array items
+When working with collections of items, we’ll often run into situations where we need to know whether all or at least some of the array items satisfy certain conditions. To write this code as efficiently as possible, all JavaScript arrays have access to the built-in every and some methods, shown next.
+Listing 9.8. Testing arrays with the every and some methods
+const ninjas = [
+{name: "Yagyu", weapon: "shuriken"},
+{name: "Yoshi" },
+{name: "Kuma", weapon: "wakizashi"}
+];
+const allNinjasAreNamed = ninjas.every(ninja => "name" in ninja);
+#A
+const allNinjasAreArmed = ninjas.every(ninja => "weapon" in ninja);
+#A
+assert(allNinjasAreNamed, "Every ninja has a name");
+assert(!allNinjasAreArmed, "But not every ninja is armed");
+const someNinjasAreArmed = ninjas.some(ninja => "weapon" in ninja);
+#B
+assert(someNinjasAreArmed, "But some ninjas are armed");
+#B
+#A - The built-in every method takes a callback that’s called for each array item. It returns true if the callback returns a true value for all array items, or false otherwise.
+#B - The built-in some method also takes a callback. It returns true if the callback returns a true value for at least one array item, or false otherwise.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":15,\"ch\":0},{\"line\":15,\"ch\":139}]]"}
+!@%STYLE%@!
+Listing 9.8 shows an example where we have a collection of ninja objects but are unsure of their names and whether all of them are armed. To get to the root of this problem, we first take advantage of every:
+var allNinjasAreNamed = ninjas.every(ninja => "name" in ninja);
+The every method takes a callback that, for each ninja in the collection, checks whether we know the ninja’s name. every returns true only if the passed-in callback returns true for every item in the array. Figure 9.6 shows how every works.
+Figure 9.6. The every method tests whether all items in an array satisfy a certain condition represented by a callback.
+In other cases, we only care whether some array items satisfy a certain condition. For these situations, we can use the built-in method some:
+const someNinjasAreArmed = ninjas.some(ninja => "weapon" in ninja);
+Starting from the first array item, some calls the callback on each array item until an item is found for which the callback returns a true value. If such an item is found, the return value is true; if not, the return value is false.
+Figure 9.7 shows how some works under the hood: We search an array in order to find out whether some or all of its items satisfy a certain condition. Next we’ll explore how to search an array to find a particular item.
+Figure 9.7. The some method checks whether at least one array item satisfies a condition represented by the passed-in callback.
+Searching arrays
+Another common operation that you’re bound to use, sooner rather than later, is finding items in an array. Again, this task is greatly simplified with another built-in array method: find. Let’s study the following listing.
+Note
+The built-in find method is part of the ES6 standard. For current browser compatibility, see http://mng.bz/U532.
+Listing 9.9. Finding array items
+const ninjas = [
+{name: "Yagyu", weapon: "shuriken"},
+{name: "Yoshi" },
+{name: "Kuma", weapon: "wakizashi"}
+];
+const ninjaWithWakizashi = ninjas.find(ninja => {
+return ninja.weapon === "wakizashi";
+#A
+});
+assert(ninjaWithWakizashi.name === "Kuma"
+&& ninjaWithWakizashi.weapon === "wakizashi",
+"Kuma is wielding a wakizashi");
+const ninjaWithKatana = ninjas.find(nina => {
+return ninja.weapon === "katana";
+#B
+});
+assert(ninjaWithKatana === undefined,
+"We couldn't find a ninja that wields a katana");
+const armedNinjas = ninjas.filter(ninja => "weapon" in ninja);
+#C
+assert(armedNinjas.length === 2, "There are two armed ninjas:");
+assert(armedNinjas[0].name === "Yagyu"
+&& armedNinjas[1].name === "Kuma", "Yagyu and Kuma");
+#A - Uses the find method to find the first array item that satisfies a certain condition, represented by a passed-in callback.
+#B - The find method returns undefined if an item can’t be found.
+#C - Use the filter method to find multiple items that all satisfy a certain condition.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+It’s easy to find an array item that satisfies a certain condition: We use the built-in find method, passing it a callback that’s invoked for each item in the collection until the targeted item is found. This is indicated by the callback returning true. For example, the expression
+ninjas.find(ninja => ninja.weapon === "wakizashi");
+finds Kuma, the first ninja in the ninjas array that’s wielding a wakizashi.
+If we’ve gone through the entire array without a single item returning true, the final result of the search is undefined. For example, the code
+ninjaWithKatana = ninjas.find(ninja => ninja.weapon === "katana");
+returns undefined, because there isn’t a katana-wielding ninja. Figure 9.8 shows the inner workings of the find function.
+Figure 9.8. The find function finds one item in an array: the first item for which the find callback returns true.
+If we need to find multiple items satisfying a certain criterion, we can use the filter method, which creates a new array containing all the items that satisfy that criterion. For example, the expression
+const armedNinjas = ninjas.filter(ninja => "weapon" in ninja);
+creates a new armedNinjas array that contains only ninjas with a weapon. In this case, poor unarmed Yoshi is left out. Figure 9.9 shows how the filter function works.
+Figure 9.9. The filter function creates a new array that contains all items for which the callback returns true.
+Throughout this example, you’ve seen how to find particular items in an array, but in many cases it might also be necessary to find the index of an item. Let’s take a closer look, with the following example.
+Listing 9.10. Finding array indexes
+const ninjas = ["Yagyu", "Yoshi", "Kuma", "Yoshi"];
+assert(ninjas.indexOf("Yoshi") === 1, "Yoshi is at index 1");
+assert(ninjas.lastIndexOf("Yoshi") === 3, "and at index 3");
+const yoshiIndex = ninjas.findIndex(ninja => ninja === "Yoshi");
+assert(yoshiIndex === 1, "Yoshi is still at index 1");
+To find the index of a particular item, we use the built-in indexOf method, passing it the item whose index we want to find:
+ninjas.indexOf("Yoshi")
+In cases where a particular item can be found multiple times in an array (as is the case with "Yoshi" and the ninjas array), we may also be interested in finding the last index where Yoshi appears. For this, we can use the lastIndexOf method:
+ninjas.lastIndexOf("Yoshi")
+Finally, in the most-general case, when we don’t have a reference to the exact item whose index we want to search for, we can use the findIndex method:
+const yoshiIndex = ninjas.findIndex(ninja => ninja === "Yoshi");
+The findIndex method takes a callback and returns the index of the first item for which the callback returns true. In essence, it works a lot like the find method, the only difference being that find returns a particular item, whereas findIndex returns the index of that item.
+Sorting arrays
+One of the most common array operations is sorting—arranging items systematically in some order. Unfortunately, correctly implementing sorting algorithms isn’t the easiest of programming tasks: We have to select the best sorting algorithm for the task, implement it, and tailor it to our needs, while, as always, being careful not to introduce subtle bugs. To get this burden off our back, as you saw in chapter 3, all JavaScript arrays have access to the built-in sort method, whose usage looks something like this:
+array.sort((a, b) => a – b);
+The JavaScript engine implements the sorting algorithm. The only thing we have to provide is a callback that informs the sorting algorithm about the relationship between two array items. The possible results are as follows:
+If a callback returns a value less than 0, then item a should come before item b.
+If a callback returns a value equal to 0, then items a and b are on equal footing (as far as the sorting algorithm is concerned, they’re equal).
+If a callback returns a value greater than 0, then item a should come after item b.
+Figure 9.10 shows the decisions made by the sorting algorithm depending on the callback return value.
+Figure 9.10. If the call-back returns a value less than 0, the first item should come before the second. If the callback returns 0, both items should be left as is. And if the return value is greater than 0, the first item should come after the second item.
+And that’s about all you need to know about the sorting algorithm. The actual sorting is performed behind the scenes, without us having to manually move array items around. Let’s look at a simple example.
+Listing 9.11. Sorting an array
+const ninjas = [{name: "Yoshi"}, {name: "Yagyu"}, {name: "Kuma"}];
+ninjas.sort(function(ninja1, ninja2){
+#A
+if(ninja1.name < ninja2.name) { return -1; }
+#A
+if(ninja1.name > ninja2.name) { return 1; }
+#A
+#A
+return 0;
+#A
+});
+#A
+assert(ninjas[0].name === "Kuma", "Kuma is first");
+assert(ninjas[1].name === "Yagyu", "Yagyu is second");
+assert(ninjas[2].name === "Yoshi", "Yoshi is third");
+#A - Passes a callback to the built-in sort method to specify a sorting order
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":13,\"ch\":0},{\"line\":13,\"ch\":77}]]"}
+!@%STYLE%@!
+In listing 9.11 we have an array of ninja objects, where each ninja has a name. Our goal is to sort that array lexicographically (in alphabetical order), according to ninja names. For this, we naturally use the sort function:
+ninjas.sort(function(ninja1, ninja2){
+if(ninja1.name < ninja2.name) { return -1; }
+if(ninja1.name > ninja2.name) { return 1; }
+return 0;
+});
+To the sort function we only need to pass a callback that’s used to compare two array items. Because we want to make a lexical comparison, we state that if ninja1’s name is “less” than ninja2’s name, the callback returns -1 (remember, this means ninja1 should come before ninja2, in the final sorted order); if it’s greater, the callback returns 1 (ninja1 should come after ninja2); if they’re equal, the callback returns 0. Notice that we can use simple less-than (<) and greater-than (>) operators to compare two ninja names.
+That’s about it! The rest of the nitty-gritty details of sorting are left to the JavaScript engine, without us having to worry about them.
+Aggregating array items
+How many times have you written code like the following?
+const numbers = [1, 2, 3, 4];
+const sum = 0;
+numbers.forEach(number => {
+sum += number;
+});
+assert(sum === 10, "The sum of first four numbers is 10");
+This code has to visit every item in a collection and aggregate some value, in essence reducing the entire array to a single value. Don’t worry—JavaScript has something to help with this situation, too: the reduce method, as shown in the following example.
+Listing 9.12. Aggregating items with reduce
+const numbers = [1, 2, 3, 4];
+const sum = numbers.reduce((aggregated, number) =>
+#A
+aggregated + number, 0);
+#A
+assert(sum === 10, "The sum of first four numbers is 10");
+#A - Uses reduce to accumulate a single value from an array
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":2,\"ch\":12},{\"line\":2,\"ch\":50}],[{\"line\":7,\"ch\":0},{\"line\":7,\"ch\":59}]]"}
+!@%STYLE%@!
+The reduce method works by taking the initial value (in this case, 0) and calling the callback function on each array item with the result of the previous callback invocation (or the initial value) and the current array item as arguments. The result of the reduce invocation is the result of the last callback, called on the last array item. Figure 9.11 sheds more light on the process.
+Figure 9.11. The reduce function applies a callback to an aggregated value and each item in an array to reduce the array to a single value.
+We hope we’ve convinced you that JavaScript contains some useful array methods that can make our lives significantly easier and your code more elegant, without having to resort to pesky for loops. If you’d like to find out more about these and other array methods, we recommend the Mozilla Developer Network explanation at http://mng.bz/cS21.
+Now we’ll take things a bit further and show you how to reuse these array methods on your own, custom objects.

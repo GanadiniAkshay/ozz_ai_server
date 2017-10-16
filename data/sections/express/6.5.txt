@@ -1,0 +1,33 @@
+
+Every HTTP response comes with an HTTP status code. The most famous one is 404, which stands for "Resource Not Found". You've likely seen 404 errors when visiting a URL that the server can't find—maybe you've clicked an expired link or typed a URL wrong.
+
+While 404 is the most famous, 200 is perhaps the most common, which is simply defined as "OK". Unlike 404, you don't usually see the text "200" on the webpage when you're browsing the web. Every time you successfully load a webpage or an image or a JSON response, you'll probably get a status code of 200.
+
+It turns out that there are a lot more HTTP status codes than 404 and 200, each with a different meaning. There are a handful of 100 codes (like 100 and 101), several in the 200s, 300s, 400s, and 500s. The ranges aren't "filled"--that is, the first four codes are 100, 101, 102, and then it skips all the way to 200.
+
+Each range has a certain theme. Steve Losh sent a great tweet that summarizes them (which I had to paraphrase a bit), as told from the perspective of the server:
+
+HTTP status ranges in a nutshell:
+
+1xx: hold on
+
+2xx: here you go
+
+3xx: go away
+
+4xx: you messed up
+
+5xx: I messed up
+
+@stevelosh, https://twitter.com/stevelosh/status/372740571749572610
+
+I love that summary. (The real one is a little more vulgar.)
+
+Beyond the sixty-or-so codes in the specification (at https://tools.ietf.org/html/rfc7231#section-6 ), HTTP doesn't define any more. You can specify your own—HTTP allows it—but it typically isn't done. Remember the first principle of good API design: defining your own HTTP status codes wouldn't be what people expect. People expect you to stick to the usual suspects.
+
+Wikipedia has a great list of every standard (and some nonstandard) HTTP response code at https://en.wikipedia.org/wiki/List_of_HTTP_status_codes , but there are a few that really pertain to building an API with Express. We'll go through each range (the 100s, then the 200s, etc) and explain some common HTTP codes you should be setting in your applications.
+
+What about HTTP 2? Most HTTP requests are HTTP 1.1 requests, with a handful of them still using version 1.0. HTTP 2, the next version of the standard, is slowly being implemented and rolled out across the web. Luckily for us, most of the changes happen at a low level and you don't have to deal with them. It does define one new status code—421—but that shouldn't affect you much.
+
+But first, how do you set HTTP status codes in Express?
+Setting HTTP status codes

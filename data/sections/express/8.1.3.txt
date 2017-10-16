@@ -1,0 +1,13 @@
+
+You'll want to install Mongo locally so that you can use it while you're developing.
+
+If you're on OSX and aren't sure you want to use the command line, I'm a big fan of Mongo.app. Instead of wrangling the command line, you simply launch an application that runs in the menu bar at the top right of your screen. You can tell when it's running and when it's not, easily start up a console, and shut it down effortlessly. You can download it at http://mongoapp.com/.
+
+If you're on OSX and would prefer to use the command line, you can use the Homebrew package manager to install MongoDB with a simple brew install mongodb. If you're using MacPorts, sudo port install mongodb will do the job. If you're not using a package manager and you don't want to use Mongo.app, you can download it from the MongoDB downloads page at http://www.mongodb.org/downloads.
+
+If you're on Ubuntu Linux, Mongo's website has helpful instructions at http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/. If you're using a Debian distribution like Mint (or Debian!), check out the official documentation at http://docs.mongodb.org/manual/tutorial/install-mongodb-on-debian/. Other Linux users can check out http://docs.mongodb.org/manual/tutorial/install-mongodb-on-linux/.
+
+If you're a Windows user or on any of the OSes I didn't mention above, the MongoDB downloads page will help you. You can either download it from their website or scroll down to the bottom of that page to see other package managers that have Mongo. Take a look at http://www.mongodb.org/downloads. If you can, make sure you download the 64-bit version; the 32-bit version has a limit on storage space.
+
+Throughout this book, we'll assume that your MongoDB database is at localhost:27017/test. Port 27017 is the default port and the default database is one called "test", but your results may vary. If you can't connect to your database, check your specific installation for help.
+Setting up Mongo

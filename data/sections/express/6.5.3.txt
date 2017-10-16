@@ -1,0 +1,31 @@
+
+Steve Losh summarized the 200 range as "here you go". The HTTP spec defines several status codes in the 200 range, but four of them are by the most common.
+
+200: "OK"
+
+200 is the most common HTTP status code on the web by a long shot. HTTP calls status code 200 "OK", and that's pretty much what it means: everything about this request and response went through just fine.
+
+Generally, if you're sending the whole response just fine and there aren't any errors or and redirects (which we'll see in the 300s section), then you'll send a 200 code.
+
+201: "Created"
+
+Code 201 is very similar to 200, but it's for a slightly different use case.
+
+It's common for a request to create a resource. This might be creating a blog post, sending a message, or uploading a photo. If the creation succeeds and everything's fine, and you'll want to send a 201 code.
+
+This is a little bit nuanced, but it's typically the correct status code for the situation.
+
+202: "Accepted"
+
+Just like 201 is a variant on 200, 202 is a variant of 201.
+
+I hope I've beaten it into your head by now: asynchronousity is a big part of Node and Express. Sometimes, you'll asynchronously queue a resource for creation but it won't be created yet.
+
+If you're pretty sure that the request is requesting to create a valid resource (perhaps you've checked that the data is valid) but you haven't created it yet, you can send a 202 error. It effectively tells the client, "hey, you're all good, but I haven't made the resource yet."
+
+Sometimes you'll want to send 201 codes and other times you'll want to send 202; it depends on the situation.
+
+204: "No Content"
+
+204 is the delete version of 201. When you create a resource, you typically send a 201 or a 202 message. When you delete something, you often don't have anything to respond with other than "yeah, this was deleted". That's when you typically send a 204 code.
+The 200 range

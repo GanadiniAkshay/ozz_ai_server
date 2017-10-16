@@ -1,0 +1,54 @@
+6.1. Making our async code elegant with generators and promises
+Imagine that you’re a developer working at freelanceninja.com, a popular freelance ninja recruitment site enabling customers to hire ninjas for stealth missions. Your task is to implement a functionality that lets users get details about the highest-rated mission done by the most popular ninja. The data representing the ninjas, the summaries of their missions, as well as the details of the missions are stored on a remote server, encoded in JSON. You might write something like this:
+try {
+var ninjas = syncGetJSON("ninjas.json");
+var missions = syncGetJSON(ninjas[0].missionsUrl);
+var missionDetails = syncGetJSON(missions[0].detailsUrl);
+//Study the mission description
+}
+catch(e){
+//Oh no, we weren't able to get the mission details
+}
+This code is relatively easy to understand, and if an error occurs in any of the steps, we can easily catch it in the catch block. But unfortunately, this code has a big problem. Getting data from a server is a long-running operation, and because JavaScript relies on a single-threaded execution model, we’ve just blocked our UI until the long-running operations finish. This leads to unresponsive applications and disappointed users. To solve this problem, we can rewrite it with callbacks, which will be invoked when a task finishes, without blocking the UI:
+getJSON("ninjas.json", function(err, ninjas){
+if(err) {
+console.log("Error fetching list of ninjas", err);
+return;
+}
+getJSON(ninjas[0].missionsUrl, function(err, missions) {
+if(err) {
+console.log("Error locating ninja missions", err);
+return;
+}
+getJSON(missions[0].detailsUrl, function(err, missionDetails){
+if(err) {
+console.log("Error locating mission details", err);
+return;
+}
+//Study the intel plan
+});
+});
+});
+Although this code will be much better received by our users, you’ll probably agree that it’s messy, it adds a lot of boilerplate error-handling code, and it’s plain ugly. This is where generators and promises jump in. By combining them, we can turn the nonblocking but awkward callback code into something much more elegant:
+async(function*(){
+#A
+try {
+const ninjas = yield getJSON("ninjas.json");
+#B
+const missions = yield getJSON(ninjas[0].missionsUrl);
+#B
+const missionDescription = yield getJSON(missions[0].detailsUrl);
+#B
+//Study the mission details
+}
+catch(e) {
+//Oh no, we weren't able to get the mission details
+}
+});
+#A - A generator function is defined by putting an asterisk right after the function keyword. We can use the new yield keyword in generator functions.
+#B - The promises are hidden within the getJSON method.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Don’t worry if this example doesn’t make much sense or if you find some of the syntax (such as function* or yield) unfamiliar. By the end of this chapter, you’ll meet all the necessary ingredients. For now, it’s enough that you compare the elegance (or the lack thereof) of the nonblocking callback code and the nonblocking generators and promises code.
+Let’s start slowly by exploring generator functions, the first stepping stone toward elegant asynchronous code.

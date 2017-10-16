@@ -1,0 +1,78 @@
+10.3. Compiling regular expressions
+Regular expressions go through multiple phases of processing, and understanding what happens during each phase can help us optimize JavaScript code that uses regular expressions. The two main phases are compilation and execution.
+Compilation occurs when the regular expression is first created. Execution occurs when we use the compiled regular expression to match patterns in a string.
+During compilation, the expression is parsed by the JavaScript engine and converted into its internal representation (whatever that may be). This phase of parsing and conversion must occur every time a regular expression is created (discounting any internal optimizations performed by the browser).
+Frequently, browsers are smart enough to determine when identical regular expressions are being used, and to cache the compilation results for that particular expression. But we can’t count on this being the case in all browsers. For complex expressions, in particular, we can begin to get some noticeable speed improvements by predefining (and thus precompiling) our regular expressions for later use.
+As we learned in our regular expression overview in the previous section, there are two ways of creating a compiled regular expression in JavaScript: via a literal and via a constructor. Let’s look at an example in the following listing.
+Listing 10.2. Two ways to create a compiled regular expression
+const re1 = /test/i;
+#A
+const re2 = new RegExp("test", "i");
+#B
+assert(re1.toString()=== "/test/i",
+"Verify the contents of the expression.");
+assert(re1.test("TesT"), "Yes, it's case-insensitive.");
+assert(re2.test("TesT"), "This one is too.");
+assert(re1.toString()=== re2.toString(),
+"The regular expressions are equal.");
+assert(re1 !== re2, "But they are different objects.");
+#A - Creates a regex via a literal
+#B - Creates a regex via the constructor
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, both regular expressions are in their compiled state after creation. If we were to replace every reference to re1 with the literal /test/i, it’s possible that the same regex would be compiled time and time again, so compiling a regex once and storing it in a variable for later reference can be an important optimization.
+Note that each regex has a unique object representation: Every time a regular expression is created (and thus compiled), a new regular expression object is created. This is unlike other primitive types (such as string, number, and so on), because the result will always be unique.
+Of particular importance is the use of the constructor (new RegExp(...)) to create a regular expression. This technique allows us to build and compile an expression from a string that we can dynamically create at runtime. This can be immensely useful for constructing complex expressions that will be heavily reused.
+For example, let’s say that we want to determine which elements within a document have a particular class name, whose value we won’t know until runtime. Because elements are capable of having multiple class names associated with them (inconveniently stored in a space-delimited string), this serves as an interesting example of runtime, regular-expression compilation (see the following listing).
+Listing 10.3. Compiling a runtime regular expression for later use
+<div class="samurai ninja"></div>
+#A
+<div class="ninja samurai"></div>
+#A
+<div></div>
+#A
+<span class="samurai ninja ronin"></span>
+#A
+<script>
+function findClassInElements(className, type) {
+const elems =
+#B
+document.getElementsByTagName(type || "*");
+const regex =
+#C
+new RegExp("(^|\\s)" + className + "(\\s|$)");
+const results = [];
+#D
+for (let i = 0, length = elems.length; i < length; i++)
+if (regex.test(elems[i].className)) {
+#E
+results.push(elems[i]);
+}
+return results;
+}
+assert(findClassInElements("ninja", "div").length === 2,
+"The right amount of div ninjas was found.");
+assert(findClassInElements("ninja", "span").length === 1,
+"The right amount of span ninjas was found.");
+assert(findClassInElements("ninja").length === 3,
+"The right amount of ninjas was found.");
+</script>
+#A - Creates test subjects of various elements with various class names
+#B - Collects elements by type
+#C - Compiles a regex using the passed class name
+#D - Stores the results
+#E - Tests for regex matches
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We can learn several interesting things from listing 10.3. To start, we set up a number of test-subject <div> and <span> elements with various combinations of class names. Then we define our class-name checking function, which accepts as parameters the class name for which we’ll check and the element type to check within.
+Then we collect all the elements of the specified type by using the getElementsByTagName built-in method and set up our regular expression:
+const regex = new RegExp("(^|\\s)" + className + "(\\s|$)");
+Note the use of the new RegExp() constructor to compile a regular expression based on the class name passed to the function. This is an instance where we can’t use a regex literal, as the class name for which we’ll search isn’t known in advance.
+We construct (and hence, compile) this expression once in order to avoid frequent and unnecessary recompilation. Because the contents of the expression are dynamic (based on the incoming className argument), we can realize major performance savings by handling the expression in this manner.
+The regex itself matches either the beginning of the string or a whitespace character, followed by the target class name, followed by either a whitespace character or the end of the string. Notice the use of a double-escape (\\) within the new regex: \\s. When creating literal regular expressions with terms including the backslash, we have to provide the backslash only once. But because we’re writing these backslashes within a string, we must double-escape them. This is a nuisance, to be sure, but one that we must be aware of when constructing regular expressions in strings rather than literals.
+After the regex is compiled, using it to collect the matching elements is a snap via the test method:
+regex.test(elems[i].className)
+Preconstructing and precompiling regular expressions so that they can be reused (executed) time and time again is a recommended technique that provides performance gains that can’t be ignored. Virtually all complex regular expression situations can benefit from the use of this technique.
+Earlier in this chapter, we mentioned that the use of parentheses in regular expressions not only serves to group terms for operator application, but also creates captures. Let’s find out more about that.

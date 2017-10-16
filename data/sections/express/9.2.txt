@@ -1,0 +1,9 @@
+
+Just like it's possible to write web servers with only Node.js, it's possible to write tests with only Node.js. We could create a file that checked a bunch of conditions to make sure everything was working as normal, and then we could output the results with console.log. Like Express, we might find this “raw” method to be verbose and we might find ourselves having to write a lot of boilerplate code just to write tests.
+
+Mocha is a testing framework that helps to reduce some of this headache. (It's written by the original creator of Express, by the way.) It gives you a nice syntax for organizing your tests, and has a several other features like asynchronous test support and easy-to-read output. It's not specifically tied to Express, so you can use it to test Express applications, JavaScript functions, database models, and anything else that runs inside the Node runtime.
+
+Before we start testing  Express applications, let's start by testing a simple function to see how it's done.
+
+Imagine we want to write a function called capitalize that capitalizes the first character of a string and makes the rest of the string lowercase. For example, "hello WORLD" would become "Hello world".
+Introduction to the Mocha testing framework

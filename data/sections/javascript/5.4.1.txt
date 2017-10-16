@@ -1,0 +1,10 @@
+5.4.1. Code nesting
+Lexical environments are heavily based on code nesting, which enables one code structure to be contained within another. Figure 5.8 shows various types of code nesting.
+Figure 5.8. Types of code nesting
+In this example, we can see the following:
+The for loop is nested within the report function.
+The report function is nested within the skulk function.
+The skulk function is nested within global code.
+In terms of scopes, each of these code structures gets an associated lexical environment every time the code is evaluated. For example, on every invocation of the skulk function, a new function lexical environment is created.
+In addition, it’s important to emphasize that an inner code structure has access to the variables defined in outer code structures; for example, the for loop can access variables from the report function, the skulk function, and the global code; the report function can access variables from the skulk function and the global code; and the skulk function can access only additional variables from the global code.
+There’s nothing special about this way of accessing variables; all of us have probably done it many times. But how does the JavaScript engine keep track of all these variables, and what’s accessible from where? This is where lexical environments jump in.

@@ -1,0 +1,11 @@
+
+Jade has another cool feature called mixins. Mixins are basically functions that you define in your Jade file to cut down on repetitive tasks.
+
+Let's re-implement the users widget example from the EJS section. We'll make a widget that's given an object called user and returns an HTML widget for that user. Here's we might do that:
+
+Listing 7.19 A user widget mixin
+
+This would render the user widget for the currentUser and for every other user in the userList. No duplicated code for us!
+
+That's all that we'll look at with Jade. For more about Jade's syntax, you can look at Jade's reference documentation at http://jade-lang.com/reference/.
+Mixins in Jade

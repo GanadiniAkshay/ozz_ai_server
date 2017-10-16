@@ -1,0 +1,49 @@
+8.2.3. Using proxies to autopopulate properties
+In addition to simplifying logging, proxies can be used for autopopulating properties. For example, imagine that you have to model your computer’s folder structure, in which a folder object can have properties that can also be folders. Now imagine that you have to model a file at the end of a long path, such as this:
+rootFolder.ninjasDir.firstNinjaDir.ninjaFile = "yoshi.txt";
+To create this, you might write something along the following lines:
+const rootFolder = new Folder();
+rootFolder.ninjasDir = new Folder();
+rootFolder.ninjasDir.firstNinjaDir = new Folder();
+rootFolder.ninjasDir.firstNinjaDir.ninjaFile = "yoshi.txt";
+Seems a tad more tedious than necessary, doesn’t it? This is where autopopulating properties comes into play; just take a look at the following example.
+Listing 8.11. Autopopulating properties with proxies
+function Folder() {
+return new Proxy({}, {
+get: (target, property) => {
+report("Reading " + property);
+#A
+if(!(property in target)) {
+#B
+target[property] = new Folder();
+#B
+}
+#B
+return target[property];
+}
+});
+}
+const rootFolder = new Folder();
+try {
+rootFolder.ninjasDir.firstNinjaDir.ninjaFile = "yoshi.txt";
+#C
+pass("An exception wasn’t raised");
+#D
+}
+catch(e){
+fail("An exception has occurred");
+}
+#A - Logs all readings to our object
+#B - If the accessed property doesn’t exist, we create it.
+#C - Whenever a property is accessed, the get trap, which creates a property if it doesn’t exist, is activated.
+#D - No exception will be raised.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":5,\"ch\":7},{\"line\":5,\"ch\":34}],[{\"line\":1,\"ch\":20},{\"line\":1,\"ch\":21}],[{\"line\":7,\"ch\":7},{\"line\":7,\"ch\":8}],[{\"line\":10,\"ch\":4},{\"line\":10,\"ch\":5}],[{\"line\":11,\"ch\":2},{\"line\":11,\"ch\":3}],[{\"line\":12,\"ch\":0},{\"line\":12,\"ch\":1}],[{\"line\":19,\"ch\":0},{\"line\":19,\"ch\":1}],[{\"line\":22,\"ch\":0},{\"line\":22,\"ch\":1}]]"}
+!@%STYLE%@!
+Normally, if we consider only the following code, we’d expect an exception to be raised:
+const rootFolder = new Folder();
+rootFolder.ninjasDir.firstNinjaDir.ninjaFile = "yoshi.txt";
+We’re accessing a property, firstNinjaDir, of an undefined property, ninjasDir, of the rootFolder object. But if we run the code, you see that all is well, as shown in figure 8.5.
+Figure 8.5. The output of running the code from listing 8.11
+This happens because we’re using proxies. Every time we access a property, the proxy get trap is activated. If our folder object already contains the requested property, its value is returned, and if it doesn’t, a new folder is created and assigned to the property. This is how two of our properties, ninjasDir and firstNinjaDir, are created. Requesting a value of an uninitialized property triggers its creation.
+Finally, we have a tool for ridding ourselves of some cases of the pesky null exception!

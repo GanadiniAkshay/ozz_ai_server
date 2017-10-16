@@ -1,0 +1,2 @@
+4.3. Fixing the problem of function contexts
+In the preceding section, you saw some of the problems that can happen when dealing with function context in JavaScript. In callback functions (such as event handlers), the function context might not be exactly what we expect, but we can use the call and apply methods to get around it. In this section, you’ll see two other options: arrow functions and the bind method, which can, in certain cases, achieve the same effect, but in a much more elegant way.

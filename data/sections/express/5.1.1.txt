@@ -1,0 +1,17 @@
+
+Let's say we want to write a simple Express application that responds to the HTTP request above (an HTTP GET to /olivia). We'll call some methods on our Express app, like so:
+
+Listing 5.2 A simple Express app that shows Olivia's homepage
+
+#A  We start by requiring Express and creating a new Express server, just like we've done in the past.
+
+#B  This is the magical part; this routes GET requests to /olivia to the request handler we specify.
+
+#C  If you load /olivia, that's all good. But if you load something else (like /olivia_example), we want to serve a 404 error.
+
+#D Finally, we start the server on port 3000!
+
+The real meat of this example is on the third line: when we get HTTP GET requests to /olivia, we run the specified request handler. To hammer this home: we'll ignore this if we see a GET request to some other URI, and we'll also ignore this if we see a non-GET request to /olivia.
+
+This is a pretty simple example (hence the title of this section). Let's take a look at some more complex routing features.
+A simple example

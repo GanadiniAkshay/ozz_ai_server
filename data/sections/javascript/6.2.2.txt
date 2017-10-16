@@ -1,0 +1,118 @@
+6.2.2. Using generators
+Generating sequences of items is all nice and dandy, but let’s get more practical, starting with a simple case of generating unique IDs.
+Using generators to generate IDs
+When creating certain objects, often we need to assign a unique ID to each object. The easiest way to do this is through a global counter variable, but that’s kind of ugly because the variable can be accidently messed up from anywhere in our code. Another option is to use a generator, as shown in the following listing.
+Listing 6.5. Using generators for generating IDs
+function *IdGenerator(){
+#A
+let id = 0;
+#B
+while(true){
+#C
+yield ++id;
+#C
+}
+#C
+}
+const idIterator = IdGenerator();
+#D
+const ninja1 = { id: idIterator.next().value };
+#E
+const ninja2 = { id: idIterator.next().value };
+#E
+const ninja3 = { id: idIterator.next().value };
+#E
+assert(ninja1.id === 1, "First ninja has id 1");
+#F
+assert(ninja2.id === 2, "Second ninja has id 2");
+#F
+assert(ninja3.id === 3, "Third ninja has id 3");
+#F
+#A - Defines an IdGenerator generator function
+#B - A variable that keeps track of IDs. This variable can’t be modified from outside our generator.
+#C - A loop that generates an infinite sequence of IDs
+#D - An iterator through which we’ll request new IDs from the generator
+#E - Requests three new IDs
+#F - Tests that all went OK
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This example starts with a generator that has one local variable, id, which represents our ID counter. The id variable is local to our generator; there’s no fear that someone will accidently modify it from somewhere else in the code. This is followed by an infinite while loop, which at each iteration yields a new id value and suspends its execution until a request for another ID comes along:
+function *IdGenerator(){
+let id = 0;
+while(true){
+yield ++id;
+}
+}
+Note
+Writing infinite loops isn’t something that we generally want to do in a standard function. But with generators, everything is fine! Whenever the generator encounters a yield statement, the generator execution is suspended until the next method is called again. So every next call executes only one iteration of our infinite while loop and sends back the next ID value.
+After defining the generator, we create an iterator object:
+const idIterator = IdGenerator();
+This allows us to control the generator with calls to the idIterator.next() method. This executes the generator until a yield is encountered, returning a new ID value that we can use for our objects:
+const ninja1 = { id: idIterator.next().value };
+See how simple this is? No messy global variables whose value can be accidentally changed. Instead, we use an iterator to request values from a generator. In addition, if later we need another iterator for tracking the IDs of, for example, samurai, we can initialize a new generator for that.
+Using generators to traverse the DOM
+As you saw in chapter 2, the layout of a web page is based on the DOM, a tree-like structure of HTML nodes, in which every node, except the root one, has exactly one parent, and can have zero or more children. Because the DOM is such a fundamental structure in web development, a lot of our code is based around traversing it. One relatively easy way to do this is by implementing a recursive function that will be executed for each visited node. See the following code.
+Listing 6.6. Recursive DOM traversal
+<div id="subTree">
+<form>
+<input type="text"/>
+</form>
+<p>Paragraph</p>
+<span>Span</span>
+</div>
+<script>
+function traverseDOM(element, callback) {
+callback(element);
+#A
+element = element.firstElementChild;
+while (element) {
+#B
+traverseDOM(element, callback);
+#B
+element = element.nextElementSibling;
+#B
+}
+#B
+}
+const subTree = document.getElementById("subTree");
+traverseDOM(subTree, function(element) {
+#C
+assert(element !== null, element.nodeName);
+#C
+});
+#C
+</script>
+#A - Processes the current node with a callback
+#B - Traverses the DOM of each child element
+#C - Starts the whole process by calling the traverseDOM function for our root element
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we use a recursive function to traverse all descendants of the element with the id subtree, in the process logging each type of node that we visit. In this case, the code outputs DIV, FORM, INPUT, P, and SPAN.
+We’ve been writing such DOM traversal code for a while now, and it has served us perfectly fine. But now that we have generators at our disposal, we can do it differently; see the following code.
+Listing 6.7. Iterating over a DOM tree with generators
+function* DomTraversal(element){
+yield element;
+element = element.firstElementChild;
+while (element) {
+yield* DomTraversal(element);
+#A
+element = element.nextElementSibling;
+}
+}
+const subTree = document.getElementById("subTree");
+for(let element of DomTraversal(subTree)) {
+#B
+assert(element !== null, element.nodeName);
+#B
+}
+#B
+#A - Uses yield* to transfer the iteration control to another instance of the DomTraversal generator
+#B - Iterates over the nodes by using the for-of loop
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":4,\"ch\":4},{\"line\":4,\"ch\":10}],[{\"line\":14,\"ch\":10},{\"line\":14,\"ch\":16}],[{\"line\":10,\"ch\":16},{\"line\":10,\"ch\":18}],[{\"line\":14,\"ch\":71},{\"line\":14,\"ch\":73}],[{\"line\":15,\"ch\":46},{\"line\":15,\"ch\":48}]]"}
+!@%STYLE%@!
+This listing shows that we can achieve DOM traversals with generators, just as easily as with standard recursion, but with the aditional benefit of not having to use the slightly awkward syntax of callbacks. Instead of processing the subtree of each visited node by recursing another level, we create one generator function for each visited node and yield to it. This enables us to write what’s conceptually recursive code in iterable fashion. The benefit is that we can consume the generated sequence of nodes with a simple for-of loop, without resorting to nasty callbacks.
+This example is a particulary good one, because it also shows how to use generators in order to separate the code that’s producing values (in this case, HTML nodes) from the code that’s consuming the sequence of generated values (in this case, the for-of loop that logs the visited nodes), without having to resort to callbacks. In addition, using iterations is, in certain cases, much more natural than recursion, so it’s always good to have our options open.
+Now that we’ve explored some practical aspects of generators, let’s go back to a slighty more theoretical topic and see how to exchange data with a running generator.

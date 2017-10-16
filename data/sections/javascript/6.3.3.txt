@@ -1,0 +1,48 @@
+6.3.3. Rejecting promises
+There are two ways of rejecting a promise: explicitly, by calling the passed-in reject method in the executor function of a promise, and implicitly, if during the handling of a promise, an unhandled exception occurs. Let’s start our exploration with the following listing.
+Listing 6.12. Explicitly rejecting promises
+const promise = new Promise((resolve, reject) => {
+reject("Explicitly reject a promise!");
+#A
+});
+promise.then(
+() => fail("Happy path, won't be called!"),
+error => pass("A promise was explicitly rejected!")
+#B
+);
+#A - A promise can be explicitly rejected by calling the passed-in reject function.
+#B - If a promise is rejected, the second, error, callback is invoked.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":1,\"ch\":2},{\"line\":1,\"ch\":41}]]"}
+!@%STYLE%@!
+We can explicitly reject a promise, by calling the passed-in reject method: reject("Explicitly reject a promise!"). If a promise is rejected, when registering callbacks through the then method, the second, error, callback will always be invoked.
+In addition, we can use an alternative syntax for handling promise rejections, by using the built-in catch method, as shown in the following listing.
+Listing 6.13. Chaining a catch method
+var promise = new Promise((resolve, reject) => {
+reject("Explicitly reject a promise!");
+});
+promise.then(()=> fail("Happy path, won't be called!"))
+.catch(() => pass("Promise was also rejected"));
+#A
+#A - Instead of supplying the second, error, callback, we can chain in the catch method, and pass to it the error callback. The end result is the same.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":42},{\"line\":0,\"ch\":43}],[{\"line\":1,\"ch\":39},{\"line\":1,\"ch\":40}],[{\"line\":2,\"ch\":1},{\"line\":2,\"ch\":2}],[{\"line\":4,\"ch\":14},{\"line\":4,\"ch\":15}],[{\"line\":5,\"ch\":15},{\"line\":5,\"ch\":16}],[{\"line\":7,\"ch\":0},{\"line\":7,\"ch\":151}]]"}
+!@%STYLE%@!
+As listing 6.13 shows, we can chain in the catch method after the then method, to also provide an error callback that will be invoked when a promise gets rejected. In this example, this is a matter of personal style. Both options work equally well, but later, when working with chains of promises, we’ll see an example in which chaining the catch method is useful.
+In addition to explicit rejection (via the reject call), a promise can also be rejected implicitly, if an exception occurs during its processing. Take a look at the following example.
+Listing 6.14. Exceptions implicitly reject a promise
+const promise = new Promise((resolve, reject) => {
+undeclaredVariable++;
+#A
+});
+promise.then(() => fail("Happy path, won't be called!"))
+.catch(error => pass("Third promise was also rejected"));
+#B
+#A - A promise is implicitly rejected if an unhandled exception occurs when processing the promise.
+#B - If an exception occurs, the second, error, callback is invoked.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Within the body of the promise executor, we try to increment undeclaredVariable, a variable that isn’t defined in our program. As expected, this results in an exception. Because there’s no try-catch statement within the body of the executor, this results in an implicit rejection of the current promise, and the catch callback is eventually invoked. In this situation, we could have just as easily supplied the second callback to the then method, and the end effect would be the same.
+This way of treating all problems that happen while working with promises in a uniform way is extremely handy. Regardless of how the promise was rejected, whether explicitly by calling the reject method or even implicitly, if an exception occurs, all errors and rejection reasons are directed to our rejection callback. This makes our lives as developers a little easier.
+Now that we understand how promises work, and how to schedule success and failure callbacks, let’s take a real-world scenario, getting JSON-formatted data from a server, and “promisify” it.

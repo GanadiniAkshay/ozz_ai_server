@@ -1,0 +1,27 @@
+
+In Node, everything goes through one big function. To resurface an example from Chapter 2, it looks like this:
+
+Listing 3.4 A Node request handler function
+
+In a world without middleware, we find ourselves having one master request function that handles everything. If we were to draw the flow of our application, it might look like Figure 3.1.
+
+Figure 3.1 A request without middleware
+
+Every request goes through just one request handler function, which eventually generates the response. That's not to say that the master handler function can't call other functions, but at the end of the day, the master function responds to every request.
+
+With middleware, rather than having your request pass through one function, it passes through an array of functions called a "middleware stack". It might look like Figure 3.2.
+
+Figure 3.2 A request with middleware.
+
+Okay, so Express lets you execute an array of functions instead of just one. What might some of these functions be?
+
+Let's resurface an example from Chapter 1: an application that authenticates users. If they're authenticated, it shows them some secret information. All the while, our server is logging every request that comes into our server, authenticated or not.
+
+This app might have three middleware functions: one that does logging, one that does authentication, and one that responds with secret information. The logging middleware will log every request and continue onto the next middleware; the authentication middleware will only continue if the user is authorized; the final middleware will always respond and it won't continue on because nothing follows it.
+
+There are two possible ways a request could flow through this simple app; an illustration of two possible options is shown in Figure 3.3.
+
+Figure 3.3 Two requests flowing through middleware functions. See that middleware sometimes continues on, but sometimes responds to requests.
+
+Each middleware function can modify the request or the response, but it doesn't always have to. Eventually, some middleware should respond to the request. It could be the first one, it could be the last. If none of them respond, then the server will hang and the browser will sit alone, without a response. We'll see some examples that will (hopefully!) make this stuff more clear.
+How middleware works at a high level

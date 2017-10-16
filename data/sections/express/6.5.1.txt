@@ -1,0 +1,21 @@
+
+By default, the status code is 200. If someone visits a URL where no resource is found and you don't have a handler for it, Express will send a 404 error. If you have some other error in your server, Express will send a 500 error.
+
+But you want to have control of what status code you get, so Express gives it to you. Express adds a method called status to the HTTP response object. All you have to do is call it with the number of your status code and you'll be in business.
+
+This method might be called like this inside of a request handler:
+
+Listing 6.9 Setting the HTTP status code in Express
+
+This method is "chainable", so you can pair it with things like the json to set the status code and send some JSON in one line, as shown in Listing 6.10.
+
+Listing 6.10 Setting the HTTP status code and sending some JSON
+
+The API isn't too complicated!
+
+Express extends the "raw" HTTP response object that Node gives you. While you should use the Express way when you're using Express, you might be reading some code that sets the status code this way:
+
+Listing 6.11 Setting the status code the "raw" way
+
+You sometimes see this code when reading through middleware, or when someone is using the "raw" Node APIs instead of the Express ones.
+Setting HTTP status codes

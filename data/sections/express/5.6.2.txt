@@ -1,0 +1,33 @@
+
+Now that we're all set up, it's time to code! Let's start with the main application JavaScript. If you followed the example at the end of Chapter 2, this business should be pretty familiar.
+
+Create app.js and put this inside:
+
+Listing 5.20 app.js
+
+#A  We start by including Node's built-in path module, Express, zippity-do-dah, and Reckon. Nothing too different than what we've seen before!
+
+#B Create a new Express application.
+
+#C Create a new Reckon object with your API key. Make sure to fill this in!
+
+#D Serve static files out of "public" with Express's built-in static file middleware.
+
+#E Use EJS as our view engine, and serve the views out of a folder called "views".
+
+#F Render the "index" view if we hit the homepage.
+
+#G This is an example of Express's regular expression routing feature. Regular expressions are always nasty to read, but this one basically says "give me five numbers". The parenthesis "capture" the specified ZIP code and pass it as req.params[0].
+
+#H Use zippity-do-dah to grab location data with the ZIP code.
+
+#I zippity-do-dah just returns an empty object ({}) when no results are found. This probes the object for a zipcode property, and if we're missing it, then this won't work, and we should continue on.
+
+#J We'll send this JSON object with Express's convenient json method.
+
+#K If we miss the static files middleware, miss the handler for the root URL (/), and miss the weather URL, then show a 404 error.
+
+#L Start the app on port 3000!
+
+Now we need to fill in the client; this means making some views with EJS, and as we'll see, we'll add a splash of CSS and a bit of client-side JavaScript.
+The main app code

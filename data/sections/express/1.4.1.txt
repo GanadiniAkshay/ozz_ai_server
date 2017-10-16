@@ -1,0 +1,21 @@
+
+Express is hardly the first web application framework, nor will it be the last.
+
+Express isn’t the only framework in the Node.js world. Perhaps its biggest “competitor” is called Hapi.js. Like Express, it’s an unopinionated, relatively small framework that has routing and middleware-like functionality. It’s different from Express in that it doesn’t aim to smooth out Node.js’s built-in HTTP server module, but to build a rather different architecture. It’s a pretty mature framework developed by the folks at Walmart, and is used by Mozilla, OpenTable, and even the npm registry! While I doubt there’s much animosity between Express developers and Hapi developers, Hapi is the biggest “competitor” to Express.
+
+There are larger frameworks in the Node.js world as well, perhaps the most popular of which is the full-stack Meteor. While Express is unopinionated about how you build your applications, Meteor has a strict structure. While Express only deals with the HTTP server layer, Meteor is full-stack, running code on both client and server. This are simply design choices—one is not inherently better than the other.
+
+Like Express piles features atop Node.js, some folks have decided to pile features atop Express. Some folks at PayPal created Kraken; while Kraken is technically just Express middleware, it sets up a lot of your application, from security defaults to bundled middleware. Sails.js is another up-and-coming framework built atop Express that adds databases, WebSocket integration, API generators, an asset pipeline, and more. Both of these frameworks are more opinionated than Express by design.
+
+Express has several features, just one of which is middleware. Connect is a web application framework for Node.js that’s just the middleware layer. Connect doesn’t have routing or conveniences; it’s just middleware. Express used to use Connect for its middleware layer, and while it now does middleware without Connect, Express middleware is completely compatible with Connect middleware. That means that any middleware that works in Connect also works in Express, which adds a huge number of helpful third-party modules to your arsenal.
+
+This is JavaScript, so there are countless other Node.js web application frameworks out there, and I’m sure I’ve offended someone by not mentioning theirs.
+
+Outside of the Node.js world, there are comparable frameworks.
+
+Express was very much inspired by Sinatra, a minimal web application framework from the Ruby world. Sinatra, like Express, has routing and middleware-like functionality. Sinatra has inspired many clones and reinterpretations many other programming languages, so if you’ve ever used Sinatra or a Sinatra-like framework, Express will be familiar. Express is also like Bottle and Flask from the Python world.
+
+Express isn’t as much like Python’s Django or Ruby on Rails or ASP.NET or Java’s Play; those are larger, more opinionated frameworks with lots of features. Express is also unlike PHP; while it is code running on the server, it’s not as tightly coupled with HTML as “vanilla” PHP is.
+
+This book should tell you that Express is better than all of these other frameworks, but it can’t—Express is simply one of the many ways to build a server-side web application. It has some real strengths that other frameworks don’t have, like Node.js’s performance and the ubiquitous JavaScript, but it does less for you than a larger framework might do, and some people don’t think JavaScript is the finest language out there. We could argue about which is best forever and never come to an answer, but it’s important to see where Express fits into the picture.
+Express versus other web application frameworks

@@ -1,0 +1,6 @@
+1.3. Using current best practices
+Mastery of the JavaScript language and a grasp of cross-browser coding issues are important parts of becoming an expert web application developer, but they’re not the complete picture. To enter the big leagues, you also need to exhibit the traits that scores of previous developers have proven are beneficial to the development of quality code. These traits are known as best practices, and in addition to mastery of the language, they include such elements as
+Debugging skills
+Testing
+Performance analysis
+It’s vitally important to adhere to these practices when coding, and we’ll use them throughout the book. Let’s examine some of them next.

@@ -1,0 +1,13 @@
+
+Let's take what we've learned and build a simple web application that returns the temperature by your United States ZIP code.
+
+NOTE I'm an American, so this example will use the US-style postal code, called a ZIP code. ZIP codes are five digits long and can give you a pretty good ballpark location. There are 42,522 of them, so if the US is 3.7 million square miles, each ZIP code covers about 87 square miles on average. Because we're going to use ZIP codes, this example will only work in the United States. It shouldn't be too much of a stretch to make a similar application that works elsewhere (if you're inspired, you could try using the HTML5 Geolocation API!).
+
+Our application will basically have two parts:
+
+1. A static homepage that asks the user for their ZIP code. After the user types it in, it will load the weather via AJAX.
+
+2. Because we're using AJAX, we'll send the temperature as JSON. We'll define a route for /12345 which will return the weather at ZIP code 12345.
+
+Let's get started.
+Putting it all together: a simple routing demo

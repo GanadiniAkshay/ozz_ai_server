@@ -1,0 +1,7 @@
+
+Express applications are made up of middleware and routes. Both of them have you writing request handler functions, so you'll be doing that a lot!
+
+To make these request handler functions easier to write, Express has added a bunch of niceties. In raw Node.js, if you want to write a request handler function that sends a JPEG file from a folder, that's about 45 lines of code if done properly. In Express, that's just one call to the sendFile method. Express has a bunch of functionality for rendering HTML more easily, where Node.js keeps mum. It also comes with a bunch of functions that make it easier to parse requests as they come in, like grabbing the client’s IP address.
+
+Unlike the features above, these conveniences don't conceptually change how you organize your app, but they can be super helpful.
+Conveniences

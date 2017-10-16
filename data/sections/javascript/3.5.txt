@@ -1,0 +1,22 @@
+3.5. Summary
+Writing sophisticated code hinges upon learning JavaScript as a functional language.
+Functions are first-class objects that are treated just like any other objects within JavaScript. Similar to any other object type, they can be
+Created via literals
+Assigned to variables or properties
+Passed as parameters
+Returned as function results
+Assigned properties and methods
+Callback functions are functions that other code will later “call back,” and are often used, especially with event handling.
+We can take advantage of the fact that functions can have properties and that those properties can be used to store any information; for example
+We can store functions in function properties for later reference and invocation.
+We can use function properties to create a cache (memoization), thereby avoiding unnecessary computations.
+There are different types of functions: function declarations, function expressions, arrow functions, and function generators.
+Function declarations and function expressions are the two most common types of functions. Function declarations must have a name, and must be placed as separate statements in our code. Function expressions don’t have to be named, but do have to be a part of another code statement.
+Arrow functions are a new addition to JavaScript, enabling us to define functions in a much more succinct way than with standard functions.
+A parameter is a variable that we list as a part of a function definition, whereas an argument is a value that we pass to the function when we invoke it.
+A function’s parameter list and its argument list can be different lengths:
+Unassigned parameters evaluate as undefined.
+Extra arguments aren’t bound to parameter names.
+Rest parameters and default parameters are new additions to JavaScript:
+Rest parameters enable us to reference the remaining arguments that don’t have matching parameter names.
+Default parameters enable us to specify default parameter values that will be used if no value is supplied during function invocation.

@@ -1,0 +1,83 @@
+
+Remember when I said that calling next would continue onto the next middleware? I lied. It was mostly true but I didn't want to confuse you.
+
+There are two types of middleware.
+
+We've been dealing with the first type so far; these are just regular middleware functions that take three arguments (sometimes two when next is discarded). Most of the time, your app is in "normal mode", which only looks at these middleware functions and skips the other.
+
+There's a second kind that's much less used: error handling middleware. When your app is in "error mode", all regular middleware is ignored and Express will only execute error handling middleware functions. To enter "error mode", simply call next with an argument. It's convention to call it with an error, like next(new Error("Something bad happened!")).
+
+These middleware functions take four arguments instead of two or three. The first one is the error (the argument passed into next), and the rest are the three from before: req, res, and next. You can do anything you want in this middleware. When you're done, it's just like other middleware: you can call res.end or next. Calling next with no arguments will exit "error mode" and move onto the next normal middleware; calling it with an argument will continue onto the next error-handling middleware if one exists.
+
+For example, let's say you have four middleware functions in a row. The first two are normal, the third handles errors, and the fourth is a normal one. If no errors happen, the flow will look something like this:
+
+Figure 4.7  If all goes well, error handling middleware will be skipped.
+
+If no errors happen, it'll be as if the error handling middleware never existed. To reiterate more precisely, "no errors" means "next was never called with any arguments". If an error does happen, then Express will skip over all other middleware until the first error-handling middleware in the stack. It might look like this:
+
+Figure 4.8  If there's an error, Express will skip straight to the error-handling middleware.
+
+While not enforced, error handling middleware is conventionally placed at the end of your middleware stack, after all the normal middleware has been added. This is because you want to catch any errors that come cascading down from earlier in the stack.
+
+
+No catching here
+
+
+No catching here
+
+Express's error handling middleware does not handle errors that are thrown with the throw keyword, only when you call next with an argument.
+
+Express has some protections in place for these exceptions. The app will return a 500 error and that request will fail, but the app will keep on running. Some errors like syntax errors, however, will crash your server.
+
+
+ 
+
+
+ 
+
+Let's say that you're writing a really simple Express app that just sends a picture to the user, no matter what. We'll use res.sendFile just like before. Here's what that simple app might look like:
+
+Listing 4.12  A simple app that always sends a file
+
+This code should look like a simplified version of the static file server we built up above. It'll unconditionally send celine.jpg over the internet.
+
+But what if that file doesn't exist on your computer for some reason? What if it has trouble reading the file because of some other weird issue? We'll want to have some way of handling that error. Error-handling middleware to the rescue!
+
+To enter "error mode", we'll start by using a convenient feature of res.sendFile: it can take an extra argument which is a callback. This callback is executed after the file is sent, and if there's an error, it's passed an argument. If you wanted to print its success, you might do something like this:
+
+Listing 4.13  Printing whether a file successfully sent
+
+Instead of printing the success story to the console, we can enter "error mode" by calling next with an argument if there's an error. We can do something like this:
+
+Listing 4.14  Entering "error mode" if a file fails to send
+
+Now that we're in this error mode, let's handle it.
+
+It's common to have a log of all errors that happen in your app, but we don't usually display this to users. For one, a long JavaScript stack trace might be a pretty confusing to a non-technical user. It might also expose your code to hackers—if a hacker can get a glimpse into how your site works, they can find things to exploit.
+
+Let's write some simple middleware that logs errors but doesn't actually respond to the error. It'll look a lot like our middleware from before, but instead of logging request information, it'll log the error. You could add the following to your file after all the normal middleware:
+
+Listing 4.16  Middleware that logs all errors
+
+#A Notice that this is just like other middleware but with an extra argument.
+
+#B Log the error.
+
+#C Continue to the next middleware. Make sure to call it with the error argument to stay in "error mode".
+
+Now, when an error comes through, we'll log it to the console so that we can investigate it later. But there's more that needs to be done to handle this error. This is similar to before—the logger did something, but it didn't respond to the request. Let's write that part.
+
+You can add this after the previous middleware. This will simply respond to the error with a 500 status code.
+
+Listing 4.17 Actually responding to the error
+
+#A Even though we're not going to use all four arguments, we have to specify them so that Express can recognize that this is error-handling middleware.
+
+#B Set the status code to 500, which means "internal server error".
+
+#C Send the error text.
+
+Keep in mind that, no matter where this middleware is placed in your stack, it won't be called unless you're in "error mode"—in code, this means calling next with an argument.
+
+For simple applications, there aren't loads and loads of places where things can go wrong. But as your apps grow, you'll want to remember to test errant behavior. If a request fails and it shouldn't, make sure you handle that gracefully instead of crashing. If an action should perform successfully but fails, make sure your server doesn't explode. Error-handling middleware can help this along.
+Error handling middleware

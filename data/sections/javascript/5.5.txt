@@ -1,0 +1,4 @@
+5.5. Understanding types of JavaScript variables
+In JavaScript, we can use three keywords for defining variables: var, let, and const. They differ in two aspects: mutability and their relationship toward the lexical environment.
+Note
+The keyword var has been part of JavaScript since its beginning, whereas let and const are ES6 additions. You can check whether your browser supports let and const at the following links: http://mng.bz/CGJ6 and http://mng.bz/uUIT.

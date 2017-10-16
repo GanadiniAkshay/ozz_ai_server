@@ -1,0 +1,65 @@
+8.1.3. Using getters and setters to define computed properties
+In addition to being able to control access to certain object properties, getters and setters can be used to define computed properties, properties whose value is calculated per request. Computed properties don’t store a value; they provide a get and/or a set method to retrieve and set other properties indirectly. In the following example, the object has two properties, name and clan, which we’ll use to compute the property fullTitle.
+Listing 8.6. Defining computed properties
+const shogun = {
+name: "Yoshiaki",
+clan: "Ashikaga",
+get fullTitle(){
+#A
+return this.name + " " + this.clan;
+#A
+},
+#A
+set fullTitle(value) {
+#B
+const segments = value.split(" ");
+#B
+this.name = segments[0];
+#B
+this.clan = segments[1];
+#B
+}
+#B
+};
+assert(shogun.name === "Yoshiaki", "Our shogun Yoshiaki");
+#C
+assert(shogun.clan === "Ashikaga", "Of clan Ashikaga");
+#C
+assert(shogun.fullTitle === "Yoshiaki Ashikaga",
+#C
+"The full name is now Yoshiaki Ashikaga");
+#C
+shogun.fullTitle = "Ieyasu Tokugawa";
+#D
+assert(shogun.name === "Ieyasu", "Our shogun Ieyasu");
+#D
+assert(shogun.clan === "Tokugawa", "Of clan Tokugawa");
+#D
+assert(shogun.fullTitle === "Ieyasu Tokugawa",
+#D
+"The full name is now Ieyasu Tokugawa");
+#D
+#A - Defines a getter method on a fullTitle property of an object literal that calculates the value by concatenating two object properties
+#B - Defines a setter method on a fullTitle property of an object literal that splits the passed-in value and updates two standard properties
+#C - The name and clan properties are normal properties whose values are directly obtained. Accessing the fullTitle property calls the get method, which computes the value.
+#D - Assigning a value to the fullTitle property calls the set method, which computes and assigns new values to the name and clan properties.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":3,\"ch\":2},{\"line\":3,\"ch\":18}]]"}
+!@%STYLE%@!
+Here we define a shogun object, with two standard properties, name and clan. In addition, we specify a getter and a setter method for a computed property, fullTitle:
+const shogun = {
+name: "Yoshiaki",
+clan: "Ashikaga",
+get fullTitle(){
+return this.name + " " + this.clan;
+},
+set fullTitle(value) {
+const segments = value.split(" ");
+this.name = segments[0];
+this.clan = segments[1];
+}
+};
+The get method computes the value of the fullTitle property, on request, by concatenating the name and clan properties. The set method, on the other hand, uses the built-in split method, available to all strings, to split the assigned string into segments by the space character. The first segment represents the name and is assigned to the name property, whereas the second segment represents the clan and is assigned to the clan property.
+This takes care of both routes: Reading the fullTitle property computes its value, and writing to the fullTitle property modifies the properties that constitute the property value.
+To be honest, we don’t have to use computed properties. A method called getFullTitle could be equally useful, but computed properties can improve the conceptual clarity of our code. If a certain value (in this case, the fullTitle value) depends only on the internal state of the object (in this case, on the name and clan properties), it makes perfect sense to represent it as a data field, a property, instead of a function.
+This concludes our exploration of getters and setters. You’ve seen that they’re a useful addition to the language that can help us deal with logging, data validation, and detecting changes in property values. Unfortunately, sometimes this isn’t enough. In certain cases, we need to control all types of interactions with our objects, and for this, we can use a completely new type of object: a proxy.

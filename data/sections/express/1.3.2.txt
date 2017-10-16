@@ -1,0 +1,11 @@
+
+Routing is better named than middleware. Like middleware, it breaks the one monolithic request handler function into smaller pieces. Unlike middleware, however, these request handlers are executed conditionally, depending on what URL and HTTP method a client sends.
+
+For example, we might build a webpage with a homepage and a guestbook. When the user sends an HTTP GET to the homepage URL, Express should send the homepage. But when they visit the guestbook URL, it should send them the HTML for the guestbook, not for the homepage! And if they post a comment in the guestbook (with an HTTP POST to a particular URL), this should update the guestbook. Routing allows you to partition your application's behavior by route.
+
+The behavior of these routes is, like middleware, defined in request handler functions. When the user visits the homepage, it will call a request handler function, written by you. When the user visits the guestbook URL, it will call another request handler function, also written by you.
+
+Express applications have middleware and routes; they complement one another. For example, you might want to log all of the requests, but you'll also want to serve the homepage when the user asks for it.
+
+NOTE Express applications don’t technically have to have both middleware and routes—they could have one but not the other—but all real applications have both.
+Routing

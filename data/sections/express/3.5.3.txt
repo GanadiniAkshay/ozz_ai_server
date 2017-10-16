@@ -1,0 +1,31 @@
+
+We've referenced a few views here, so let's fill those in. Create a folder called views, and then create the header in views/header.ejs:
+
+Listing 3.21 header.ejs
+
+#A This code loads Twitter's Bootstrap CSS from the Bootstrap CDN, an external server that hosts Bootstrap for your convenience.
+
+Notice that we use Twitter Bootstrap for styling, but you could easily replace it with your own CSS. The most important part is that this is the header; this HTML will appear at the top of every page.
+
+NOTE In short, Bootstrap is a bunch of CSS that provides a bunch of default styling. You can absolutely write navbars and buttons and header CSS yourself, but Bootstrap helps us get up and running quickly. You can find out more at http://getbootstrap.com/.
+
+Next, create the simple footer in views/footer.ejs, which will appear at the bottom of every page:
+
+Listing 3.22 footer.ejs
+
+Now that we've defined the common header and footer, let's define the three views: the homepage, the "add a new entry" page, and the 404 page.
+
+Save the following into views/index.ejs:
+
+Listing 3.23 index.ejs
+
+...the following into views/new-entry.ejs...
+
+Listing 3.24 new-entry.ejs
+
+...and finally, the following into views/404.ejs:
+
+Listing 3.25 404.ejs
+
+And that's all your views!
+Creating the views

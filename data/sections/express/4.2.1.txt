@@ -1,0 +1,51 @@
+
+Start by making a new directory. You can call it whatever you’d like; let's choose static-file-fun. Inside of this directory, create a file called package.json. This file is present in every Node.js project and describes metadata about your package, from its title to its third-party dependencies.
+
+Listing 4.1 The package.json file for our static file application
+
+#A The “name” key defines the name of your package. It’s not required for private projects (see #B), but we’ll add it.
+
+#B The “private” key tells Node that this shouldn’t be published in the public Node module registry. This should be set to "true" for your own personal projects.
+
+#C When you run “npm start”, it’ll run “node app.js”.
+
+Once you've saved this package.json, you'll want to install the latest version of Express. From inside of this directory, run npm install express --save. This will install Express into a directory called node_modules inside of this folder. It'll also add Express as a dependency in package.json. package.json will now look like this:
+
+Listing 4.2 The updated package.json file for our static file application
+
+#A Your dependency versions may vary.
+
+Next, create a folder called "static" inside of this new project directory (right next to package.json). Put a few files inside; maybe an HTML file or an image or two. It doesn't really matter what you put in here, but put some files that your example app will serve.
+
+Finally, create app.js in the root of your project, which will contain all of our app's code. Your folder structure will look something like this:
+
+Figure 4.5 The directory structure of Static File Fun.
+
+When you want to run this app, you'll run npm start. This command will look inside your package.json file, see that you've added a script called "start", and run that command. In this case, it'll run node app.js.
+
+Running npm start won't do anything yet—we haven't written our app—but you'll run that whenever you want to run your application.
+
+
+Why use npm start?
+
+
+Why use npm start?
+
+You might be wondering why we used npm start at all—why didn't we just run node app.js? There are three reasons we might do this.
+
+First, it's a convention. Most Node web servers can be started with npm start, regardless of the project's structure. If instead of app.js someone had chosen application.js, you'd have to know about that change. The Node community seems to have settled on a common convention here.
+
+Second, it allows you to run a more complex command (or set of commands) with a relatively simple one. Our app is pretty simple now, but starting it could be more complex in the future. Perhaps we'll need to start up a database server or clear a giant log file. Keeping this complexity under the blanket of a simple command helps keep things consistent and more pleasant.
+
+The third reason is a little more nuanced. npm lets you install packages globally, so you can run them just like any other terminal command. Bower is a common one, letting you install front-end dependencies from the command line with the newly-installed bower command. npm scripts allow you to add new commands to your project without installing them globally, so that you can keep all of your dependencies inside of your project. This reason comes in handy for things like testing.
+
+At the end of the day, you could just run node app.js and never type npm start, but I find the above reasons compelling enough to do it.
+
+
+ 
+
+
+ 
+
+Okay. Let's write the app!
+Getting set up

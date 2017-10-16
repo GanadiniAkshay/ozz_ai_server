@@ -1,0 +1,15 @@
+3.3. Defining functions
+JavaScript functions are usually defined by using a function literal that creates a function value in the same way that, for example, a numeric literal creates a numeric value. Remember that as first-class objects, functions are values that can be used in the language just like other values, such as strings and numbers. And whether you realize it or not, you’ve been doing that all along.
+JavaScript provides a couple of ways to define functions, which can be divided into four groups:
+Function declarations and function expressions—The two most common, yet subtly different ways of defining functions. Often people don’t even consider them as separate, but as you’ll see, being aware of their differences can help us understand when our functions are available for invocation:
+function myFun(){ return 1;}
+Arrow functions (often called lambda functions)—A recent, ES6 addition to the JavaScript standard that enables us to define functions with far less syntactic clutter. They even solve one common problem with callback functions, but more on that later:
+myArg => myArg*2
+Function constructors— A not-so-often used way of defining functions that enables us to dynamically construct a new function from a string that can also be dynamically generated. This example dynamically creates a function with two parameters, a and b, that returns the sum of those two parameters:
+new Function('a', 'b', 'return a + b')
+Generator functions— This ES6 addition to JavaScript enable us to create functions that, unlike normal functions, can be exited and reentered later in the application execution, while keeping the values of their variables across these re-entrances. We can define generator versions of function declarations, function expressions, and function constructors:
+function* myGen(){ yield 1; }
+It’s important that you understand these differences, because the way in which a function is defined significantly influences when the function is available to be invoked and how it behaves, as well as on which object the function can be invoked.
+In this chapter, we’ll explore function declarations, function expressions, and arrow functions. You’ll learn their syntax and how they work, and we’ll come back to them multiple times throughout the book to explore their specifics. Generator functions, on the other hand, are rather peculiar and are significantly different from the standard functions. We’ll revisit them in detail in chapter 6.
+That leaves us with function constructors, a JavaScript feature that we’ll skip entirely. Although it has some interesting applications, especially when dynamically creating and evaluating code, we consider it a corner feature of the JavaScript language. If you want to know more about function constructors, visit http://mng.bz/ZN8e.
+Let’s start with the simplest, most traditional ways of defining functions: function declarations and function expressions.

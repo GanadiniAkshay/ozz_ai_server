@@ -1,0 +1,11 @@
+
+In short, Browserify is a tool for packaging JavaScript that allows you to use the require  function just like you do in Node. And I love Browserify. I just want to get that out of the way. Freakin' love this thing.
+
+I once heard someone describe browser-based programming as "hostile." I love making client-side projects, but I must admit that there are a lot of potholes in the road: browser inconsistencies, no reliable module system, an overwhelming number of varying-quality packages, no real choice of programming language...the list goes on. Sometimes it's great, but sometimes it sucks! Browserify solves the module problem in a clever way: it lets you require modules exactly like you would in Node (in contrast to things like RequireJS, which are asynchronous and require an ugly callback). This is powerful for a few reasons.
+
+First, this lets you easily define modules. If Browserify sees that evan.js requires cake.js and burrito.js, it'll package up cake.js and burrito.js and concatenate them into the compiled output file.
+
+Second, it's almost completely consistent with Node modules. This is huge—both Node-based and browser-based JavaScript can require Node modules, letting you share code between server and client with no extra work. You can even require most native Node modules in the browser, and many Node-isms like __dirname are resolved.
+
+I could write sonnets about Browserify. This thing is truly great. Let me show it to you.
+Using Browserify to require modules in the browser, just like in Node

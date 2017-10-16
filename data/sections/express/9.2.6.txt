@@ -1,0 +1,35 @@
+
+So far, we've only seen how we can use Mocha and Chai to test equality. Effectively, we've used a glorified equality operator. But these two modules can do much more than that. We won't go through all of the options here, but we'll look at a couple of examples.
+
+Running code before each test
+
+It's common to run setup code before you actually run your assertions. Perhaps you're defining a variable to be manipulated or spooling up your server.  If you're doing this setup  across many tests, Mocha has the beforeEach function to help reduce the amount of repeated code.
+
+For example, let's say we've made a Person model and we want to test it. In every single test, we're creating a person object and we want to test it. Here's how we might do that:
+
+Listing 9.9 Using Mocha's beforeEach feature
+
+#A This code is run before every single test, so that the user is defined inside of every test.
+
+The code above tests some of the functionality of an imaginary User object, but it doesn't have code to redefine an example User object inside of every test (inside of every it block); it defines them in a beforeEach block, which redefines the user before running each test.
+
+Testing for errors
+
+If we pass a string to our capitalization function, everything should work normally. But if we pass a non-string, like a number or undefined, we want our function to throw some kind of error. We can use Chai to test this.
+
+Listing 9.10 Using Chai to test for errors
+
+This will test that calling capitalize with 123 throws an error. The only tricky bit is that we have to wrap it in a function. This is because we don't want our test code to create an error—we want that error to be caught by Chai.
+
+Reversing tests
+
+We might want to test that a value equals another value or that a function throws an error, but we might also want to test that a value doesn't equal another value or that a function doesn't throw an error. In the spirit of Chai's almost-readable-as-English syntax, we can use .not to reverse our test.
+
+Let's say that we want to make sure that capitalizing “foo” doesn't equal “foo”. This is a bit of a contrived example, but we might want to make sure that our capitalization function does something.
+
+Listing 9.11 Negating tests
+
+#A Notice the .not in there; that's reversing our condition.
+
+We've only begun to scratch the surface of what Chai can do. For more of its features, check out the documentation at http://chaijs.com/api/bdd/.
+More features of Mocha and Chai

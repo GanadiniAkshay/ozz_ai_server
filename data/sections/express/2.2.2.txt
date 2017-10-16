@@ -1,0 +1,69 @@
+
+Node has several built-in modules, but they're rarely enough; third-party packages are indispensible when making applications. And this is a book about a third-party module, after all, so you should definitely know how to use them!
+
+The first thing we need to talk about is package.json. Every Node project sits in a folder, and at the root of every Node project, there's a file called package.json. (When I say "every Node project", I mean every single one, from third-party packages to applications. You'll likely never build a Node project without one.)
+
+"package dot json" is a pretty simple JSON file that defines project metadata like the name of the project, its version, and its authors. It also defines the project's dependencies.
+
+Let's make a simple app. Make a new folder and save this to package.json:
+
+Listing 2.3 A simple package.json file
+
+#A Define the name of your project.
+
+#B Define the author. This can be an array of authors if you have many, and it probably isn't "Evan Hahn".
+
+#C This says "this is a private project; don't let me be published to the package registry for anyone to use."
+
+#D Define the version of the package.
+
+#E Notice that this project has no dependencies yet. We'll install some soon!
+
+Now that we've defined our package, we can install its dependencies.
+
+When you install Node, you actually get two programs: Node (as you might expect) and something called npm (deliberately lowercase). npm is an official helper for Node that helps you with your Node projects.
+
+npm is often called the "Node Package Manager", but its unabbreviated name has never been explicitly stated—its website randomly shows names like "Never Poke Monkeys" or "Nine Putrid Mangos". It may evade the "package manager" moniker because it does much more than that, but package management is perhaps its biggest feature, which we'll use now.
+
+Let's say we want to use Mustache (see https://mustache.github.io/), a standard little templating system. It lets you turn template strings into "real" strings. An example explains it best:
+
+Listing 2.4 An example of the Mustache templating system
+
+Let's say that we want to write a simple Node application that greets Nicholas Cage with the Mustache module.
+
+From the root of this directory, run npm install mustache --save. (You must run this command from the root of this directory so that npm knows where to put things.) This command will create a new folder in this directory called node_modules. Then it downloads the latest version of the Mustache package and puts it into this new node_modules folder (go look inside to check it out!). Finally, the --save flag will add it to your package.json. Your package.json file should look similar, but  it will now have the latest version of the Mustache package:
+
+Listing 2.5 A simple package.json file
+
+#A Notice this new line. Your dependency version may be newer than the one here.
+
+If you left off the --save flag, you'd see the new node_modules folder and it'd have Mustache inside, but nothing would be present in your package.json. The reason you want dependencies listed in your package.json is so that someone else can install the dependencies later if you gave them the project—they just have to run npm install with no arguments. Node projects typically have dependencies listed in their package.json but they don't come with the actual dependency files (they don't include the node_modules folder).
+
+Now that we've installed it, we can use the Mustache module from our code!
+
+Listing 2.6 Using the Mustache module
+
+#A Notice how we require Mustache—just like a built-in module.
+
+Save the code above to mustache-test.js and run it with node mustache-test.js.  You should see the text "Hi, Nicholas Cage!" appear.
+
+And that's it! Once it's installed into node_modules, you can use Mustache just like you would a built-in module. Node knows how to require modules inside the node_modules folder.
+
+When you're adding dependencies, you can also manually edit package.json and then run npm install. You can also install specific versions of dependencies or install them from places other than the official npm registry; see more at the npm install documentation (https://docs.npmjs.com/cli/install ).
+
+
+npm init
+
+
+npm init
+
+npm does much more than just install dependencies. For example, it allows you to autogenerate your package.json file. You can create package.json by hand yourself, but npm can do it for you.
+
+In your new project directory, you can type npm init. It will ask you a bunch of questions about your project—project name, author, version—and when it's all done, it will save a new package.json. There's nothing sacred about this generated file; you can change it all you want. But it can save you a bit of time when creating these package.json files.
+
+
+ 
+
+
+ 
+Requiring third-party modules with package.json and npm

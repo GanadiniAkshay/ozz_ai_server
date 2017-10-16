@@ -1,0 +1,17 @@
+
+First, you'll need to get a Heroku account. Visit Heroku.com and sign up (if you don't already have an account). The signup process should be fairly straightforward if you've ever signed up for any account online.
+
+Figure 11.2 Heroku's signup page.
+
+Next, you'll want to download and install the Heroku Toolbelt from https://toolbelt.heroku.com/. Follow the instructions for your specific operating system. Installing the Heroku Toolbelt on your computer will install three things:
+
+1. The Heroku client, a command-line tool for managing Heroku apps. We'll use it to create and manage our Express apps.
+
+2. Foreman, another command-line tool. We'll use it to define how we want our applications to run.
+
+3. Git, the version control system that you likely already have installed.
+
+Once you've installed it, there's one last thing to do: authenticate your computer with Heroku. Open up a command line and type heroku login. This will ask you for your Heroku username and password.
+
+Once you've done all that, Heroku should be set up!
+Getting Heroku set up

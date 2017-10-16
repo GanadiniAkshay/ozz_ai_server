@@ -1,0 +1,78 @@
+8.2.1. Using proxies for logging
+One of the most powerful tools when trying to figure out how code works or when trying to get to the root of a nasty bug is logging, the act of outputting information that we find useful at a particular moment. We might, for example, want to know which functions are called, how long they’ve been executing, what properties are read or written to, and so on.
+Unfortunately, when implementing logging, we usually scatter logging statements throughout the code. Take a look at the Ninja example used earlier in the chapter.
+Listing 8.8. Logging without proxies
+function Ninja() {
+let _skillLevel = 0;
+Object.defineProperty(this, 'skillLevel', {
+get: () => {
+report("skillLevel get method is called");
+#A
+return _skillLevel;
+},
+set: value => {
+report("skillLevel set method is called");
+#B
+_skillLevel = value;
+}
+});
+}
+const ninja = new Ninja();
+ninja.skillLevel;
+#C
+ninja.skillLevel = 4;
+#D
+#A - We log whenever the skillLevel property is read...
+#B - ...and whenever the skillLevel property is written to.
+#C - Reads the skillLevel property and triggers the get method
+#D - Writes to the skillLevel property and triggers the set method
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We define a Ninja constructor function that adds a getter and a setter to the skillLevel property, which log all attempts of reading and writing to that property.
+Notice that this isn’t an ideal solution. We’ve cluttered our domain code that deals with reading and writing to an object property with logging code. In addition, if in the future we need more properties on the ninja object, we have to be careful not to forget to add additional logging statements to each new property.
+Luckily, one of the straightforward uses of proxies is to enable logging whenever we read or write to a property, but in a much nicer and cleaner way. Consider the following example.
+Listing 8.9. Using proxies makes it easier to add logging to objects
+function makeLoggable(target){
+#A
+return new Proxy(target, {
+#B
+get: (target, property) => {
+#C
+report("Reading " + property);
+#C
+return target[property];
+#C
+},
+#C
+set: (target, property, value) => {
+#D
+report("Writing value " + value + " to " + property);
+#D
+target[property] = value;
+#D
+}
+#D
+});
+}
+let ninja = { name: "Yoshi"};
+#E
+ninja = makeLoggable(ninja);
+#E
+assert(ninja.name === "Yoshi", "Our ninja Yoshi");
+#F
+ninja.weapon = "sword";
+#F
+#A - Defines a function that takes a target object and makes it loggable
+#B - Creates a new proxy with that target object
+#C - A get trap that logs property reads
+#D - A set trap that logs property writes
+#E - Creates a new ninja object that will serve as our target object and make it loggable
+#F - Reads and writes to our proxy object. These actions are logged by the proxy traps.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":2,\"ch\":4},{\"line\":2,\"ch\":32}],[{\"line\":7,\"ch\":4},{\"line\":7,\"ch\":39}]]"}
+!@%STYLE%@!
+Here we define a makeLoggable function that takes a target object and returns a new Proxy that has a handler with a get and a set trap. These traps, besides reading and writing to the property, log the information about which property is read or written to.
+Next, we create a ninja object with a name property, and we pass it to the make-Loggable function, in which it will be used as a target for a newly created proxy. We then assign the proxy back to the ninja identifier, overriding it. (Don’t worry, our original ninja object is kept alive as the target object of our proxy.)
+Whenever we try to read a property (for example, with ninja.name), the get trap will be called, and the information about which property has been read will be logged. A similar thing will happen when writing to a property: ninja.weapon = "sword".
+Notice how much easier and more transparent this is when compared to the standard way of using getters and setters. We don’t have to mix our domain code with our logging code, and there’s no need to add separate logging for each object property. Instead, all property reads and writes go through our proxy object trap methods. Logging has been specified in only one place and is reused as many times as necessary, on as many objects as necessary.

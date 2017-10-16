@@ -1,0 +1,21 @@
+
+Before we start, let's talk about how Mongo works.
+
+Most applications have one database, like MongoDB. These databases are
+
+hosted by servers. A Mongo server can have many databases on it, but there is generally one database per application. If you're only developing one application on your computer, you'll likely only have one Mongo database. (These databases can be replicated across multiple servers, but you treat them as if it's one database.)
+
+To access these databases, you'll run a MongoDB server. Clients will talk to these servers, viewing and manipulating the database. There are client libraries for most programming languages; these libraries are called drivers and let you talk to the database in your favorite programming language. In this book, we'll be using the Node.js driver for MongoDB.
+
+Every database will have one or more collections. I like to think of collections as fancy arrays. A blog application might have a collection for blog posts, or a social network might have a collection for user profiles. They're like arrays in that they're just giant lists, but you can also query them ("give me all users in this collection older than age 18", for example) much more easily than arrays.
+
+Every collection will have any number of documents. Documents aren't technically stored as JSON, but you can think of them that way; they're basically objects with various properties. Documents are things like users and blog posts; there is one document per thing. Documents don't have to have the same properties, even if they're in the same collection—you could theoretically have a collection filled with completely different objects (although you seldom do this in practice).
+
+Documents look a lot like JSON, but they're technically something called Binary JSON, or BSON. You almost never deal with BSON directly; rather, you'll translate to and from JavaScript objects. The specifics of BSON encoding and decoding are a little different from JSON. BSON also supports a few types that JSON does not, like dates, timestamps, and undefined values.
+
+Here's a diagram that shows how things are put together:
+
+Figure 8.1 Hierarchy of Mongo's databases, collections, and documents
+
+One last important point: Mongo adds a unique _id property to every document. Because these IDs are unique, two documents are the same if they have the same _id property, and you can't store two documents with the same ID in the same collection. This is a miscellaneous point but an important one that we'll come back to!
+How Mongo works

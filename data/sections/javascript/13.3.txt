@@ -1,0 +1,293 @@
+13.3. Working with events
+When a certain event occurs, we can handle it in our code. As you’ve seen many times throughout this book, one common way of registering event handlers is by using the built-in addEventListener method, as shown in the following listing.
+Listing 13.6. Registering event handlers
+<button id="myButton">Click</button>
+<script>
+const myButton = document.getElementById("myButton");
+myButton.addEventListener("click", function myHandler(event){
+#A
+assert(event.target === myButton,
+#B
+"The target of the event is also myButton");
+#B
+assert(this === myButton,
+#C
+"The handler is registered on myButton");
+#C
+});
+</script>
+#A - Registers an event handler by using the addEventListener method
+#B - Accesses the element that the event has occurred on through the target property of the passed-in event
+#C - Within the handler function, this refers to the element that has registered the handler.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this snippet, we define a button named myButton and register a click event handler by using the built-in addEventListener method that’s accessible from all elements.
+After a click event occurs, the browser calls the associated handler, in this case the myHandler function. To this handler, the browser passes in an event object that contains properties that we can use to find out more information about the event, such as the position of the mouse or the mouse button that was clicked, in case we’re dealing with a mouse-click event, or the pressed key if we’re dealing with a keyboard event.
+One of the properties of the passed-in event object is the target property, which references the element on which the event has occurred.
+Note
+As within most other functions, within the event handler, we can use the this keyword. People often colloquially say that within an event handler, the this keyword refers to the object on which the event has occurred, but as we’ll soon find out, this isn’t exactly true. Instead, the this keyword refers to the element on which the event handler has been registered. To be honest, in most cases the element on which the event handler has been registered is the element on which the event has occurred, but there are exceptions. We’ll explore these situations shortly.
+Before exploring this concept further, let’s set the stage so you can see how events can be propagated through the DOM.
+13.3.1. Propagating events through the DOM
+As we already know from chapter 2, in HTML documents, elements are organized in a tree. An element can have zero or more children, and every element (except the root html element) has exactly one parent. Now, suppose that we’re working with a page that has an element inside another element, and both elements have a click handler, as in the following listing.
+Listing 13.7. Nested elements and click handlers
+<html>
+<head>
+<style>
+#outerContainer {width:100px; height:100px; background-color: blue;}
+#innerContainer {width:50px; height:50px; background-color: red;}
+</style>
+</head>
+<body>
+<div id="outerContainer">
+#A
+<div id="innerContainer"></div>
+#A
+</div>
+<script>
+const outerContainer = document.getElementById("outerContainer");
+const innerContainer = document.getElementById("innerContainer");
+outerContainer.addEventListener("click", () => {
+#B
+report("Outer container click");
+});
+innerContainer.addEventListener("click", () => {
+#C
+report("Inner container click");
+});
+document.addEventListener("click", () => {
+#D
+report("Document click");
+});
+</script>
+</body>
+</html>
+#A - Creates two nested elements
+#B - Registers a click handler for the outer container
+#C - Registers a click handler for the inner container
+#D - Registers a click handler for the entire document
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we have two HTML elements, outerContainer and innerContainer, that are, like all the other HTML elements, contained within our global document. And on all three objects, we register a click handler.
+Now let’s suppose that a user clicks the innerContainer element. Because innerContainer is contained within the outerContainer element, and both of these elements are contained within the document, it’s obvious that this should trigger the execution of all three event handlers, outputting three messages. What’s not apparent is the order in which the event handlers should be executed.
+Should we follow the order in which the events were registered? Should we start with the element on which the event occurs and move upward? Or should we start from the top and move downward toward the targeted element? Back in the day, when browsers were first making these decisions, the two primary competitors, Netscape and Microsoft, made opposing choices.
+In Netscape’s event model, the event handling starts with the top element and trickles down to the event target element. In our case, the event handlers would be executed in the following order: document click handler, outerContainer click handler, and finally innerContainer click handler. This is called event capturing.
+Microsoft chose to go the other way around: start from the targeted element and bubble up the DOM tree. In our case, the events would be executed in the following order: innerContainer click handler, outerContainer click handler, and document click handler. This is called event bubbling.
+The standard set by the W3 Consortium (www.w3.org/TR/DOM-Level-3-Events/), which is implemented by all modern browsers, embraces both approaches. An event is handled in two phases:
+Capturing phase— An event is first captured at the top element and trickled down to the target element.
+Bubbling phase— After the target element has been reached in the capturing phase, the event handling switches to bubbling, and the event bubbles up again from the target element to the top element.
+These two phases are shown in figure 13.15.
+Figure 13.15. With capturing, the event trickles down to the target element. With bubbling, the event bubbles up from the target element.
+We can easily decide which event-handling order we want to use, by adding another Boolean argument to the addEventListener method. If we use true as the third argument, the event will be captured, whereas if we use false (or leave out the value), the event will bubble. So in a sense, the W3C standard prefers event bubbling slightly more to event capturing, because bubbling has been made the default option.
+Now let’s go back to listing 13.7 and look closely at the way we’ve registered events:
+outerContainer.addEventListener("click", () => {
+report("Outer container click");
+});
+innerContainer.addEventListener("click", () => {
+report("Inner container click");
+});
+document.addEventListener("click", () => {
+report("Document click");
+});
+As you can see, in all three cases, we’ve called the addEventListener method with only two arguments, which means that the default method, bubbling, is chosen. So in this case, if we click the innerContainer element, the event handlers would be executed in this order: innerContainer click handler, outerContainer click handler, document click handler.
+Let’s modify the code in listing 13.7 in the following way.
+Listing 13.8. Capturing versus bubbling
+const outerContainer = document.getElementById("outerContainer");
+const innerContainer = document.getElementById("innerContainer");
+document.addEventListener("click", () => {
+report("Document click");
+});
+#A
+outerContainer.addEventListener("click", () => {
+report("Outer container click");
+}, true);
+#B
+innerContainer.addEventListener("click", () => {
+report("Inner container click");
+}, false);
+#C
+#A - By not specifying the third argument, the default, bubbling mode, is enabled.
+#B - Passing in true as the third argument enables capturing.
+#C - Passing in false enables bubbling.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":9,\"ch\":1},{\"line\":9,\"ch\":7}],[{\"line\":13,\"ch\":1},{\"line\":13,\"ch\":8}]]"}
+!@%STYLE%@!
+This time, we set the event handler of the outerContainer to capturing mode (by passing in true as the third argument), and the event handlers of innerContainer (by passing in false as the third argument) and document to bubbling mode (leaving out the third argument chooses the default, bubbling mode).
+As you know, a single event can trigger the execution of multiple event handlers, where each handler can be in either capturing or bubbling mode. For this reason, the event first goes through capturing, starting from the top element and trickling down to the event target element. When the target element is reached, bubbling mode is activated, and the event bubbles from the target element all the way back to the top.
+In our case, capturing starts from the top, window object and trickles down to the innerContainer element, with the goal of finding all elements that have an event handler for this click event in capturing mode. Only one element, outerContainer, is found, and its matching click handler is executed as the first event handler.
+The event continues traveling down the capturing path, but no more event handlers with capturing are found. After the event reaches the event target element, the innerContainer element, the event moves on to the bubbling phase, where it goes from the target element all the way back to the top, executing all bubbling event handlers on that path.
+In our case, the innerContainer click handler will be executed as the second event handler, and the document click handler as the third. The output generated by clicking the innerContainer element, as well as the taken path, is shown in figure 13.16.
+Figure 13.16. First the event trickles down from the top, executing all event handlers in capturing mode. When the target element is reached, the event bubbles up to the top, executing all event handlers in bubbling mode.
+One of the things this example shows is that the element on which the event is handled doesn’t have to be the element on which the event occurs. For example, in our case, the event occurs on the innerContainer element, but we can handle it on elements higher up in the DOM hierarchy, such as on the outerContainer or the document element.
+This takes us back to the this keyword in event handlers, and why we explicitly stated that the this keyword refers to the element on which the event handler is registered, and not necessarily to the element on which the event occurs.
+Again, let’s modify our running example, as shown in the following listing.
+Listing 13.9. The difference between this and event.target in event handlers
+const outerContainer = document.getElementById("outerContainer");
+const innerContainer = document.getElementById("innerContainer");
+innerContainer.addEventListener("click", function(event){
+report("innerContainer handler");
+#A
+assert(this === innerContainer,
+#A
+"This referes to the innerContainer");
+#A
+assert(event.target === innerContainer,
+#A
+"event.target refers to the innerContainer");
+#A
+});
+outerContainer.addEventListener("click", function(event){
+report("innerContainer handler");
+#B
+assert(this === outerContainer,
+#B
+"This refers to the outerContainer");
+#B
+assert(event.target === innerContainer,
+#B
+"event.target refers to the innerContainer");
+#B
+});
+#A - Within the innerContainer handler, both this and event.target point to the innerContainer element.
+#B - Within the outerContainer handler, if we’re handling the event originating on the innerContainer, this will refer to the outerContainer and event.target to innerContainer
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Again, let’s look at the application execution when a click occurs on innerContainer. Because both event handlers use event bubbling (there’s no third argument set to true in the addEventListener methods), first the innerContainer click handler is invoked. Within the body of the handler, we check that both the this keyword and the event.target property refer to the innerContainer element:
+assert(this === innerContainer,
+"This refers to the innerContainer");
+assert(event.target === innerContainer,
+"event.target refers to the innerContainer");
+The this keyword points to the innerContainer element because that’s the element on which the current handler has been registered, whereas the event.target property points to the innerContainer element because that’s the element on which the event has occurred.
+Next, the event bubbles up to the outerContainer handler. This time, the this keyword and the event.target point to different elements:
+assert(this === outerContainer,
+"This refers to the outerContainer");
+assert(event.target === innerContainer,
+"event.target refers to the innerContainer");
+As expected, the this keyword refers to the outerContainer element, because this is the element on which the current handler has been registered. On the other hand, the event.target property points to the innerContainer element, because this is the element on which the event has occurred.
+Now that we understand how an event is propagated through the DOM tree and how to access the element on which the event has originally occurred, let’s see how to apply this knowledge to write less memory-intensive code.
+Delegating events to an ancestor
+Let’s say that we want to visually indicate whether a cell within a table has been clicked by the user, by initially displaying a white background for each cell and then changing the background color to yellow after the cell is clicked. Sounds easy enough. We can iterate through all the cells and establish a handler on each one that changes the background color property:
+const cells = document.querySelectorAll('td');
+for (let n = 0; n < cells.length; n++) {
+cells[n].addEventListener('click', function(){
+this.style.backgroundColor = 'yellow';
+});
+}
+Sure this works, but is it elegant? No. We’re establishing the exact same event handler on potentially hundreds of elements, and they all do the exact same thing.
+A much more elegant approach is to establish a single handler at a level higher than the cells that can handle all the events using event bubbling.
+We know that all the cells will be descendants of their enclosing table, and we know that we can get a reference to the element that was clicked via event.target. It’s much more suave to delegate the event handling to the table, as follows:
+const table = document.getElementById('someTable');
+table.addEventListener('click', function(event){
+if (event.target.tagName.toLowerCase() === 'td')
+#A
+event.target.style.backgroundColor = 'yellow';
+});
+#A - Performs an action only if the click happens on a cell element (and not on a random descendant)
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":0},{\"line\":6,\"ch\":100}]]"}
+!@%STYLE%@!
+Here, we establish one handler that easily handles the work of changing the background color for all cells in the table that were clicked. This is much more efficient and elegant.
+With event delegation, we have to make sure that it’s only applied to elements that are ancestors of the elements that are the event targets. That way, we’re sure that the events will eventually bubble up to the element to which the handler has been delegated.
+So far, we’ve been dealing with events that are provided by the browser, but haven’t you ever fervently desired the ability to trigger your own custom events?
+13.3.2. Custom events
+Imagine a scenario in which you want to perform an action, but you want to trigger it under a variety of conditions from different pieces of code, perhaps even from code that’s in shared script files. A novice would repeat the code everywhere it’s needed. A journeyman would create a global function and call it from everywhere it’s needed. A ninja would use custom events. But why?
+Loose coupling
+Say we’re doing operations from shared code, and we want to let page code know when it’s time to react to a particular condition. If we use the journeyman’s global function approach, we introduce the disadvantage that our shared code needs to define a fixed name for the function, and all pages that use the shared code need to use such a function.
+Moreover, what if there are multiple things to do when the triggering condition occurs? Making allowances for multiple notifications would be arduous and necessarily messy. These disadvantages are a result of close coupling, in which the code that detects the conditions has to know the details of the code that will react to that condition.
+Loose coupling, on the other hand, occurs when the code that triggers the condition doesn’t know anything about the code that will react to the condition, or even if there’s anything that will react to it at all. One of the advantages of event handlers is that we can establish as many as we want, and these handlers are completely independent of each other. So event handling is a good example of loose coupling. When a button-click event is triggered, the code triggering the event has no knowledge of what handlers we’ve established on the page, or even if there are any. Rather, the click event is pushed onto the task queue by the browser, and whatever caused the event to trigger could care less what happens after that. If handlers have been established for the click event, they’ll eventually be individually invoked in a completely independent fashion.
+There’s much to be said for loose coupling. In our scenario, the shared code, when it detects an interesting condition, triggers a signal of some sort that says, “This interesting thing has happened; anyone interested can deal with it,” and it couldn’t give a darn whether anyone’s interested. Let’s examine a concrete example.
+An Ajax-y example
+Let’s pretend that we’ve written some shared code that will be performing an Ajax request. The pages that this code will be used on want to be notified when an Ajax request begins and when it ends; each page has its own things that it needs to do when these “events” occur.
+For example, on one page using this package, we want to display a spinning pinwheel when an Ajax request starts, and we want to hide it when the request completes, in order to give the user some visual feedback that a request is being processed. If we imagine the start condition as an event named ajax-start, and the stop condition as ajax-complete, wouldn’t it be grand if we could establish event handlers on the page for these events that show and hide the image as appropriate?
+Consider this:
+document.addEventListener('ajax-start', e => {
+document.getElementById('whirlyThing').style.display = 'inline-block';
+});
+document.addEventListener('ajax-complete', e => {
+document.getElementById('whirlyThing').style.display = 'none';
+});
+Sadly, these events don’t exist, but there’s nothing stopping us from bringing them into existence.
+Creating custom events
+Custom events are a way of simulating (for the user of our shared code) the experience of a real event, but an event that has business sense within the context of our application. The following listing shows an example of triggering a custom event.
+Listing 13.10. Using custom events
+<style>
+#whirlyThing { display: none; }
+</style>
+<button type="button" id="clickMe">Start</button>
+#A
+<img id="whirlyThing" src="whirly-thing.gif" />
+#B
+<script>
+function triggerEvent(target, eventType, eventDetail){
+const event = new CustomEvent(eventType, {
+#C
+detail: eventDetail
+#D
+});
+target.dispatchEvent(event);
+#E
+}
+function performAjaxOperation() {
+#F
+triggerEvent(document, 'ajax-start', { url: 'my-url'});
+#F
+setTimeout(() => {
+#F
+triggerEvent(document, 'ajax-complete');
+#F
+},5000);
+}
+const button = document.getElementById('clickMe');
+button.addEventListener('click', () => {
+performAjaxOperation();
+#G
+});
+document.addEventListener('ajax-start', e => {
+#H
+document.getElementById('whirlyThing').style.display = 'inline-block';
+assert(e.detail.url === 'my-url', 'We can pass in event data');
+#I
+});
+document.addEventListener('ajax-complete', e => {
+#J
+document.getElementById('whirlyThing').style.display = 'none';
+});
+</script>
+#A - A button that we’ll click to simulate an Ajax request
+#B - Our spinner image, which indicates loading, if shown
+#C - Uses the CustomEvent constructor to create a new event
+#D - Passes in information to the event object through the detail property
+#E - Uses the built-in dispatchEvent method to dispatch the event to the specified element
+#F - Mimics our Ajax request with a timer. At the start of execution, triggers the ajax-start event. After enough time elapses, triggers the ajax-complete event. Passes in a URL as additional event data
+#G - When a button is clicked, the Ajax operation is started.
+#H - Handles the ajax-start event by showing our whirly thing
+#I - Checks that we can access additional event data
+#J - Handles the ajax-complete event by hiding our whirly thing
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In this example, we explore custom events by establishing the scenario described in the previous section: An animated pinwheel image is displayed while an Ajax operation is underway. The operation is triggered by the click of a button.
+In a completely decoupled fashion, a handler for a custom event named ajax-start is established, as is the one for the ajax-complete custom event. The handlers for these events show and hide the pinwheel image, respectively:
+button.addEventListener('click', () => {
+performAjaxOperation();
+});
+document.addEventListener('ajax-start', e => {
+document.getElementById('whirlyThing').style.display = 'inline-block';
+assert(e.detail.url === 'my-url', 'We can pass in event data');
+});
+document.addEventListener('ajax-complete', e => {
+document.getElementById('whirlyThing').style.display = 'none';
+});
+Note that the three handlers know nothing of each other’s existence. In particular, the button click handler has no responsibilities with respect to showing and hiding the image.
+The Ajax operation itself is simulated with the following code:
+function performAjaxOperation() {
+triggerEvent(document, 'ajax-start', { url: 'my-url'});
+setTimeout(() => {
+triggerEvent(document, 'ajax-complete');
+}, 5000);
+}
+The function triggers the ajax-start event and sends data about the event (the url property), pretending that an Ajax request is about to be made. The function then issues a 5-second time-out, simulating an Ajax request that spans 5 seconds. When the timer expires, we pretend that the response has been returned and trigger an ajax-complete event to signify that the Ajax operation has completed.
+Notice the high degree of decoupling throughout this example. The shared Ajax operation code has no knowledge of what the page code is going to do when the events are triggered, or even if there’s page code to trigger at all. The page code is modularized into small handlers that don’t know about each other. Furthermore, the page code has no idea how the shared code is doing its thing; it just reacts to events that may or may not be triggered.
+This level of decoupling helps to keep code modular, easier to write, and a lot easier to debug when something goes wrong. It also makes it easy to share portions of code and to move them around without fear of violating a coupled dependency between the code fragments. Decoupling is a fundamental advantage when using custom events in code, and it allows us to develop applications in a much more expressive and flexible manner.

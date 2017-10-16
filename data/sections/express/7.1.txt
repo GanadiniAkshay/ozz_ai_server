@@ -1,0 +1,9 @@
+
+Before I begin, let me define a term I'll be using a lot: view engine. When I say "view engine", I basically mean "module that does the actual rendering of views".
+
+Jade and EJS are view engines, and there are many others.
+
+American singer-songwriter India.Arie has an excellent song called "Brown Skin". About brown skin she sings "I can't tell where yours begins, I can't tell where mine ends". Similarly, when I first started using Express views, I was confused where Express ended and the view engines began. Luckily, it's not too difficult!
+
+Express is unopinionated about which view engine you use. As long as the view engine exposes an API that Express expects, you're good to go. Express offers a convenience function to help you render your views; let's take a look.
+Express's view features

@@ -1,0 +1,5 @@
+
+One of the simplest and most popular view engines out there is called EJS, for "Embedded JavaScript". It can do templating for simple strings, HTML, plain text—you name it—it lightly integrates itself with whatever tool you use. It works in the browser and Node.js. If you've ever used ERB from the Ruby world, EJS is very similar. In any case, it's pretty simple!
+
+WARNING There are actually two versions of EJS maintained by two different groups of people. They're similar, but not identical. The one we'll be using is by TJ Holowaychuck, the creator of Express. If you look for a package called "ejs" on npm, this is the one you'll find. But if you visit http://embeddedjs.com/, you'll find a very similar library claiming with the same name. A lot of the functionality is the same, but it's a different library last updated in 2009. It doesn't work in Node, and it's even got some debatably-sexist sentences in its documentation; avoid it!
+Everything you need to know about EJS

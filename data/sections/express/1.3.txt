@@ -1,0 +1,6 @@
+
+Alright, so Express is minimal, and it sugarcoats Node.js to make it easier to use. How does it do that?
+
+When you get right down to it, Express has just four major features. There's a lot of conceptual stuff in the next few sections, 
+but it's not just hand-waving; we'll get to the nitty-gritty details in the following chapters.
+The core parts of Express

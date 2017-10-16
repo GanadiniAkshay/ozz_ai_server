@@ -1,0 +1,73 @@
+
+EJS can be used for templating HTML, but it can be used for anything. Let's take a look at a short bit of EJS, and what that looks like when you render it.
+
+Listing 7.5 An EJS template
+
+If we passed the following context to EJS...
+
+Listing 7.6 An EJS context
+
+Then we'd get the following result (as of 2014, anyway):
+
+This little example shows four major features of EJS: JavaScript that's evaluated, escaped, and printed, JavaScript that's evaluated but not printed, JavaScript that's evaluate and printed (but not escaped for HTML), and filters.
+
+You can print the results of JavaScript expressions in two ways, as we see. <% expression %> prints the result of the expression, while <%= expression %> prints the result of the expression and escapes any HTML entities that might be inside. In general, I'd recommend using the latter option when you can, because it's more secure.
+
+You can also run arbitrary JavaScript and keep it from being printed. This is useful for things like loops and conditionals, as we see in the above example. This is done with <% expression %>. As you can see, you can use brackets to group loops and conditionals across multiple lines.
+
+Finally, appending a colon (:) to an output will allow filters to be applied. Filters take the output of an expression and filter it to change the output. In the above example, we use the capitalization filter, but there are plenty of others and you can define your own (as we'll see in just a moment!).
+
+NOTE If you want to play around with EJS, I made "Try EJS" (at https://evanhahn.github.io/try-EJS/), a simple browser app to play around with EJS in your browser. I'll admit it's not polished, but it's sufficient for just playing around with EJS in your browser and seeing the rendered output.
+
+INCLUDE-ING OTHER EJS TEMPLATES WITHIN YOUR OWN
+
+EJS also lets you include other EJS templates, too. This is incredibly useful for a variety of reasons. You can add headers and footers to pages, split out common widgets, and more! If you find yourself writing the same code several times, it might be time to use EJS's include feature.
+
+Let's look at two examples.
+
+First, let's imagine you have pages that all share the same header and footer. Rather than duplicate everything over and over again, you could create a header EJS file, a footer EJS file, and then your pages that go "between" the header and footer.
+
+Here's how a header file (saved at header.ejs) might look:
+
+Listing 7.7 A header EJS file
+
+Then, you'd define a footer in footer.ejs:
+
+Listing 7.8 A footer EJS file
+
+Now that you've defined your header and footer, you can include it in sub-pages pretty easily!
+
+Listing 7.9 Including a header and footer from EJS
+
+We use include to, well, include other EJS files. Notice that we don't use <%= ... %> or <%- ... %>; everything is finally printed by EJS, not you.
+
+We could also imagine ourselves using this to build a widget. For example, let's say we had a widget that showed user profiles. Given an object called user, this template would spit out some HTML for that user. Here's how userwidget.ejs might look:
+
+Listing 7.10 A user widget in userwidget.ejs
+
+Now we can use that template when rendering the current user...
+
+Listing 7.11 Rendering a user widget for the current user
+
+...or when rendering a list of users.
+
+Listing 7.12 Rendering a user widget many times
+
+EJS's include is versatile; it can be used to create templates or to render sub-views many times.
+
+ADDING YOUR OWN FILTERS
+
+There are 22 built-in filters, ranging from mathematic operations to array/string reversal to sorting. They're often enough for your needs, but sometimes you'll want to add your own.
+
+Assuming you've required EJS into a variable called ejs, you simply add a property to ejs.filters. If we're frequently summing arrays, we might find it useful to make our own custom "array summer" filter.
+
+Here's how we might add such a filter:
+
+Listing 7.13 Add an EJS filter to sum an array
+
+Now you can use it just like any other filter!
+
+Listing 7.14 Using our new EJS sum filter
+
+Pretty simple! There are lots of filters you could dream up—code them as you need them!
+The syntax of EJS

@@ -1,0 +1,53 @@
+14.1. Cross-browser considerations
+Perfecting our JavaScript programming skills will take us far, especially now that JavaScript has escaped the confines of the browser and is being used on the server with Node.js. But when developing browser-based JavaScript applications (which is the focus of this book), sooner rather than later, we’re going to run face first into The Browsers and their various issues and inconsistencies.
+In a perfect world, all browsers would be bug-free and would support web standards consistently, but as we all know, we don’t live in that world. Although the quality of browsers has improved greatly as of late, all still have some bugs, missing APIs, and browser-specific quirks that we’ll need to deal with. Developing a comprehensive strategy for tackling these browser issues, and becoming intimately familiar with their differences and quirks, isn’t less important than proficiency in JavaScript itself.
+When writing browser applications, choosing which browsers to support is important. We’d probably like to support them all, but limitations on development and testing resources dictate otherwise. So how do we decide which to support, and to what level?
+One approach that we can employ is loosely borrowed from an older Yahoo! approach, graded browser support. In this technique, we create a browser-support matrix that serves as a snapshot of how important a browser and its platform are to our needs. In this table, we list the target platforms on one axis, and the browsers on the other. Then, in the table cells, we give a “grade” (A through F, or any other grading system that meets our needs) to each browser/platform combination. Table 14.1 shows a hypothetical example.
+Table 14.1. A hypothetical browser-support matrix
+Windows
+OS X
+Linux
+iOS
+Android
+IE 9
+N/A
+N/A
+N/A
+N/A
+IE10
+N/A
+N/A
+N/A
+N/A
+IE11
+N/A
+N/A
+N/A
+N/A
+Edge
+N/A
+N/A
+N/A
+N/A
+Firefox
+N/A
+Chrome
+Opera
+Safari
+N/A
+N/A
+Note that we haven’t filled in any grades. The grades you assign to a particular combination of platform and browser are entirely dependent on the needs and requirements of your project, as well as other important factors, such as the makeup of the target audience. We can use this approach to come up with grades that measure the importance of support for that platform/browser, and combine that info with the cost of that support to try to come up with the optimal set of supported browsers.
+When we choose to support a browser, we’re typically making the following promises:
+We’ll actively test against that browser with our test suite.
+We’ll fix bugs and regressions associated with that browser.
+The browser will execute our code with a reasonable level of performance.
+Because it’s impractical to develop against lots of platform/browser combinations, we must weigh the costs versus the benefits of supporting the various browsers. This analysis must take into account multiple considerations, and the primary ones are as follows:
+The expectations and needs of the target audience
+The market share of the browser
+The amount of effort necessary to support the browser
+The first point is a subjective one that only your project can determine. Market share, on the other hand, can frequently be measured using available information. And a rough estimate of the effort involved in supporting each browser can be determined by considering the capabilities of the browsers and their adherence to modern standards.
+Figure 14.1 shows a sample chart that represents information on browser use (obtained from http://gs.statcounter.com for April 2016). Any piece of reusable JavaScript code, whether it’s a mass-consumption JavaScript library or our own onpage code, should be developed to work in as many environments as feasible, concentrating on the browsers and platforms that are important to the end user. For mass-consumption libraries, that’s a large set; for more-targeted applications, the required set may be narrower.
+Figure 14.1. Looking at the usage statistics of browsers on desktop and mobile devices gives us an idea of which browsers to focus our attention on.
+But it’s vitally important not to bite off more than you can chew, and quality should never be sacrificed for coverage. That’s important enough to repeat; in fact, we urge you to read it out loud:
+Quality should never be sacrificed for coverage.
+In this chapter, we’ll examine the situations that JavaScript code will find itself up against with regards to cross-browser support. Then we’ll examine some of the best ways to write that code with the aim of alleviating any potential problems that those situations pose. This should go a long way in helping you decide which of these techniques are worth your time to adopt, and it should help you fill out your own browser-support chart.

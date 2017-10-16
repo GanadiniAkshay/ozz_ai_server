@@ -1,0 +1,13 @@
+
+In short, Express.js is a light layer on top of the Node.js web server, making it more pleasant to develop Node.js web applications.
+
+Express.js is philosophically similar to jQuery. People want to add dynamic content to their webpages, but the “vanilla” browser APIs can be verbose, confusing, and limited in features. Developers often have to write a lot of boilerplate code. jQuery exists to cut down on this boilerplate code by simplifying the APIs of the browser and adding helpful new features. That's basically it.
+
+Express is exactly the same. People want to make web applications with Node.js, but the “vanilla” Node.js APIs can be verbose, confusing, and limited in features. Developers often have to write a lot of boilerplate code. Express exists to cut down on this boilerplate code by simplifying the APIs of Node.js and adding helpful new features. That's basically it!
+
+Like jQuery, Express aims to be extensible. It's hands-off about most parts of your applications' decisions and is easily extended with third-party libraries. Throughout this book and your Express career, you'll have to make decisions about your applications' architectures and you'll extend Express with a bevy of powerful third-party modules.
+
+You probably didn't pick up this book for the “in short” definition, though. The rest of this chapter (and book, really) will discuss Express in much more depth.
+
+NOTE  This book assumes you know some Node.js and are proficient in JavaScript. If you don't, take a look at Appendix A, where you'll learn how to install Node.js, the basics, and some helpful tooling.
+What is Express?

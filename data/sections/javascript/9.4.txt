@@ -1,0 +1,18 @@
+9.4. Summary
+Arrays are a special type of object with a length property and Array.prototype as their prototype.
+We can create new arrays using the array literal notation ([]) or by calling the built-in Array constructor.
+We can modify the contents of an array using several methods accessible from array objects:
+The built-in push and pop methods add items to and remove items from the end of the array.
+The built-in shift and unshift methods add items to and remove items from the beginning of the array.
+The built-in splice method can be used to remove items from and add items to arbitrary array positions.
+All arrays have access to a number of useful methods:
+The map method creates a new array with the results of calling a callback on every element.
+The every and some methods determine whether all or some array items satisfy a certain criterion.
+The find and filter methods find array items that satisfy a certain condition.
+The sort method sorts an array.
+The reduce method aggregates all items in an array into a single value.
+You can reuse the built-in array methods when implementing your own objects by explicitly setting the method call context with the call or apply method.
+Maps and dictionaries are objects that contain mappings between a key and a value.
+Objects in JavaScript are lousy maps because you can only use string values as keys and because there’s always the risk of accessing prototype properties. Instead, use the new built-in Map collection.
+Maps are collections and can be iterated over using the for...of loop.
+Sets are collections of unique items.

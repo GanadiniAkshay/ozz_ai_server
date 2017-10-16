@@ -1,0 +1,34 @@
+5.6.3. Revisiting the closures and callbacks example
+Let’s go back to our simple animations example with callback timers. This time, we’ll animate two objects, as shown in the following listing.
+Listing 5.13. Using a closure in a timer interval callback
+<div id="box1">First Box</div>
+<div id="box2">Second Box</div>
+<script>
+function animateIt(elementId) {
+var elem = document.getElementById(elementId);
+var tick = 0;
+var timer = setInterval(function(){
+if (tick < 100) {
+elem.style.left = elem.style.top = tick + "px";
+tick++;
+}
+else {
+clearInterval(timer);
+assert(tick === 100,
+"Tick accessed via a closure.");
+assert(elem,
+"Element also accessed via a closure.");
+assert(timer,
+"Timer reference also obtained via a closure." );
+}
+}, 10);
+}
+animateIt("box1");
+animateIt("box2");
+</script>
+As you saw earlier in the chapter, we use closures to simplify animating multiple objects on our pages. But now we’ll consider lexical environments, as shown in figure 5.19.
+Figure 5.19. By creating multiple closures, we can do many things at once. Every time an interval expires, the callback function reactivates the environment that was active at the time of callback creation. The closure of each callback automatically keeps track of its own set of variables.
+Every time we call the animateIt function, a new function lexical environment is created
+that keeps track of the set of variables important for that animation (the elementId; elem, the element that’s being animated; tick, the current number of ticks; and timer, the ID of the timer doing the animation). That environment will be kept alive as long as there’s at least one function that works with its variables through closures. In this case, the browser will keep alive the setInterval callback until we call the clearInterval function. Later, when an interval expires, the browser calls the matching callback—and with it, through closures, come the variables defined when the callback was created. This enables us to avoid the trouble of manually mapping the callback and the active variables
+, thereby significantly simplifying our code.
+That’s all we have to say about closures and scopes. Now recap this chapter and meet us in the next one, where we’ll explore two completely new ES6 concepts, generators and promises, that can help when writing asynchronous code.

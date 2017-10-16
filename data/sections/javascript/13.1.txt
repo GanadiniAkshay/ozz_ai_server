@@ -1,0 +1,138 @@
+13.1. Diving into the event loop
+As you might have figured out, the event loop is more complicated than its presentation in chapter 2. For starters, instead of a single event queue, which holds only events, the event loop has at least two queues that, in addition to events, hold other actions performed by the browser. These actions are called tasks and are grouped into two categories: macrotasks (or often just called tasks) and microtasks.
+Examples of macrotasks include creating the main document object, parsing HTML, executing mainline (or global) JavaScript code, changing the current URL, as well as various events such as page loading, input, network events, and timer events. From the browser’s perspective, a macrotask represents one discrete, self-contained unit of work. After running a task, the browser can continue with other assignments such as re-rendering the UI of the page, or performing garbage collection.
+Microtasks, on the other hand, are smaller tasks that update the application state and should be executed before the browser continues with other assignments such as re-rendering the UI. Examples include promise callbacks and DOM mutation changes. Microtasks should be executed as soon as possible, in an asynchronous way, but without the cost of executing a whole new macrotask. Microtasks enable us to execute certain actions before the UI is re-rendered, thereby avoiding unnecessary UI rendering that might show inconsistent application state.
+Note
+The ECMAScript specification doesn’t mention event loops. Instead, the event loop is detailed in the HTML specification (https://html.spec.whatwg.org/#event-loops), which also discusses the concept of macrotasks and microtasks. The ECMAScript specification mentions jobs (which are analogous to microtasks) in respect to handling promise callbacks (http://mng.bz/fOlK). Even though the event loop is defined in the HTML specification, other environments, such as Node.js, also use it.
+The implementation of an event loop should use at least one queue for macrotasks and at least one queue for microtasks. Event loop implementations usually go beyond that, and have several queues for different types of macro- and microtasks. This enables the event loop to prioritize types of tasks; for example, giving priority to performance-sensitive tasks such as user input. On the other hand, because there are many browsers and JavaScript execution environments out in the wild, you shouldn’t be surprised if you run into event loops with only a single queue for both types of tasks together.
+The event loop is based on two fundamental principles:
+Tasks are handled one at a time.
+A task runs to completion and can’t be interrupted by another task.
+Let’s take a look at figure 13.1, which depicts these two principles.
+Figure 13.1. The event loop usually has access to at least two task queues: a microtask queue and a macrotask queue. Both types of tasks are handled one at a time.
+On a high level, figure 13.1 shows that in a single iteration, the event loop first checks the macrotask queue, and if there’s a macrotask waiting to be executed, starts its execution. Only after the task is fully processed (or if there were no tasks in the queue), the event loop moves onto processing the microtask queue. If there’s a task waiting in that queue, the event loop takes it and executes it to completion. This is performed for all microtasks in the queue. Note the difference between handling the macrotask and microtask queues: In a single loop iteration, one macrotask at most is processed (others are left waiting in the queue), whereas all microtasks are processed.
+When the microtask queue is finally empty, the event loop checks whether a UI render update is required, and if it is, the UI is re-rendered. This ends the current iteration of the event loop, which goes back to the beginning and checks the macrotask queue again.
+Now that we have a high-level understanding of the event loop, let’s check some of the interesting details shown in figure 13.1:
+Both task queues are placed outside the event loop, to indicate that the act of adding tasks to their matching queues happens outside the event loop. If this wasn’t the case, any events that occur while JavaScript code is being executed would be ignored. Because we most definitely don’t want to do this, the acts of detecting and adding tasks are done separately from the event loop.
+Both types of tasks are executed one at a time, because JavaScript is based on a single-threaded execution model. When a task starts executing, it’s executed to its completion, without being interrupted by another task. Only the browser can stop the execution of a task; for example, if the task starts being too selfish by taking up too much time or memory.
+All microtasks should be executed before the next rendering, because their goal is to update the application state before rendering occurs.
+The browser usually tries to render the page 60 times per second, to achieve 60 frames per second (60 fps), a frame rate that’s often considered ideal for smooth motion, such as animations—meaning, the browser tries to render a frame every 16 ms. Notice how the “Update rendering” action, shown in figure 13.1, happens inside the event loop, because the page content shouldn’t be modified by another task while the page is being rendered. This all means that, if we want to achieve smooth-running applications, we don’t have much time to process tasks in a single event-loop iteration. A single task and all microtasks generated by that task should ideally complete within 16 ms.
+Now, let’s consider three situations that can occur in the next event-loop iteration, after the browser has completed a page render:
+The event loop reaches the “Is rendering required?” decision point before another 16 ms has elapsed. Because updating the UI is a complex operation, if there isn’t an explicit need to render the page, the browser may choose not to perform the UI rendering in this loop iteration.
+The event loop reaches the “Is rendering required?” decision point roughly around 16 ms after the last rendering. In this case, the browser updates the UI, and users will experience a smooth-running application.
+Executing the next task (and all related microtasks) takes much more than 16 ms. In this case, the browser won’t be able to re-render the page at the target frame rate, and the UI won’t be updated. If running the task code doesn’t take up too much time (more than a couple of hundred milliseconds), this delay might not even be perceivable, especially if there isn’t much motion going on in the page. On the other hand, if we take too much time, or animations are running on the page, users will probably perceive the web page as slow and nonresponsive. In a worst-case scenario, in which a task gets executed for more than a couple of seconds, the user’s browser shows the dreaded “Unresponsive script” message. (Don’t worry, later in the chapter we’ll show you a technique for breaking complex tasks into smaller ones that won’t clog the event loop.)
+Note
+Be careful about which events you decide to handle, how often they occur, and how much processing time an event handler takes. For example, you should be extra careful when handling mouse-move events. Moving the mouse around causes a large number of events to be queued, so performing any complex operation in that mouse-move handler is a sure path to building a slow and jerky web application.
+Now that we’ve described how the event loop works, you’re ready to explore a couple of examples in detail.
+13.1.1. An example with only macrotasks
+The unavoidable result of JavaScript’s single-threaded execution model is that only one task can be executed at a time. This in turn means that all created tasks have to wait in a queue until their turn for execution comes.
+Let’s focus our attention on a simple web page that contains the following:
+Nontrivial mainline (global) JavaScript code
+Two buttons and two nontrivial click handlers, one for each button
+The following listing shows the sample code.
+Listing 13.1. Pseudocode for our event loop demo with one task queue
+<button id="firstButton"></button>
+<button id="secondButton"></button>
+<script>
+const firstButton = document.getElementById("firstButton");
+const secondButton = document.getElementById("secondButton");
+firstButton.addEventListener("click", function firstHandler(){
+#A
+/*Some click handle code that runs for 8 ms*/
+#A
+});
+secondButton.addEventListener("click", function secondHandler(){
+#B
+/*Click handle code that runs for 5ms*/
+#B
+});
+/*Code that runs for 15ms*/
+</script>
+#A - Registers an event handler for a button-click event on the first button
+#B - Registers another click event handler, this time for the second button
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This example requires some imagination, so instead of cluttering the code fragment with unnecessary code, we ask you to imagine the following:
+Our mainline JavaScript code takes 15 ms to execute.
+The first click event handler runs for 8 ms.
+The second click event handler runs for 5 ms.
+Now let’s continue to be imaginative, and say that we have a super quick user who clicks the first button 5 ms after our script starts executing, and the second button 12 ms after. Figure 13.2 depicts this situation.
+Figure 13.2. This timing diagram shows how events are added to the task queue as they occur. When a task is done executing, the event loop takes it off the queue, and continues by executing the next task.
+There’s a lot of information to digest here, but understanding it completely will give you a better idea of how the event loop works. In the top part of the figure, time (in milliseconds) is running from left to right along the x-axis. The rectangles underneath that timeline represent portions of JavaScript code under execution, extending for the amount of time they’re running. For example, the first block of mainline JavaScript code executes for approximately 15 ms, the first click handler for approximately 8 ms, and the second click handler for approximately 5 ms. The timing diagram also shows when certain events occur; for example, the first button click occurs 5 ms into application execution, and the second button click at 12 ms. The bottom part of the figure shows the state of the macrotask queue at various points of application execution.
+The program starts by executing mainline JavaScript code. Immediately, two elements, firstButton and secondButton, are fetched from the DOM, and two functions, firstHandler and secondHandler, are registered as click event handlers:
+firstButton.addEventListener("click", function firstHandler(){...});
+secondButton.addEventListener("click", function secondHandler(){...});
+This is followed by code that executes for another 15 ms. During this execution, our quick user clicks firstButton 5 ms after the program starts executing, and clicks secondButton 12 ms after.
+Because JavaScript is based on a single-threaded execution model, clicking firstButton doesn’t mean that the click handler is immediately executed. (Remember, if a task is already being executed, it can’t be interrupted by another task.) Instead, the click event related to firstButton is placed in the task queue, where it patiently waits for its turn to be executed. The same thing happens when a click of secondButton occurs: A matching event is placed in the task queue, and waits for execution. Note that it’s important that the event detection and addition to the task queue happens outside the event loop; the tasks are added to the task queue even while mainline JavaScript code is being executed.
+If we take a snapshot of our task queue 12 ms into the execution of our script, we’ll see the following three tasks:
+Evaluate mainline JavaScript code—the currently executing task.
+Click firstButton—the event created when firstButton is clicked.
+Click secondButton—the event created when secondButton is clicked.
+These tasks are also shown in figure 13.3.
+Figure 13.3. 12 ms into the application execution, the task queue has three tasks: one for evaluating mainline JavaScript code (the currently executing task), and one for each button-click event.
+The next interesting point in the application execution happens at 15 ms, when the mainline JavaScript code finishes its execution. As shown in figure 13.1, after a task has finished the execution, the event loop moves on to processing the microtask queue. Because in this situation we don’t have any microtasks (we don’t even show the microtask queue in the diagram, because it’s always empty), we skip this step and move on to updating the UI. In this example, even though the update happens and takes some time, for simplicity sake, we keep it out of our discussion. With this, the event loop finishes the first iteration and starts the second iteration, by moving onto the following task in the queue.
+Next, the firstButton click task starts its execution. Figure 13.4 illustrates the task queue 15 ms into the application execution. The execution of firstHandler, associated with the firstButton click, takes around 8 ms, and the handler is executed to its completion, without interruption, while the click event related to secondButton is waiting in the queue.
+Figure 13.4. The task queue 15 ms into application execution contains two tasks for click events. The first task is currently being executed.
+Next, at 23 ms, the firstButton click event is fully processed, and the matching task is removed from the task queue. Again, the browser checks the microtask queue, which is still empty, and re-renders the page, if necessary.
+Finally, in the third loop iteration, the secondButton click event is being handled, as shown in figure 13.5. The secondHandler takes around 5 ms to execute, and after this is performed, the task queue is finally empty, at 28 ms.
+Figure 13.5. 23 ms after the application starts executing, only one task, handling the secondButton click event, remains to be executed.
+This example emphasizes that an event has to wait its turn to be processed, if other tasks are already being handled. For example, even though the secondButton click has happened 12 ms into the application execution, the matching handler is called somewhere around 23 ms into the application execution.
+Now let’s extend this code to include microtasks.
+13.1.2. An example with both macro- and microtasks
+Now that you’ve seen how the event loop works against one task queue, we’ll extend our example to also include a microtask queue. The cleanest way to do this is to include a promise in the first button-click handler and the code that handles the promise after it resolves. As you’ll recall from chapter 6, a promise is a placeholder for a value that we don’t have yet but will have later; it’s a guarantee that we’ll eventually know the result of an asynchronous computation. For this reason, promise handlers, the callbacks we attach through the promise’s then method, are always called asynchronously, even if we attach them to already resolved promises.
+The following listing shows the modified code for this two-queue example.
+Listing 13.2. Pseudocode for our event loop demo with two queues
+<button id="firstButton"></button>
+<button id="secondButton"></button>
+<script>
+const firstButton = document.getElementById("firstButton");
+const secondButton = document.getElementById("secondButton");
+firstButton.addEventListener("click", function firstHandler(){
+Promise.resolve().then(() => {
+#A
+/*Some promise handling code that runs for 4 ms*/
+#A
+});
+#A
+/*Some click handle code that runs for 8 ms*/
+});
+secondButton.addEventListener("click", function secondHandler(){
+/*Click handle code that runs for 5ms*/
+});
+/*Code that runs for 15ms*/
+</script>
+#A - Immediately resolves a promise and passes in a callback to the then method
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":6,\"ch\":71},{\"line\":6,\"ch\":73}],[{\"line\":7,\"ch\":71},{\"line\":7,\"ch\":73}],[{\"line\":8,\"ch\":71},{\"line\":8,\"ch\":73}],[{\"line\":19,\"ch\":0},{\"line\":19,\"ch\":2}],[{\"line\":19,\"ch\":0},{\"line\":19,\"ch\":79}]]"}
+!@%STYLE%@!
+In this example, we assume that the same actions occur as in the first example:
+firstButton is clicked after 5 ms.
+secondButton is clicked after 12 ms.
+firstHandler handles the click event of firstButton and runs for 8 ms.
+secondHandler handles the click event of secondButton and runs for 5 ms.
+The only difference is that this time, within the firstHandler code, we also create an immediately resolved promise to which we pass a callback that will run for 4 ms. Because a promise represents a future value that we usually don’t know immediately, promise handlers are always handled asynchronously.
+To be honest, in this case, where we’ve created an immediately resolved promise, the JavaScript engine could immediately invoke the callback, because we already know that the promise is successfully resolved. But, for consistency sake, the JavaScript engine doesn’t do this, and instead calls all promise callbacks asynchronously, after the rest of the firstHandler code (which runs for 8 ms) is done executing. It does this by creating a new microtask and pushing it onto the microtask queue. Let’s explore the timing diagram of this execution in figure 13.6.
+Figure 13.6. If a microtask is queued in the microtask queue, it gets priority and is processed even if an older task is already waiting in the queue. In this case, the promise success microtask gets priority over the secondButton click event task.
+This timing diagram is similar to the diagram of the previous example. If we take a snapshot of the task queue 12 ms into the application execution, we’ll see the exact same tasks in the queue: The mainline JavaScript code is being processed while the tasks for handling the firstButton click and the secondButton click are waiting for their turns (just as in figure 13.3). But in addition to the task queue, in this example we’ll also focus on the microtask queue, which is still empty 12 ms into application execution.
+The next interesting point in application execution happens at 15 ms, when mainline JavaScript execution ends. Because a task has finished executing, the event loop checks the microtask queue, which is empty, and moves onto page rendering, if necessary. Again, for simplicity sake, we don’t include a rendering fragment in our timing diagram.
+In the next iteration of the event loop, the task associated with the firstButton click is being processed:
+firstButton.addEventListener("click", function firstHandler(){
+Promise.resolve().then(() => {
+/*Some promise handling code that runs for 4ms*/
+});
+/*Some click handle code that runs for 8ms*/
+});
+The firstHandler function creates an already resolved promise, by calling Promise.resolve() with a callback function that will for sure be invoked, because the promise is already resolved. This creates a new microtask to run the callback code. The microtask is placed into the microtask queue, and the click handler continues to execute for another 8 ms. The current state of the task queues is shown in figure 13.7.
+Figure 13.7. During the execution of the first click handler, a resolved promise is created. This queues up a promise success microtask in the microtask queue that will be executed as soon as possible, but without interrupting the currently running task.
+We revisit the task queues again 23 ms into the application execution, after the firstButton click has been completely handled and its task taken off the task queue.
+At this point, the event loop has to choose which task to process next. We have one macrotask for handling the secondButton click that was placed in the task queue 12 ms into application execution, and one microtask for handling the promise success that was placed in the microtask queue somewhere around 15 ms into the application execution.
+If we consider things like this, it would be only fair that the secondButton click task gets handled first, but as we already mentioned, microtasks are smaller tasks that should be executed as soon as possible. Microtasks have priority, and if you look back at figure 13.1, you’ll see that every time a task is processed, the event loop first checks the microtask queue, with the goal of processing all microtasks before continuing on to either rendering or other tasks.
+For this reason, the promise success task is executed immediately after the firstButton click, even with the “older” secondButton click task still waiting in the task queue, as shown in figure 13.8.
+Figure 13.8. After a task gets executed, the event loop processes all tasks in the microtask queue. In this case, before moving to the secondButton click task, the promise success task is handled.
+There’s one important point that we need to emphasize. After a macrotask gets executed, the event loop immediately moves onto handling the microtask queue, without allowing rendering until the microtask queue is empty. Just take a look at the timing diagram in figure 13.9.
+Figure 13.9. A page can be re-rendered between two macrotasks (mainline JavaScript execution and first click handler), while it can’t be rendered before a microtask is executed (before the promise handler).
+Figure 13.9 shows that a re-render can occur between two macrotasks, only if there are no microtasks in between. In our case, the page can be rendered between the mainline JavaScript execution and the first click handler, but it can’t be rendered immediately after the first click handler, because microtasks, such as promise handlers, have priority over rendering.
+A render can also occur after a microtask, but only if no other microtasks are waiting in the microtask queue. In our example, after the promise handler occurs, but before the event loop moves onto the second click handler, the browser can re-render the page.
+Note that there’s nothing stopping the promise success microtask from queuing other microtasks, and that all of these microtasks will have priority over the secondButton click task. The event loop will re-render the page and move onto the secondButton task only when the microtask queue is empty, so be careful!
+Now that you understand how the event loop works, let’s take a look at a special group of events: timers.

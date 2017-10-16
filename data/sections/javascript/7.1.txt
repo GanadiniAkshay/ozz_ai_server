@@ -1,0 +1,91 @@
+7.1. Understanding prototypes
+In JavaScript, objects are collections of named properties with values. For example, we can easily create new objects with object-literal notation:
+let obj = {
+prop1: 1,
+#A
+prop2: function(){},
+#B
+prop3: {}
+#C
+}
+#A - Assigns a simple value
+#B - Assigns a function
+#C - Assigns another object
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":10},{\"line\":0,\"ch\":11}],[{\"line\":2,\"ch\":19},{\"line\":2,\"ch\":20}],[{\"line\":3,\"ch\":9},{\"line\":3,\"ch\":10}],[{\"line\":2,\"ch\":20},{\"line\":2,\"ch\":21}],[{\"line\":3,\"ch\":10},{\"line\":3,\"ch\":11}],[{\"line\":4,\"ch\":0},{\"line\":4,\"ch\":1}]]"}
+!@%STYLE%@!
+As we can see, object properties can be simple values (such as numbers or strings), functions, and even other objects. In addition, JavaScript is a highly dynamic language, and the properties assigned to an object can be easily changed by modifying and deleting existing properties:
+obj.prop1 = 1;
+#A
+obj.prop1 = [];
+#B
+delete obj.prop2;
+#C
+#A - prop1 stores a simple number.
+#B - Assigns a value of a completely different type, here an array
+#C - Removes the property from the object
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We can even add completely new properties:
+obj.prop4 = "Hello";
+#A
+#A - Adds a completely new property
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":2,\"ch\":0},{\"line\":2,\"ch\":35}]]"}
+!@%STYLE%@!
+In the end, all these modifications have left our simple object in the following state:
+{
+prop1: [],
+prop3: {},
+prop4: "Hello"
+};
+When developing software, we strive not to reinvent the wheel, so we want to reuse as much code as possible. One form of code reuse that also helps organize our programs is inheritance, extending the features of one object into another. In JavaScript, inheritance is implemented with prototyping.
+The idea of prototyping is simple. Every object can have a reference to its prototype, an object to which the search for a particular property can be delegated to, if the object itself doesn’t have that property. Imagine that you’re in a game quiz with a group of people, and that the game show host asks you a question. If you know the answer, you give it immediately, and if you don’t, you ask the person next to you. It’s as simple as that.
+Let’s take a look at the following listing.
+Listing 7.1. With prototypes, objects can access properties of other objects
+const yoshi = { skulk: true };
+#A
+const hattori = { sneak: true };
+#A
+const kuma = { creep: true };
+#A
+assert("skulk" in yoshi, "Yoshi can skulk");
+#B
+assert(!("sneak" in yoshi)), "Yoshi cannot sneak");
+#B
+assert(!("creep" in yoshi)), "Yoshi cannot creep");
+#B
+Object.setPrototypeOf(yoshi, hattori);
+#C
+assert("sneak" in yoshi, "Yoshi can now sneak");
+#D
+assert(!("creep" in hattori)), "Hattori cannot creep");
+#E
+Object.setPrototypeOf(hattori, kuma);
+#F
+assert("creep" in hattori, "Hattori can now creep");
+#G
+assert("creep" in yoshi, "Yoshi can also creep");
+#H
+#A - Creates three objects, each with its own property
+#B - yoshi has access to only its own, skulk, property
+#C - Use the Object.setPrototypeOf method to set one object as the prototype of another object.
+#D - By setting hattori as yoshi’s prototype, yoshi now has access to hattori’s properties.
+#E - Currently, hattori can’t creep.
+#F - Sets kuma as a prototype of hattori
+#G - Now hattori has access to creep.
+#H - yoshi also has access to creep, through hattori.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":4,\"ch\":42},{\"line\":4,\"ch\":43}],[{\"line\":5,\"ch\":25},{\"line\":5,\"ch\":26}],[{\"line\":6,\"ch\":25},{\"line\":6,\"ch\":26}],[{\"line\":8,\"ch\":36},{\"line\":8,\"ch\":37}],[{\"line\":10,\"ch\":46},{\"line\":10,\"ch\":47}],[{\"line\":11,\"ch\":27},{\"line\":11,\"ch\":28}],[{\"line\":13,\"ch\":35},{\"line\":13,\"ch\":36}],[{\"line\":14,\"ch\":50},{\"line\":14,\"ch\":51}],[{\"line\":15,\"ch\":47},{\"line\":15,\"ch\":48}]]"}
+!@%STYLE%@!
+In this example, we start by creating three objects: yoshi, hattori, and kuma. Each has one specific property accessible only to that object: Only yoshi can skulk, only hattori can sneak, and only kuma can creep. See figure 7.1.
+Figure 7.1. Initially, each object has access to only its own properties.
+To test whether an object has access to a particular property, we can use the in operator. For example, executing skulk in yoshi returns true, because yoshi has access to the skulk property; whereas executing sneak in yoshi returns false.
+In JavaScript, the object’s prototype property is an internal property that’s not directly accessible (so we mark it with [[prototype]]). Instead, the built-in method Object.setPrototypeOf takes in two object arguments and sets the second object as the prototype of the first. For example, calling Object.setPrototypeOf(yoshi, hattori); sets up hattori as a prototype of yoshi.
+As a result, whenever we ask yoshi for a property that it doesn’t have, yoshi delegates that search to hattori. We can access hattori’s sneak property through yoshi. See figure 7.2.
+Figure 7.2. When we access a property that the object doesn’t have, the object’s prototype is searched for that property. Here, we can access hattori’s sneak property through yoshi, because yoshi is hattori’s prototype.
+We can do a similar thing with hattori and kuma. By using the Object.setPrototypeOf method, we can set kuma as the prototype of hattori. If we then ask hattori for a property that he doesn’t have, that search will be delegated to kuma. In this case, hattori now has access to kuma’s creep property. See figure 7.3.
+Figure 7.3. The search for a particular property stops when there are no more prototypes to explore. Accessing yoshi.creep triggers the search first in yoshi, then in hattori, and finally in kuma.
+It’s important to emphasize that every object can have a prototype, and an object’s prototype can also have a prototype, and so on, forming a prototype chain. The search delegation for a particular property occurs up the whole chain, and it stops only when there are no more prototypes to explore. For example, as shown in figure 7.3, asking yoshi for the value of the creep property triggers the search for the property first in yoshi. Because the property isn’t found, yoshi’s prototype, hattori, is searched. Again, hattori doesn’t have a property named creep, so hattori’s prototype, kuma, is searched, and the property is finally found.
+Now that we have a basic idea of how the search for a particular property occurs through the prototype chain, let’s see how prototypes are used when constructing new objects with constructor functions.

@@ -1,0 +1,13 @@
+
+The middleware has some quick-start options which make it easy to get started, but I strongly recommend configuring things. For example, one of the configuration options can keep connect-assets from muddying the global namespace, which it does by default. Here's what a simple application setup might look like:
+
+Listing 11.25 Setting up the connect-assets middleware
+
+#A This attaches connect-assets's view helpers to app.locals, rather than making them global variables.
+
+#B Specify any asset paths you're using. Order matters here—if the.js exists in multiple directories, for example, it'll only compile the one listed first.
+
+This middleware has a number of sensible defaults. For example, it will enable minification (as long as you've installed uglify-js and csso) and caching in production, but disable them in development. You can override this configuration if you truly want to; check the documentation for more detailed instructions.
+
+Now that we've set up the middleware, we'll need to link to those assets from views.
+Setting up the middleware

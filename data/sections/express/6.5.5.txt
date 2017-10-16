@@ -1,0 +1,25 @@
+
+The 400 range is the largest, and it generally means that something about the request was bad. In other words, the client screwed something up and it's not the server's fault. There are a lot of different errors here.
+
+401 and 403 authentication errors
+
+There are two different errors for failed client authentication, and they're 401 ("Unauthorized") and 403 ("Forbidden"). The words "unauthorized" and "forbidden" sound pretty similar—what's the difference between those two?
+
+In short, a 401 error is when the user isn't logged in at all. A 403 error is when the user is logged in as a valid user, but they don't have permissions to do what they're trying to do.
+
+For example, imagine a website where you couldn’t see any of it unless you logged in. This website also has an administrator panel, but not all users can administer the site. Until you logged in, you'd see 401 errors. Once you logged in, you would stop seeing 401 errors. If you tried to visit the administrator panel as a non-admin user, you'd see 403 errors.
+
+Send these response codes when the user isn't authorized to do whatever they're doing.
+
+404: "Not found"
+
+I don't think I have to tell you much about 404—you've probably run into it when browsing the web. One thing I found a little surprising about 404 errors is that you can visit a valid route but still get a 404 error.
+
+For example, let's say you want to visit a user's page. The homepage for User #123 is at /users/123. But if you mistype and visit /users/1234 and no user exists with ID 1234, then you'd get a 404 error.
+
+Other errors
+
+There are a lot of other client errors you can run into—far too many to enumerate here. Visit the list of status codes at https://en.wikipedia.org/wiki/List_of_HTTP_status_codes to find the right status code for you.
+
+When in doubt, though, send a 400 "Bad Request" error. It's a generic response to any kind of bad request, and encompasses anything. While there might be a status code that better describes the client error, 400 will do the trick when you're not sure which one to choose.
+The 400 range

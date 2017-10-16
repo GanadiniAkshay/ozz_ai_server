@@ -1,0 +1,9 @@
+
+Most programming languages have a way of including File A from File B so that you can split your code into multiple files. C and C++ have #include; Python has import; Ruby and PHP have require. Some languages like C# do this kind of cross-file communication implicitly at compile time.
+
+For most of its life, the JavaScript language didn't have an official way to do this. To solve this problem, people built things that concatenated JavaScript files together into one file, or built dependency loaders like RequireJS. A lot of web developers simply fill their webpages with <script> tags.
+
+Node wanted to solve this problem elegantly and they implemented a standard module system called CommonJS. At its core, CommonJS lets you include code from one file in another.
+
+There are three major components to this module system: requiring built-in modules, requiring third-party modules, and making your own modules. Let's see how they work.
+Using modules

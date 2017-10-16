@@ -1,0 +1,72 @@
+6.3.2. Diving into promises
+A promise is an object that serves as a placeholder for a result of an asynchronous task. It represents a value that we don’t have but hope to have in the future. For this reason, during its lifetime, a promise can go through a couple of states, as shown in figure 6.10.
+Figure 6.10. States of a promise
+A promise starts in the pending state, in which we know nothing about our promised value. That’s why a promise in the pending state is also called an unresolved promise. During program execution, if the promise’s resolve function is called, the promise moves into the fulfilled state, in which we’ve successfully obtained the promised value. On the other hand, if the promise’s reject function is called, or if an unhandled exception occurs during promise handling, the promise moves into the rejected state, in which we weren’t able to obtain the promised value, but in which we at least know why. Once a promise has reached either the fulfilled state or the rejected state, it can’t switch (a promise can’t go from fulfilled to rejected or vice versa), and it always stays in that state. We say that a promise is resolved (either successfully or not).
+The following listing provides a closer look at what’s going on when we use promises.
+Listing 6.11. A closer look at promise order of execution
+report("At code start");
+var ninjaDelayedPromise = new Promise((resolve, reject) => {
+report("ninjaDelayedPromise executor");
+#A
+setTimeout(() => {
+#B
+report("Resolving ninjaDelayedPromise");
+#B
+resolve("Hattori");
+#B
+}, 500);
+#B
+});
+assert(ninjaDelayedPromise !== null, "After creating ninjaDelayedPromise");
+ninjaDelayedPromise.then(ninja => {
+#C
+assert(ninja === "Hattori",
+#C
+"ninjaDelayedPromise resolve handled with Hattori");
+#C
+});
+#C
+const ninjaImmediatePromise = new Promise((resolve, reject) => {
+#D
+report("ninjaImmediatePromise executor. Immediate resolve.");
+#D
+resolve("Yoshi");
+#D
+});
+#D
+ninjaImmediatePromise.then(ninja => {
+#E
+assert(ninja === "Yoshi",
+#E
+"ninjaImmediatePromise resolve handled with Yoshi");
+#E
+});
+#E
+report("At code end");
+#A - Calling the Promise constructor immediately invokes the passed-in function.
+#B - We’ll resolve this promise as successful after a 500ms timeout expires.
+#C - The Promise then method is used to set up a callback that will be called when the promise resolves, in our case when the timeout expires.
+#D - Creates a new promise that gets immediately resolved
+#E - Sets up a callback to be invoked when the promise resolves. But our promise is already resolved!
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+The code in listing 6.11 outputs the results shown in figure 6.11. As you can see, the code starts by logging the “At code start” message by using our custom-made report function (appendix C) that outputs the message onscreen. This enables us to easily track the order of execution.
+Figure 6.11. The result of executing listing 6.11
+Next we create a new promise by calling the Promise constructor. This immediately invokes the executor function in which we set up a timeout:
+setTimeout(() => {
+report("Resolving ninjaDelayedPromise");
+resolve("Hattori");
+}, 500);
+The timeout will resolve the promise after 500ms. This could have been any other asynchronous task, but we chose the humble timeout because of its simplicity.
+After the ninjaDelayedPromise has been created, it still doesn’t know the value that it will eventually have, or whether it will even be successful. (Remember, it’s still waiting for the time-out that will resolve it.) So after construction, the ninjaDelayedPromise is in the first promise state, pending.
+Next we use the then method on the ninjaDelayedPromise to schedule a callback to be executed when the promise successfully resolves:
+ninjaDelayedPromise.then(ninja => {
+assert(ninja === "Hattori",
+"ninjaDelayedPromise resolve handled with Hattori");
+});
+This callback will always be called asynchronously, regardless of the current state of the promise.
+We continue by creating another promise, ninjaImmediatePromise, which is resolved immediately during its construction, by calling the resolve function. Unlike the ninjaDelayedPromise, which after construction is in the pending state, the ninja-ImmediatePromise finishes construction in the resolved state, and the promise already has the value Yoshi.
+Afterward, we use the ninjaImmediatePromise’s then method to register a callback that will be executed when the promise successfully resolves. But our promise is already settled; does this mean that the success callback will be immediately called or that it will be ignored? The answer is neither.
+Promises are designed to deal with asynchronous actions, so the JavaScript engine always resorts to asynchronous handling, to make the promise behavior predictable. The engine does this by executing the then callbacks after all the code in the current step of the event loop is executed (once again, we’ll explore exactly what this means in chapter 13). For this reason, if we study the output in figure 6.11, we’ll see that we first log “At code end” and then we log that the ninjaImmediatePromise was resolved. In the end, after the 500ms timeout expires, the ninjaDelayedPromise is resolved, which causes the execution of the matching then callback.
+In this example, for the sake of simplicity, we’ve worked only with the rosy scenario in which everything goes great. But the real world isn’t all sunshine and rainbows, so let’s see how to deal with all sorts of crazy problems that can occur.

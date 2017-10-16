@@ -1,0 +1,33 @@
+
+Now that we've written a first version of our capitalization function, let's write a test to see if it works!
+
+Create a folder called test in the root of your project. Inside that directory, create a file for testing our capitalization; I simply called mine capitalize.js. Put the following inside:
+
+Listing 9.3 Our first test for capitalize (in test/capitalize.js)
+
+#A First, require our function that we're going to test.
+
+#B Require Chai and then use the “expect” property, which we'll use to make assertions in our tests.
+
+#C This is called a “suite”, and describes a series of specifications in the same topic. This is at the Mocha level.
+
+#D This is a specification, and it has a title and some code to run. This is at the Mocha level.
+
+#E Do the actual assertions; make sure our code actually does what we expect! This is at the Chai level.
+
+So what's going on here?
+
+First, we're requiring our module so that we can test it. Next, we're requiring Chai and using its expect property so that we can use it to make assertions later on. (Chai has two other assertion styles, but we'll stick to this one for now.)
+
+Next, we describe a “suite” of tests. This is basically a component of your application; this could be a class or just a slew of functions. This suite is called "capitalize"; it's English, not code. In this case, this suite describes the capitalization function.
+
+Inside of this suite, we define a test (we'll add more in a moment). It's a JavaScript function that says what some piece of your program should do. It says it in plain English ("it capitalizes single words") and in code. For each suite, you can have a number of tests for any number of tests you want to do.
+
+Finally, inside of the test, we expect the result of capitalize("express") to equal "Express", and the same capitalization should happen for "cats".
+
+If you go to the root of your project and type npm test, you'll see something like the following output:
+
+That means we've run one test, and it passes! Congratulations—you've written your first test. We don't know that everything works 100%, but we know that it properly capitalizes the first letter of two different words.
+
+We're not out of the woods yet; there are more tests to write to become more confident that our code works.
+Writing your first test with Mocha and Chai

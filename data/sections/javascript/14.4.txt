@@ -1,0 +1,21 @@
+14.4. Reducing assumptions
+Writing cross-browser, reusable code is a battle of assumptions, but by using clever detection and authoring, we can reduce the number of assumptions that we make in our code. When we make assumptions about the code that we write, we stand to encounter problems further down the road.
+For example, assuming that an issue or a bug will always exist in a specific browser is a huge and dangerous assumption. Instead, testing for the problem (as we’ve done throughout this chapter) proves to be much more effective. In our coding, we should always strive to reduce the number of assumptions, effectively reducing the room for error and the probability that something is going to come back and bite us in the behind.
+The most common area for making assumptions in JavaScript is in user-agent detection—specifically, analyzing the user agent provided by a browser (navigator.userAgent) and using it to make an assumption about how the browser will behave (in other words, browser detection). Unfortunately, most user-agent string analysis proves to be a superb source of future-induced errors. Assuming that a bug, issue, or proprietary feature will always be linked to a specific browser is a recipe for disaster.
+But reality intervenes when it comes to minimizing assumptions: It’s virtually impossible to remove all of them. At some point, we’ll have to assume that a browser will do what it’s supposed to do. Figuring out where to strike that balance is completely up to the developer, and it’s what “separates the men from the boys,” as they say (with apologies to our female readers).
+For example, let’s reexamine the event-attaching code that we’ve already seen in this chapter:
+function bindEvent(element, type, handle) {
+if (element.addEventListener) {
+element.addEventListener(type, handle, false);
+}
+else if (element.attachEvent) {
+element.attachEvent("on" + type, handle);
+}
+}
+Without looking ahead, see if you can spot three assumptions made by this code. Go on, we’ll wait. (Jeopardy theme plays...)
+How’d you do? The preceding code has at least these three assumptions:
+The properties that we’re checking are callable functions.
+They’re the correct functions, performing the actions that we expect.
+These two methods are the only possible ways of binding an event.
+We could easily get rid of the first assumption by adding checks to see whether the properties are, in fact, functions. Tackling the remaining two points is much more difficult.
+In this code, we always need to decide how many assumptions are optimal for our requirements, our target audience, and us. Frequently, reducing the number of assumptions also increases the size and complexity of the code base. It’s fully possible, and rather easy, to attempt to reduce assumptions to the point of complete insanity, but at some point we have to stop and take stock of what we have, say “good enough,” and work from there. Remember that even the least-assuming code is still prone to regressions introduced by a browser.

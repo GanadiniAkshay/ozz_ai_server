@@ -1,0 +1,3 @@
+
+We’ve already covered most of the big topics like cross-site scripting and HTTPS. There are a few other tricks that you can employ to make your Express applications even more secure. The topics in this section are hardly as essential in the ones above, but they’re quick and easy and can lower the amount of places that you can be attacked.
+Various little tricks

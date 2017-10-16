@@ -1,0 +1,25 @@
+6.3.5. Chaining promises
+You’ve already seen how handling a sequence of interdependent steps leads to the pyramid of doom, a deeply nested and difficult-to-maintain sequence of callbacks. Promises are a step toward solving that problem, because they have the ability to be chained.
+Earlier in the chapter, you saw how, by using the then method on a promise, we can register a callback that will be executed if a promise is successfully resolved. What we didn’t tell you is that calling the then method also returns a new promise. So there’s nothing stopping us from chaining as many then methods as we want; see the following code.
+Listing 6.16. Chaining promises with then
+getJSON("data/ninjas.json")
+.then(ninjas => getJSON(ninjas[0].missionsUrl))
+#A
+.then(missions => getJSON(missions[0].detailsUrl))
+#A
+.then(mission => assert(mission !== null, "Ninja mission obtained!"))
+#A
+.catch(error => fail("An error has occurred"));
+#B
+#A - Specifies multiple sequential steps by chaining in then calls
+#B - Catches promise rejections in any of the steps
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This creates a sequence of promises that will be, if everything goes according to plan, resolved one after another. First, we use the getJSON("data/ninjas.json") method to fetch a list of ninjas from the file on the server. After we receive that list, we take the information about the first ninja, and we request a list of missions the ninja is assigned to: getJSON(ninjas[0].missionsUrl). Later, when these missions come in, we make yet another request for the details of the first mission: getJSON(missions[0].details-Url). Finally, we log the details of the mission.
+Writing such code using standard callbacks would result in a deeply nested sequence of callbacks. Identifying the exact sequence of steps wouldn’t be easy, and God forbid we decide to add in an extra step somewhere in the middle.
+Catching errors in chained promises
+When dealing with sequences of asynchronous steps, an error can occur in any step. We already know that we either can provide a second, error callback to the then call, or can chain in a catch call that takes an error callback. When we care about only the success/failure of the entire sequence of steps, supplying each step with special error handling might be tedious. So, as shown in listing 6.16, we can take advantage of the catch method that you saw earlier:
+...catch(error => fail("An error has occurred:" + err));
+If a failure occurs in any of the previous promises, the catch method catches it. If no error occurs, the program flow continues through it, unobstructed.
+Dealing with a sequence of steps is much nicer with promises than with regular callbacks, wouldn’t you agree? But it’s still not as elegant as it could be. We’ll get to that soon, but first let’s see how to use promises to take care of parallel asynchronous steps.

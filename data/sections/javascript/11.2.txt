@@ -1,0 +1,262 @@
+11.2. ES6 modules
+ES6 modules are designed to marry the advantages of CommonJS and AMD:
+Similar to CommonJS, ES6 modules have a relatively simple syntax, and ES6 modules are file based (one module per file).
+Similar to AMD, ES6 modules provide support for asynchronous module loading.
+Note
+Built-in modules are a part of the ES6 standard. As you’ll soon see, the ES6 module syntax includes additional semantics and keywords (such as the export and import keywords) that aren’t supported by current browsers. If we want to use modules today, we have to transpile our module code with Traceur (https://github.com/google/traceur-compiler), Babel (http://babeljs.io/), or TypeScript (www.typescriptlang.org/). We also can use the SystemJS library (https://github.com/systemjs/systemjs), which provides support for loading all currently available module standards: AMD, CommonJS, and even ES6 modules. You can find instructions on how to use SystemJS in the project’s repository (https://github.com/systemjs/systemjs).
+The main idea behind ES6 modules is that only the identifiers explicitly exported from a module are accessible from outside that module. All other identifiers, even the ones defined in top-level scope (what would be global scope in standard JavaScript), are accessible only from within the module. This was inspired by CommonJS.
+To provide this functionality, ES6 introduces two new keywords:
+export—For making certain identifiers available from outside the module
+import—For importing exported module identifiers
+The syntax for exporting and importing module functionality is simple, but it has a lot of subtle nuances that we’ll explore slowly, step by step.
+11.2.1. Exporting and importing functionality
+Let’s start with a simple example that shows how to export functionality from one module and import it into another.
+Listing 11.5. Exporting from a Ninja.js module
+const ninja = "Yoshi";
+#A
+export const message = "Hello";
+#B
+#B
+export function sayHiToNinja() {
+#B
+return message + " " + ninja;
+#C
+}
+#A - Defines a top-level variable in a module
+#B - Defines a variable and a function, and exports them from the module with the export keyword
+#C - Accesses an inner module variable from the module’s public API
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+We first define a variable, ninja, a module variable that will be accessible only within this module, even though it’s placed in top-level code (which would make it a global variable in pre-ES6 code).
+Next, we define another top-level variable, message, which we make accessible from outside the module by using the new export keyword. Finally, we also create and export the sayHiToNinja function.
+And that’s it! This is the minimum syntax we need to know for defining our own modules. We don’t have to use immediate functions or remember any esoteric syntax in order to export functionality from a module. We write our code as we would write standard JavaScript code, with the only difference that we prefix some of the identifiers (such as variables, functions, or classes) with an export keyword.
+Before learning how to import this exported functionality, we’ll take a look at an alternative way to export identifiers: We list everything we want to export at the end of the module, as shown in the following listing.
+Listing 11.6. Exporting at the end of a module
+const ninja = "Yoshi";
+#A
+const message = "Hello";
+#A
+function sayHiToNinja() {
+#B
+return message + " " + ninja;
+#B
+}
+#B
+#B
+export { message, sayHiToNinja };
+#B
+#A - Specifies all module identifiers
+#B - Exports some of the module identifiers
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":7,\"ch\":0},{\"line\":7,\"ch\":33}]]"}
+!@%STYLE%@!
+This way of exporting module identifiers bears some resemblance to the module pattern, as an immediate function returns an object that represents the public interface of our module, and especially to CommonJS, as we expand the module.exports object with the public module interface.
+Regardless of how we’ve exported identifiers of a certain module, if we need to import them into another module, we have to use the import keyword, as in the following example.
+Listing 11.7. Importing from the Ninja.js module
+import { message, sayHiToNinja} from "Ninja.js";
+#A
+assert(message === "Hello",
+#B
+"We can access the imported variable");
+#B
+assert(sayHiToNinja() === "Hello Yoshi",
+#B
+"We can say hi to Yoshi from outside the module");
+#B
+assert(typeof ninja === "undefined",
+#C
+"But we cannot access Yoshi directly");
+#C
+#A - Uses the import keyword to import an identifier binding from a module
+#B - We can now access the imported variable and call the imported function.
+#C - We can’t access not-exported module variables directly.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":0},{\"line\":0,\"ch\":48}]]"}
+!@%STYLE%@!
+We use the new import keyword to import a variable, message and a function, sayHiToNinja from the ninja module:
+import { message, sayHiToNinja} from "Ninja.js";
+By doing this, we’ve gained access to these two identifiers defined in the ninja module. Finally, we can test that we can access the message variable and call the sayHiToNinja function:
+assert(message === "Hello",
+"We can access the imported variable");
+assert(sayHiToNinja() === "Hello Yoshi",
+"We can say hi to Yoshi from outside the module");
+What we can’t do is access the nonexported and nonimported variables. For example, we can’t access the ninja variable because it isn’t marked with export:
+assert(typeof ninja === "undefined",
+"But we cannot access Yoshi directly");
+With modules, we’re finally a bit safer from the misuse of global variables. Everything that we didn’t explicitly mark for export stays nicely isolated within a module.
+In this example, we’ve used a named export, which enables us to export multiple identifiers from a module (as we did with message and sayHiToNinja). Because we can export a large number of identifiers, listing them all in an import statement can be tedious. Therefore, a shorthand notation enables us to bring in all exported identifiers from a module, as shown in the following listing.
+Listing 11.8. Importing all named exports from the Ninja.js module
+import * as ninjaModule from "Ninja.js";
+#A
+assert(ninjaModule.message === "Hello",
+#B
+"We can access the imported variable");
+#B
+assert(ninjaModule.sayHiToNinja() === "Hello Yoshi",
+#B
+"We can say hi to Yoshi from outside the module");
+#B
+assert(typeof ninjaModule.ninja === "undefined",
+#C
+"But we cannot access Yoshi directly");
+#C
+#A - Uses * notation to import all exported identifiers
+#B - Refers to the named exports through property notation
+#C - We still can’t access not-exported identifiers.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+As listing 11.8 shows, to import all exported identifiers from a module, we use the import * notation in combination with an identifier that we’ll use to refer to the whole module (in this case, the ninjaModule identifier). After we’ve done this, we can access the exported identifiers through property notation; for example, ninjaModule.message, ninjaModule.sayHiToNinja. Notice that we still can’t access top-level variables that weren’t exported, as is the case with the ninja variable.
+Default exports
+Often we don’t want to export a set of related identifiers from a module, but instead want to represent the whole module through a single export. One fairly common situation in which this occurs is when our modules contain a single class, as in the following listing.
+Listing 11.9. A default export from Ninja.js
+export default class Ninja {
+#A
+constructor(name){
+this.name = name;
+}
+}
+export function compareNinjas(ninja1, ninja2){
+#B
+return ninja1.name === ninja2.name;
+}
+#A - Uses the export default keywords to specify the default module binding
+#B - We can still use named exports along with the default export.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":0},{\"line\":0,\"ch\":14}],[{\"line\":10,\"ch\":14},{\"line\":10,\"ch\":28}]]"}
+!@%STYLE%@!
+Here we’ve added the default keyword after the export keyword, which specifies the default binding for this module. In this case, the default binding for this module is the class named Ninja. Even though we’ve specified a default binding, we can still use named exports to export additional identifiers, as we did with the compare-Ninjas function.
+Now, we can use simplified syntax to import functionalities from Ninja.js, as shown in the following listing.
+Listing 11.10. Importing a default export
+import ImportedNinja from "Ninja.js";
+#A
+import {compareNinjas} from "Ninja.js";
+#B
+const ninja1 = new ImportedNinja("Yoshi");
+#C
+const ninja2 = new ImportedNinja("Hattori");
+#C
+#C
+assert(ninja1 !== undefined
+#C
+&& ninja2 !== undefined, "We can create a couple of Ninjas");
+#C
+assert(!compareNinjas(ninja1, ninja2),
+#D
+"We can compare ninjas");
+#D
+#A - When importing a default export, there’s no need for braces, and we can use whatever name we want.
+#B - We can still import named exports.
+#C - Creates a couple of ninjas, and tests that they exist
+#D - We can also access the named exports.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":0},{\"line\":0,\"ch\":37}]]"}
+!@%STYLE%@!
+We start this example with importing a default export. For this, we use a less cluttered import syntax by dropping the braces that are mandatory for importing named exports. Also, notice that we can choose an arbitrary name to refer to the default export; we aren’t bound to use the one we used when exporting. In this example, ImportedNinja refers to the Ninja class defined in the file Ninja.js.
+We continue the example by importing a named export, as in previous examples, just to illustrate that we can have both a default export and a number of named exports within a single module. Finally, we instantiate a couple of ninja objects and call the compareNinjas function, to confirm that all imports work as they should.
+In this case, both imports are made from the same file. ES6 offers a shorthand syntax:
+import ImportedNinja, {compareNinjas} from "Ninja.js";
+Here we use the comma operator to import both the default and the named exports from the Ninja.js file, in a single statement.
+Renaming exports and imports
+If necessary, we can also rename both exports and imports. Let’s start with renaming exports, as shown in the following code (the comments indicate in which file the code is located):
+//************* Greetings.js ************/
+function sayHi(){
+#A
+return "Hello";
+}
+assert(typeof sayHi === "function"
+#B
+&& typeof sayHello === "undefined",
+#B
+"Within the module we can access only sayHi");
+#B
+export { sayHi as sayHello }
+#C
+//*************
+main.js *****************/
+import {sayHello } from "Greetings.js";
+#D
+#D
+assert(typeof sayHi === "undefined"
+#D
+&& typeof sayHello === "function",
+#D
+"When importing, we can only access the alias");
+#D
+#A - Defines a function called sayHi
+#B - Tests that we can access only the sayHi function, but not the alias!
+#C - Provides an identifier alias with the as keyword
+#D - When importing, only the sayHello alias is available.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":9,\"ch\":9},{\"line\":9,\"ch\":26}]]"}
+!@%STYLE%@!
+In the previous example, we define a function called sayHi, and we test that we can access the function only though the sayHi identifier, and not through the sayHello alias that we provide at the end of the module through the as keyword:
+export { sayHi as sayHello }
+We can perform an export rename only in this export form, and not by prefixing the variable or function declaration with the export keyword.
+Then, when we perform an import of the renamed export, we reference the import through the given alias:
+import { sayHello } from "Greetings.js";
+Finally, we test that we have access to the aliased identifier, but not the original one:
+assert(typeof sayHi === "undefined"
+&& typeof sayHello === "function",
+"When importing, we can only access the alias");
+The situation is similar when renaming imports, as shown in the following code segment:
+/************* Hello.js *************/
+export function greet(){
+#A
+return "Hello";
+#A
+}
+#A
+/************* Salute.js *************/
+export function greet(){
+#B
+return "Salute";
+#B
+}
+#B
+/************* main.js *************/
+import { greet as sayHello } from "Hello.js";
+#C
+import { greet as salute } from "Salute.js";
+#C
+assert(typeof greet === "undefined",
+#D
+"We cannot access greet");
+#D
+assert(sayHello() === "Hello" && salute() === "Salute",
+#E
+"We can access aliased identifiers!");
+#E
+#A - Exports a function with the name greet from the Hello.js module
+#B - Exports a function with the same name greet from Salute.js
+#C - Uses the as keyword to alias imports, thereby avoiding name clashes
+#D - We can’t access the original function name.
+#E - But we can access the aliases.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":11,\"ch\":9},{\"line\":11,\"ch\":26}],[{\"line\":12,\"ch\":9},{\"line\":12,\"ch\":24}]]"}
+!@%STYLE%@!
+Similarly to exporting identifiers, we can also use the as keyword to create aliases when importing identifiers from other modules. This is useful when we need to provide a better name that’s more suitable to the current context, or when we want to avoid naming clashes, as is the case in this small example.
+With this, we’ve finished our exploration of the ES6 modules’ syntax, which is recapped in table 11.1.
+Table 11.1. Overview of ES6 module syntax
+Code
+Meaning
+export const ninja = "Yoshi";
+export function compare(){}
+export class Ninja{}
+Export a named variable. Export a named function. Export a named class.
+export default class Ninja{}
+export default function Ninja(){}
+Export the default class export. Export the default function export.
+const ninja = "Yoshi";
+function compare(){};
+export {ninja, compare};
+export {ninja as samurai, compare};
+Export existing variables. Export a variable through a new name.
+import Ninja from "Ninja.js";
+import {ninja, Ninja} from "Ninja.js";
+Import a default export. Import named exports.
+import * as Ninja from "Ninja.js";
+Import all named exports from a module.
+import {ninja as iNinja} from "Ninja.js";
+Import a named export through a new name.

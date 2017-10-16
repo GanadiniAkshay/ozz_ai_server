@@ -1,0 +1,11 @@
+
+If you're using connect-assets to compile your assets, then Heroku will work just fine (assuming you've installed all of the dependencies properly). But if you want to use Grunt (or another task runner like Gulp), you'll need to run Grunt to build your assets when you deploy your site.
+
+There's a little trick you can use to make this work, which leverages a nice little feature of npm: the post-install script. Heroku will run npm install when you deploy your app, and we can tell Heroku to run Grunt right after that in order to build all of our assets. This is a simple manner of adding another script to our package.json:
+
+Listing 11.33 Running Grunt in a postinstall script
+
+#A I use “grunt build” as an example—you could run whatever Grunt command you'd like.
+
+Now, when anyone (including Heroku!) runs npm install, grunt build will run.
+Running Grunt on Heroku

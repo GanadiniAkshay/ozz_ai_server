@@ -1,0 +1,81 @@
+
+Like many parts of programming, it's often the case that someone else has done what you're trying to do. You can write your own middleware, but it's common to find that the functionality you want is already in somebody else's middleware.
+
+Let's look at a couple of examples of helpful third-party middleware.
+
+MORGAN: LOGGING MIDDLEWARE
+
+Let's remove our logger and use Morgan, a nice logger for Express that has far more features. Loggers are pretty helpful for a number of reasons. First of all, they're one way to see what your users are doing. This isn't the best way to do things like marketing analytics, but it's really useful when your app crashes for a user and you're not sure why. I also find it really useful when developing—you can see when a request comes into your server. If something is wrong, you can use Morgan's logging as a sanity check.
+
+Run npm install morgan --save and give this a try (saving it into app.js again):
+
+Listing 3.8 Using Morgan for logging (in app.js)
+
+Visit http://localhost:3000 and you'll see some logging! Thanks, Morgan.
+
+EXPRESS'S STATIC MIDDLEWARE
+
+There's more middleware out there than just Morgan.
+
+It's very common for web applications to need to send static files over the wire. This is things like images or CSS—content that isn't dynamic.
+
+express.static ships with Express, and helps you serve static files. The simple act of sending files turns out to be a lot of work, because there are a lot of edge cases and performance considerations to think about. Express to the rescue!
+
+Let's say we want to serve files out of a directory called "public". Here's how we might do that with Express's static middleware:
+
+Listing 3.9 Using express.static (in app.js)
+
+#A Set up the public path, using Node's path module.
+
+#B Send static files from the publicPath directory.
+
+Now, any file in the public directory will be shown. We can put anything in there that we please and the server will send it. If no matching file exists in the public folder, it'll go onto the next middleware, and say "Hello, World!". If a matching file is found, express.static will send it off and stop the middleware chain.
+
+
+Why use path.resolve?
+
+
+Why use path.resolve?
+
+What's all that business about path.resolve? Why can't we just say /public? The short answer is that we could, but it's not cross-platform.
+
+On Mac and Linux, we want this directory:
+
+  &nbsp.
+
+   /public
+
+ 
+
+But on Windows, we want this directory:
+
+ 
+
+   \public
+
+ 
+
+Node's built-in path module will make sure that things run smoothly on Windows, Mac, and Linux.
+
+
+ 
+
+
+ 
+
+FINDING MORE MIDDLEWARE
+
+I've shown Morgan and Express's static middleware, but there's a lot more. Here are a few other helpful ones:
+
+·   connect-ratelimit lets you throttle connections to a certain number of requests per hour. If someone is sending lots of requests to your server, you can start giving them errors to stop them from bringing your site down.
+
+·   helmet helps you add HTTP headers to make your app safer against certain kinds of attacks. We'll explore it in later chapters. (I'm a contributor to Helmet, so I'd definitely recommend it!) 
+
+·   cookie-parser parses browser cookies.
+
+·   response-time sends the X-Response-Time header so you can debug the performance of your application.
+
+We'll explore many of these middleware options further in the next chapter.
+
+If you're looking for more middleware, you'll have luck searching for "Express middleware", but you should also search for "Connect middleware" too. There's another framework called Connect that's like Express but only does middleware. Connect middleware is compatible with Express, so if the "Express middleware" search isn't fruitful, try searching for Connect middleware.
+Third-party middleware libraries

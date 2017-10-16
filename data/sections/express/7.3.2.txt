@@ -1,0 +1,29 @@
+
+Layouts are an important feature of any templating language. They allow you to include, in one form or another, other HTML. This allows you to define your header and footer once, and then include them on pages where you need them.
+
+A very common case is to define a layout file for your pages. That way, everything can have a consistent header and footer while allowing the content to change per page.
+
+First, we define the "master" layout. This is the Jade common to every page, like a header and footer. This master layout defines empty blocks that are filled in by any pages that use this master layout. Let's take a look at an example.
+
+First, let's define a simple layout file. This file will be shared by all of our pages.
+
+Listing 7.15 A simple layout file for Jade
+
+#A In the parent layout file, we define a "header" block and "body" block. These will be used by anyone who extends this layout.
+
+Notice how we've defined two blocks with block header and block body. These will get filled in by Jade files using this layout. Save that file into layout.jade. We can use these in "real" pages that use this layout, like this:
+
+Listing 7.16 Using a Jade layout file
+
+That will render the following HTML:
+
+Listing 7.17 The output of using a Jade layout
+
+Notice that we simply put something in a block when we extend a layout and it's magically inserted! Also notice that we don't have to use a block just because it's defined -- we never touch the header block because we don't need to.
+
+If we wanted to, we could define another page that uses this layout very easily.
+
+Listing 7.18 Using a Jade layout file again
+
+Layouts let us separate out common components, which means we don't have to repeat the same code over and over again.
+Layouts in Jade

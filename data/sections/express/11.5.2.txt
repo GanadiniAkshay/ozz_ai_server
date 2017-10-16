@@ -1,0 +1,35 @@
+
+Let's make a simple hello world application and deploy it to Heroku, shall we?
+
+To set your app up for Heroku, you don't have to do too much different from what you normally would. While there are a few commands you'll need to run in order to deploy, the only changes you'll need to make are as follows:
+
+1. Make sure to start the app on process.env.PORT.
+
+2. Make sure your package.json lists a Node version.
+
+3. Create a file that will be run when Heroku starts your app (called a Procfile). In our simple app, this file will only be one line.
+
+Let's make a simple app and make sure we cross off these things.
+
+The Express part of this “hello world” application should be pretty easy for you at this point in the book, and there's not much special we have to do in order to make sure that it works for Heroku; it's only a line or two.
+
+First, define your package.json:
+
+Listing 11.30 package.json for our Heroku Express app
+
+#A This tells Heroku (and anyone running your app) that your app requires Node 0.10. This helps Heroku disambiguate.
+
+Nothing too new there, but for the definition of which Node version to use. Next, define app.js, where our Hello World code resides:
+
+Listing 11.31 A Hello World Express app (app.js)
+
+Once again, not much new here. The only Heroku-specific thing here is how the port is set. Heroku will set an environment variable for the port which we'll access through process.env.PORT. If we never deal with that variable, we won't be able to start our app on Heroku on the proper port.
+
+The next part is the most foreign thing we've seen so far: a Procfile. It might sound like a complicated new Heroku concept, but it's really simple. When you run your app, you type npm start into your command line. The Procfile codifies that, and tells Heroku to run npm start when your app begins. Create a file in the root of your directory and call it Procfile (capital P, no file extension):
+
+Listing 11.32 Our application's Procfile
+
+That's not too bad, right? Heroku is pretty nice.
+
+Now that we've got our application all ready to go, let's deploy it!
+Making a Heroku-ready app

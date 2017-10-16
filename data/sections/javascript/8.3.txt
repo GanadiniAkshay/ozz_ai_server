@@ -1,0 +1,16 @@
+8.3. Summary
+We can monitor our objects with getters, setters, and proxies.
+By using accessor methods (getters and setters), we can control access to object properties.
+Accessor properties can be defined by using the built-in Object.define-Property method or with a special get and set syntax as parts of object literals or ES6 classes.
+A get method is implicitly called whenever we try to read, whereas a set method is called whenever we assign a value to the matching object’s property.
+Getter methods can be used to define computed properties, properties whose value is calculated on a per request basis, whereas setter methods can be used to achieve data validation and logging.
+Proxies are an ES6 addition to JavaScript and are used to control other objects.
+Proxies enable us to define custom actions that will be executed when an object is interacted with (for example, when a property is read or a function is called).
+All interactions have to go through the proxy, which has traps that are triggered when a specific action occurs.
+Use proxies to achieve elegant
+Logging
+Performance measurements
+Data validation
+Autopopulating object properties (thereby avoiding pesky null exceptions)
+Negative array indexes
+Proxies aren’t fast, so be careful when using them in code that’s executed a lot. We recommend that you do performance testing.

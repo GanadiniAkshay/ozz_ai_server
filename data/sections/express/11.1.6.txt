@@ -1,0 +1,9 @@
+
+At this point in the book, it should come as no surprise: there's more than one way to do CSS preprocessing. The elephant in the room is LESS's biggest “rival”, Sass. Sass is very similar to LESS; both have variables, mixins, nested selectors, includes, and integration with Express. As far as the languages go, they're pretty similar. Sass isn't originally a Node project, but it is very popular and has done a solid job integrating itself into the Node world. You can check it out at http://sass-lang.com/.
+
+Most people reading this book will either want to use LESS or Sass. While we'll use LESS in this book, you can usually substitute the word “LESS” for the word “Sass” and it will be the same. LESS and Sass vary slightly in syntax, but they're largely the same conceptually and in how you integrate them with Express.
+
+There are smaller-time CSS preprocessors that aim to fundamentally change CSS in one way or another. Stylus makes CSS's syntax a lot nicer and Roole adds a number of powerful features, and while they are both great, they aren't as popular as LESS or Sass.
+
+Other CSS preprocessors like Myth and cssnext take a different angle. Rather than try to make a new language that compiles to CSS, they compile upcoming versions of CSS to current-day CSS. For example, the next version of CSS has variables, so these preprocessors compile this new syntax into current-day CSS.
+Alternatives to LESS

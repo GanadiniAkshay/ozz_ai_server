@@ -1,0 +1,11 @@
+
+It's possible that you'll want to send static files with a route. For example, you might want to send a user's profile picture if they visit /users/123/profile_photo. The static middleware has no way of knowing about this, but Express has a nice way of doing this, which uses a lot of the same internal mechanisms as the static middleware.
+
+Let's say we want to send profile pictures when someone visits /users/:userid/profile_photo. Let's also say that we've earlier populated req.user with the user object (with app.param, as we saw before), and each user object has a property called profilePhotoPath, that holds the local path to the profile photo. Here's how we might do that:
+
+Listing 5.15 Sending profile pictures
+
+In Chapter 2, we saw that this would be a big headache without Express. We'd have to open the file, figure out its content-type (HTML, plain text, image...), its file size, et cetera. Express's sendfile does all of this for us and lets you send files easily.
+
+You can use this to send any file you want!
+Routing to static files

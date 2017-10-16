@@ -1,0 +1,51 @@
+
+Routing is a way to map requests to specific handlers depending on their URL and HTTP verb. In many of the above examples, we had a homepage and an about page and a 404 page. We'd basically do this with a bunch of if statements in the examples.
+
+But Express is smarter than that. Express gives us something called "routing" which I think is better explained with code than with English:
+
+Listing 3.10 Express routing example
+
+#A  This sets up static middleware like we've seen before. Every request will go through this middleware, and if no static file is found, it will continue onto the routes below.
+
+ #B This request handler is called when a request to the root is called. In this example's case, this handler is called when you visit http://localhost:3000.
+
+ #C This request handler is called when a request to /about (http://localhost:3000/about in this case) comes in.
+
+ #D This request handler is called when a request to /weather (http://localhost:3000/weather in this case) comes in.
+
+ #E If we didn't hit the static file middleware or any of the routes above, then we've tried everything and we'll wind up here. This will happen when you visit an unknown URL, like /edward_cullen or /delicious_foods/burrito.jpg.
+
+After the basic requires, we add our static file middleware (just like we've seen before). This will serve any files in a folder called public.
+
+The three calls to app.get are Express's magical routing system. They could also be app.post, which respond to POST requests, or PUT, or any of the HTTP verbs. (We'll talk more about these other HTTP verbs in later chapters.) The first argument is a path, like /about or /weather or simply /, the site's root. The second argument is a request handler similar to what we've seen before in the middleware section. To quote the Express documentation:
+
+[These request handlers] behave just like middleware, with the one exception that these callbacks may invoke next('route') to bypass the remaining route callback(s). This mechanism can be used to perform pre-conditions on a route then pass control to subsequent routes when there is no reason to proceed with the route matched.
+
+In short: they're the request handler functions we've seen before. They work just like middleware; it's just a matter of when they're called.
+
+These routes can get smarter. In addition to matching "fixed" routes (imagine a comparison with ===), they can also match more complex ones (imagine a regular expression or more complicated parsing).
+
+Listing 3.11 Grabbing data from routes
+
+#A This specifies that the "hello" part of the route is fixed, but the stuff afterward can change.
+
+#B req.params has a property called "who". It's no coincidence that this was also the name specified in the route above!
+
+Restart your server and visit localhost:3000/hello/earth for the following message:
+
+
+Hello, earth.
+
+
+Hello, earth.
+
+It's likely that you've seen this sort of behavior all over the internet. For example, Wikipedia does something like this (though they don't use Express). For example, if you wanted to visit the entry for Transylvania on the English Wikipedia, you'd visit the following URL: https://en.wikipedia.org/wiki/Transylvania
+
+For another example, if you want to see the Facebook page for Node.js, you'd visit https://facebook.com/nodejs.
+
+Express allows us to do something like this. Rather than defining a route for every single possible username (or article, or whatever), you can define one route that matches all of them.
+
+The docs also show an example that uses regular expressions to do even more complex matching, and you can do lots of other stuff with this routing. For a conceptual understanding, I've said enough. We'll explore this in far more detail in Chapter 5.
+
+But it gets cooler.
+Routing

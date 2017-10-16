@@ -1,0 +1,17 @@
+
+The first thing we'll need to do, if you haven't done it already, is put your app under version control with Git. I'm going to assume you at least know the basics of Git, but if you don't, check out Try Git at https://try.github.io.
+
+Initialize a Git project in your directory with git init and add all of your files (if you haven't already). Once that's all ready to go, type the following command:
+
+This will set up a new URL for your Heroku app. The names it generates are always a bit wacky—I got mighty-ravine-4205.herokuapp.com—but that's the price you pay for free hosting! You can change the URL or associate a domain name you own with a Herkou address, but we won't go into that here.
+
+Next, we'll want to tell our newly-created Heroku app that it's a production Node environment. We'll do this by setting the NODE_ENV environment variable on Heroku's servers. Set that variable by running this command:
+
+When you ran heroku create, Heroku added a remote Git server. When you push your code to Heroku, Heroku will deploy your app (or redeploy it if you've already deployed). This is just one Git command:
+
+This will first push your code to Heroku's servers, then set up their servers with all of your dependencies. You'll run git push heroku master every time you want to re-deploy; that's really the only command you'll run more than once. There's just one last thing to do: tell Heroku that it should run your app with one process:
+
+Suddenly, your app will be running on the real internet! You can type heroku open to open your app in your browser, and see it running! You can send this link to your friends; no more localhost, baby.
+
+Figure 11.3  Your “hello world” app running on Heroku!
+Deploying our first app

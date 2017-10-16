@@ -1,0 +1,48 @@
+9.3.1. Creating our first set
+The cornerstone of creating sets is the newly introduced constructor function, conveniently named Set. Let’s look at an example.
+Listing 9.20. Creating a set
+const ninjas = new Set(["Kuma", "Hattori", "Yagyu", "Hattori"]);
+#A
+assert(ninjas.has("Hattori"), "Hattori is in our set");
+#B
+assert(ninjas.size === 3, "There are only three ninjas in our set!");
+#B
+assert(!ninjas.has("Yoshi"), "Yoshi is not in, yet..");
+#C
+ninjas.add("Yoshi");
+#C
+assert(ninjas.has("Yoshi"), "Yoshi is added");
+#C
+assert(ninjas.size === 4, "There are four ninjas in our set!");
+#C
+assert(ninjas.has("Kuma"), "Kuma is already added");
+#D
+ninjas.add("Kuma");
+#D
+assert(ninjas.size === 4, "Adding Kuma again has no effect");
+#D
+for(let ninja of ninjas) {
+#E
+assert(ninja !== null, ninja);
+#E
+}
+#E
+#A - The Set constructor can take an array of items with which the set is initialized.
+#B - Discards any duplicate items
+#C - We can add new items that aren’t already contained in the set.
+#D - Adding existing items has no effect.
+#E - Iterates through the set with a for...of loop
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we use the built-in Set constructor to create a new ninjas set that will contain distinct ninjas. If we don’t pass in any arguments, an empty set is created. We can also pass in an array, such as this, which pre-fills the set:
+new Set(["Kuma", "Hattori", "Yagyu", "Hattori"]);
+As we already mentioned, sets are collections of unique items, and their primary purpose is to stop us from storing multiple occurrences of the same object. In this case, this means "Hattori", which we tried to add twice, is added only once.
+A number of methods are accessible from every set. For example, the has method checks whether an item is contained in the set:
+ninjas.has("Hattori")
+and the add method is used to add unique items to the set:
+ninjas.add("Yoshi");
+If you’re curious about how many items are in a set, you can always use the size property.
+Similar to maps and arrays, sets are collections, so we can iterate over them with a for...of loop. As you can see in figure 9.16, the items are always iterated over in the order in which they were inserted.
+Figure 9.16. Running the code from listing 9.20 shows that the items in a set are iterated over in the order in which they were inserted.
+Now that we’ve gone through the basics of sets, let’s visit some common operations on sets: unions, intersections, and differences.

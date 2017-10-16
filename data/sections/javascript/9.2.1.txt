@@ -1,0 +1,61 @@
+9.2.1. Don’t use objects as maps
+Imagine that somewhere on our site we need to access the translation for the word constructor, so we extend the dictionary example into the following code.
+Listing 9.14. Objects have access to properties that weren’t explicitly defined
+We try to access the translation for the word constructor—a word that we foolishly forgot to define in our dictionary. Normally, in such a case, we’d expect the dictionary to return undefined. But that isn’t the result, as you can see in figure 9.12.
+Figure 9.12. Running listing 9.14 shows that objects aren’t good maps, because they have access to properties that weren’t explicitly defined (through their prototypes).
+As you can see, by accessing the constructor property, we obtain the following string:
+"function Object() { [native code] }"
+What’s with this? As you learned in chapter 7, all objects have prototypes; even if we define new, empty objects as our maps, they still have access to the properties of the prototype objects. One of those properties is constructor (recall that constructor is the property of the prototype object that points back to the constructor function), and it’s the culprit behind the mess we now have on our hands.
+In addition, with objects, keys can only be string values; if you want to create a mapping for any other value, that value will be silently converted into a string without anyone asking you anything! For example, imagine that we want to track some information about HTML nodes, as in the following listing.
+Listing 9.15. Mapping values to HTML nodes with objects
+<div id="firstElement"></div>
+#A
+<div id="secondElement"></div>
+#A
+<script>
+#A
+const firstElement = document.getElementById("firstElement");
+#A
+const secondElement = document.getElementById("secondElement"); #A
+const map = {};
+#B
+map[firstElement] = { data: "firstElement"};
+#C
+assert(map[firstElement].data === "firstElement",
+#C
+"The first element is correctly mapped");
+#C
+map[secondElement] = { data: "secondElement"};
+#D
+assert(map[secondElement].data === "secondElement",
+#D
+"The second element is correctly mapped");
+#D
+assert(map[firstElement].data === "firstElement",
+#E
+"But now the firstElement is overriden!");
+#E
+</script>
+#A - Defines two HTML elements and fetches them by using the built-in document.getElementById method
+#B - Defines an object that we’ll use as a map to store additional information about our HTML elements
+#C - Stores information about the first element, and checks that it was correctly stored
+#D - Stores information about the second element, and checks that it was correctly stored
+#E - The mapping for the first element is now invalid!
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+In listing 9.15, we create two HTML elements, firstElement and secondElement, which we then fetch from the DOM by using the document.getElementById method. In order to create a mapping that will store additional information about each element, we define a plain old JavaScript object:
+const map = {};
+Then we use the HTML element as a key for our mapping object and associate some data with it:
+map[firstElement] = { data: "firstElement"}
+And we check that we can retrieve that data. Because that works as it should, we repeat the entire process for the second element:
+map[secondElement] = { data: "secondElement"};
+Again, everything looks hunky dory; we’ve successfully associated some data with our HTML element. But a problem occurs if we decide to revisit the first element:
+map[firstElement].data
+It would be normal to assume that we’d again obtain the information about the first element, but this isn’t the case. Instead, as figure 9.13 shows, the information about the second element is returned.
+Figure 9.13. Running the code from listing 9.15 shows that objects are converted to strings if we try to use them as object properties.
+This happens because with objects, keys are stored as strings. This means when we try to use any non-string value, such as an HTML element, as a property of an object, that value is silently converted to a string by calling its toString method. Here, this returns the string "[object HTMLDivElement]", and the information about the first element is stored as the value of the [object HTMLDivElement] property.
+Next, when we try to create a mapping for the second element, a similar thing happens. The second element, which is also an HTML div element, is also converted to a string, and its additional data is also assigned to the [object HTMLDivElement] property, overriding the value we set for the first element.
+For these two reasons—properties inherited through prototypes and support for string-only keys—plain objects generally aren’t useful as maps. Due to this limitation, the ECMAScript committee has specified a completely new type: Map.
+Note
+Maps are a part of the ES6 standard. For current browser compatibility, see: http://mng.bz/JYYM.

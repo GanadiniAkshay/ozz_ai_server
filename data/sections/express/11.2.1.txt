@@ -1,0 +1,31 @@
+
+Let's say you want to write a webpage that generates a random color and sets the background to that color. Maybe you want to be inspired for the next great color scheme.
+
+We're going to use an npm module called random-color (at https://www.npmjs.com/package/random-color), which just generates a random RGB color string. If you check out the source code for this module, you'll see that it knows nothing about the browser—it's only designed to work with Node's module system.
+
+Make a new folder to build this. We'll make a package.json that looks something like this (your package versions may vary):
+
+Listing 11.11 package.json for our simple Browserify example
+
+Run npm install and then create a file called main.js. Put this inside:
+
+Listing 11.12 main.js for our simple Browserify example
+
+Note that this file uses the require statement, but it's made for the browser, which doesn't have that natively. Get ready for your little mind to be blown!!
+
+Finally, define a simple HTML file with the following contents:
+
+Listing 11.13 HTML file for our simple Browserify example
+
+Now, if you save all that and run npm run build-my-js, Browserify will compile main.js into a new file, compiled.js. Open the HTML file you saved to see a webpage that generates random colors every time you refresh!
+
+You can open compiled.js to see that your code is there, as is the random-color module. The code will be ugly, but here's what it looks like:
+
+They're both wrapped in a bit of Browserify stuff to fake Node's module system, but they're there...and most importantly, they work! You can now require Node modules in the browser.
+
+Browserify is so great. Love it.
+
+NOTE While you can require a number of utility libraries (even the built-in ones), there are some things you can't fake in the browser and therefore can't use in Browserify. For example, you can't run a web server in the browser, so some of the http module is off-limits. But many things like util or modules you write are totally fair game!
+
+As you write your code with Browserify, you'll want a nicer way to build this than having to run the build command every single time. Let's check out a tool that helps us use Browserify, LESS, and much much more.
+A simple Browserify example

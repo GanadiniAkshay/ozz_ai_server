@@ -1,0 +1,25 @@
+
+Middleware can affect the response, but it doesn't have to. For example, the logging middleware from the previous section doesn't need to send different data—it just needs to log the request and move on.
+
+Let's start by building a completely useless middleware and then moving on from there. Here's what an empty middleware function looks like:
+
+Listing 3.5 An empty middleware that does nothing
+
+#A Do stuff with the request and/or response.
+
+#B When we're all done, call next() to defer to the next middleware in the chain.
+
+When we start a server, we start at the topmost middleware and work our way to the bottom. So if we wanted to add simple logging to our app, we could do it!
+
+Listing 3.6 Logging middleware
+
+#A This is the logging middleware, which will log the request to the console and then advance to the next middleware.
+
+#B This sends the actual response.
+
+Run this app and visit http://localhost:3000. In the console, you'll see that your server is logging your requests (refresh to see). You'll also see your "Hello, World!" in the browser.
+
+It's important to note that anything that works in the vanilla Node.js server also works in middleware. For example, you can inspect request.method in a vanilla Node web server, without Express. Express doesn't get rid of it--it's right there like it was before. If you want to set the statusCode of the response, you can do that too. Express adds some more things to these objects, but it doesn't remove anything.
+
+The above example shows middleware that doesn't change the request or the response—it logs the request and always continues. While this kind of middleware can be useful, middleware can also change the request or response objects.
+Middleware code that's passive

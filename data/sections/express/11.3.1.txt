@@ -1,0 +1,25 @@
+
+These instructions will deviate from the official Grunt instructions a bit. The documentation will tell you to install Grunt globally, but I believe that you should install everything locally if you can. This allows you to install multiple versions of Grunt on your system and doesn't pollute your "global" registry.
+
+Every project has a package.json. If you want to add Grunt to a project, you'll want to define a new script so that you can run the local Grunt:
+
+Listing 11.14 A script for running the local Grunt
+
+If you'd like to follow along with these examples, you can make a new project with a barebones package.json like this one:
+
+Listing 11.15 A barebones package.json for these examples
+
+Grunt isn't set up yet, but when it is, this allows us to say npm run grunt to run the local Grunt.
+
+Next, you'll want to npm install grunt --save-dev and npm install grunt-cli --save-dev (or just npm install grunt grunt-cli --save-dev) to save Grunt and its command-line tool as local dependencies.
+
+Next, you'll want to create a something called a "Gruntfile", which Grunt examines to figure out what it should do. The Gruntfile lives at the root of your project (in the same folder as your package.json) and is called Gruntfile.js.
+
+Here's a "hello world" Gruntfile. When you run Grunt, it will look at this Gruntfile, find the appropriate task, and run the code inside.
+
+Listing 11.16 A skeleton Gruntfile
+
+To try this out, type npm run grunt into your terminal. You should see the following output:
+
+Unfortunately, "hello world" isn't of much use to us. Let's look at some more useful tasks we can define.
+Installing Grunt

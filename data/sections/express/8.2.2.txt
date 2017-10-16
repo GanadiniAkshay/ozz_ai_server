@@ -1,0 +1,71 @@
+
+As we've discussed, MongoDB stores everything in BSON, which is a binary format. A simple "hello world" BSON document might look like this internally:
+
+A computer can deal with all that mumbo-jumbo, but that's hard to read for humans like us. We want something that's more amenable to us, which is why developers have created the concept of a database model. A model is a representation of a database record as a nice object in your programming language of choice. In this case, our models will be JavaScript objects.
+
+Models can serve as a simple object that stores database values, but they often have things like data validation, extra methods, and more. As we'll see, Mongoose has a lot of those features.
+
+In this example, we'll be building a model for users. Before we start, we should consider the properties User objects should have:
+
+·   Username, a unique name. This will be required.
+
+·   Password. This will also be required.
+
+·   Time joined, a record of when the user joined the site.
+
+·   Display name, name that's displayed instead of the username. This will be optional.
+
+·   Biography, an optional bunch of text that's displayed on the user's profile page.
+
+To specify this in Mongoose, we must define a schema, which contains information about properties, methods, and more. (Personally, I don't think "Schema" is the right word; it's a lot more like a class or a prototype.) It's pretty easy to translate the English above into Mongoose code.
+
+Create a folder called models in the root of your project, and create a new file called user.js inside that folder. To start, put the following contents:
+
+Listing 8.2 Defining the user schema (in models/user.js)
+
+After we require Mongoose, it's pretty straightforward to define our fields. As you can see, we define the username as username, the password as password, the time joined as createdAt, the display name as displayName, and the biography as bio. Notice that some fields are required, some are unique, some have default values, and others are simply a declaration of their types.
+
+Once we've created the schema with the properties, we can add some methods to it. The first we'll add is simple: get the user's name. If the user has defined a display name, return that; otherwise, return their username. Here's how we'll add that:
+
+Listing 8.3 Adding a simple method to the user model (in models/user.js)
+
+We'll also want to make sure we store the password securely. We could store the password in plain text in our database, but that has a number of security issues. What if someone hacked our database? They'd get all the passwords! We also want to be responsible administrators and not be able to see our users passwords in the clear. In order to ensure that we never store the "real" password, we'll apply a one-way hash to it using the Bcrypt algorithm.
+
+First, to start using Bcrypt, add the require statement to the top of your file. Bcrypt works by running a part of the algorithm many times to give you a secure hash, but that number of times is configurable. The higher the number, the more secure the hash but the longer it will take. We'll use a value of 10 for now, but we could increase that number for higher security (but, once again, slower speed):
+
+Listing 8.4 Requiring Bcrypt (in models/user.js)
+
+Next, after you've defined your schema, we'll define a pre-save action. Before we save our model to the database, we'll run some code that will hash the password. Here's how that looks:
+
+Listing 8.5 Our pre-save action to hash the password (in models/user.js)
+
+#1 We'll define a function that will be run before our model is saved.
+
+#2 Because we'll be using inner functions, we'll save a reference to the user.
+
+#3 Skip this logic if the user hasn't modified their password.
+
+#4 We'll generate a salt for our hash, and call the inner function once completed.
+
+#5 Next, we'll hash the user's password with that generated salt.
+
+#6 Store the password and continue on with the saving!
+
+Now, we never have to call any fancy logic to hash the password for the database—it'll happen every time we save.
+
+Finally, we'll need to write some code to compare the real password to a password guess. When a user logs in, we'll need to make sure the password they typed is correct. Let's define another method on the model to do this:
+
+Listing 8.6 Checking the user's password (in models/user.js)
+
+#1 For complicated security reasons, we'll use Bcrypt's compare function rather than something like a === check.
+
+Now we'll be storing our users' passwords securely!
+
+Once we've defined our schema with its properties and methods, we'll need to attach that schema to an actual model. It only takes one line to do this, and because we're defining this user model in a file, we'll make sure to export it into module.exports so other files can require it. Here's how we do that:
+
+Listing 8.7 Creating and exporting the user model (in models/user.js)
+
+That's how you define a user model! Here's what the full file will look like when you're done:
+
+Listing 8.8 Finished models/user.js
+Creating a user model

@@ -1,0 +1,78 @@
+10.6. Solving common problems with regular expressions
+In JavaScript, a few idioms tend to occur again and again, but their solutions aren’t always obvious. A knowledge of regular expressions can definitely come to the rescue, and in this section we’ll look at a few common problems that we can solve with a regex or two.
+10.6.1. Matching newlines
+When performing a search, it’s sometimes desirable for the period (.) term, which matches any character except for newline, to also include newline characters. Regular expression implementations in other languages frequently include a flag for making this possible, but JavaScript’s implementation doesn’t.
+Let’s look at a couple of ways of getting around this omission in JavaScript, as shown in the next listing.
+Listing 10.11. Matching all characters, including newlines
+const html = "<b>Hello</b>\n<i>world!</i>";
+#A
+assert(/.*/.exec(html)[0] === "<b>Hello</b>",
+#B
+"A normal capture doesn't handle endlines.");
+assert(/[\S\s]*/.exec(html)[0] ===
+#C
+"<b>Hello</b>\n<i>world!</i>",
+#C
+"Matching everything with a character set.");
+#C
+assert(/(?:.|\s)*/.exec(html)[0] ===
+#D
+"<b>Hello</b>\n<i>world!</i>",
+#D
+"Using a non-capturing group to match everything.");
+#D
+#A - Defines a test subject
+#B - Shows that newlines aren’t matched
+#C - Matches all using whitespace matching
+#D - Matches all using alteration
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This example defines a test subject string: "<b>Hello</b>\n<i>world!</i>", containing a newline. Then we try various ways of matching all the characters in the string.
+In the first test, /.*/.exec(html)[0] === "<b>Hello</b>", we verify that newlines aren’t matched by the . operator. Ninjas won’t be denied, so in the next test we get our way with an alternative regex, /[\S\s]*/, in which we define a character class that matches anything that’s not a whitespace character and anything that is a whitespace character. This union is the set of all characters.
+Another approach is taken in the next test:
+/[\S\s]*/.exec(html)[0] === "<b>Hello</b>\n<i>world!</i>"
+Here we use an alternation regex, /(?:.|\s)*/, in which we match everything matched by ., which is everything but newline, and everything considered whitespace, which includes newline. The resulting union is the set of all characters including newlines. Note the use of a passive subexpression to prevent any unintended captures. Because of its simplicity (and implicit speed benefits), the solution provided by /[\S\s]*/ is generally considered optimal.
+Next, let’s take a step to widen our view to a worldwide scope.
+10.6.2. Matching Unicode
+Frequently in the use of regular expressions, we want to match alphanumeric characters, such as an ID selector in a CSS selector engine implementation. But assuming that the alphabetic characters will be from only the set of English ASCII characters is shortsighted.
+Expanding the set to include Unicode characters is sometimes desirable, explicitly supporting multiple languages not covered by the traditional alphanumeric character set (see the following listing).
+Listing 10.12. Matching Unicode characters
+const text ="\u5FCD\u8005\u30D1\u30EF\u30FC";
+const matchAll = /[\w\u0080-\uFFFF_-]+/;
+#A
+assert(text.match(matchAll),"Our regexp matches non-ASCII!");
+#A - Matches all, including Unicode
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":4,\"ch\":0},{\"line\":4,\"ch\":35}]]"}
+!@%STYLE%@!
+This listing includes the entire range of Unicode characters in the match by creating a character class that includes the \w term, to match all the “normal” word characters, plus a range that spans the entire set of Unicode characters above U+0080. Starting at 128 gives us some high ASCII characters along with all Unicode characters in the Basic Multilingual Plane.
+The astute among you might note that by adding the entire range of Unicode characters above \u0080, we match not only alphabetic characters, but also all Unicode punctuation and other special characters (arrows, for example). But that’s okay, because the point of the example is to show how to match Unicode characters in general. If you have a specific range of characters that you want to match, you can use the lesson of this example to add whatever range you wish to the character class.
+Before moving on from our examination of regular expressions, let’s tackle one more common issue.
+10.6.3. Matching escaped characters
+It’s common for page authors to use names that conform to program identifiers when assigning id values to page elements, but that’s just a convention; id values can contain characters other than “word” characters, including punctuation. For example, a web developer might use the id value form:update for an element.
+A library developer, when writing an implementation for, say, a CSS selector engine, would like to support escaped characters. This allows the user to specify complex names that don’t conform to typical naming conventions. So let’s develop a regex that will allow matching escaped characters. Consider the following code.
+Listing 10.13. Matching escaped characters in a CSS selector
+const pattern = /^((\w+)|(\\.))+$/;
+#A
+const tests = [
+#B
+"formUpdate",
+"form\\.update\\.whatever",
+"form\\:update",
+"\\f\\o\\r\\m\\u\\p\\d\\a\\t\\e",
+"form:update"
+];
+for (let n = 0; n < tests.length; n++) {
+#C
+assert(pattern.test(tests[n]),
+tests[n] + " is a valid identifier" );
+}
+#A - This regular expression allows any sequence composed of word characters, a backslash followed by any character (even a backslash), or both.
+#B - Sets up various test subjects. All should pass but the last, which fails to escape its nonword character (:).
+#C - Runs through all the test subjects
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This particular expression works by allowing for a match of either a word character sequence or a sequence of a backslash followed by any character.
+Note that more work is required to fully support all escape characters. For more details, visit https://mathiasbynens.be/notes/css-escapes.

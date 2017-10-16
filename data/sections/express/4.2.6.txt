@@ -1,0 +1,25 @@
+
+There's only one piece of middleware that's bundled with Express, and it replaces our second middleware.
+
+It's called express.static. It works a lot like the middleware we wrote, but it's got a bunch of other features. It does a bunch of complicated tricks to achieve better security and performance. For example, it adds a caching mechanism. If you're interested in more of its benefits, you can read my blog post about the middleware at http://evanhahn.com/express-dot-static-deep-dive/.
+
+Like Morgan, express.static is a function that returns a middleware function. It takes one argument: the path to the folder we'll be using for static files. To get this path, we'll use path.join, like before. Then we'll pass it to the static middleware.
+
+Replace your static file middleware with this:
+
+Listing 4.10  Replacing our static file middleware with Express's
+
+#A Put the static path in a variable.
+
+#B Use express.static to serve files from the static path.
+
+It's a bit more complicated because it's got more features, but express.static functions quite similarly to what we had before. If the file exists at the path, it will send it. If not, it'll call next and continue on to the next middleware in the stack.
+
+If you restart your app, you won't notice much difference in functionality, but your code will be much shorter. Because you're using battle-tested middleware instead of your own, you'll also be getting a much more reliable set of features.
+
+Now our app code looks like this:
+
+Figure 4.11  The next version of our static file app (app.js)
+
+I think we can call our Express-powered static file server complete for now. Well done, hero.
+Switching to Express's built-in static file middleware

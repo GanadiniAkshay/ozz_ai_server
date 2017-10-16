@@ -1,0 +1,34 @@
+4.3.2. Using the bind method
+In this chapter, you’ve already met two methods that every function has access to, call and apply, and you’ve seen how to use them for greater control over the context and arguments of our function invocations.
+In addition to these methods, every function has access to the bind method that, in short, creates a new function. This function has the same body, but its context is always bound to a certain object, regardless of the way we invoke it.
+Let’s revisit our little problem with button-click handlers one last time.
+Listing 4.15. Binding a specific context to an event handler
+<button id="test">Click Me!</button>
+<script>
+var button = {
+clicked: false,
+click: function(){
+this.clicked = true;
+assert(button.clicked,"The button has been clicked");
+}
+};
+var elem = document.getElementById("test");
+elem.addEventListener("click", button.click.bind(button));
+#A
+var boundFunction = button.click.bind(button);
+assert(boundFunction != button.click,
+"Calling bind creates a completly new function");
+</script>
+#A - Uses the bind function to create a new function bound to the button object
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":10,\"ch\":33},{\"line\":10,\"ch\":58}],[{\"line\":12,\"ch\":22},{\"line\":12,\"ch\":47}],[{\"line\":17,\"ch\":0},{\"line\":17,\"ch\":79}]]"}
+!@%STYLE%@!
+The secret sauce added here is the bind() method:
+elem.addEventListener("click", button.click.bind(button));
+The bind method is available to all functions, and is designed to create and return a new function that’s bound to the passed-in object (in this case, the button object). The value of the this parameter is always set to that object, regardless of the way the bound function was invoked. Apart from that, the bound function behaves like the originating function, because it has the same code in its body.
+Whenever the button is clicked, that bound function will be invoked with the button object as its context, because we’ve used that button object as an argument to bind.
+Note that calling the bind method doesn’t modify the original function. It creates a completely new function, a fact asserted at the end of the example:
+var boundFunction = button.click.bind(button);
+assert(boundFunction != button.click,
+"Calling bind creates a completly new function");
+With this, we’ll end our exploration of the function context. Rest for now, because in the next chapter, we’ll be dealing with one of the most important concepts in JavaScript: closures.

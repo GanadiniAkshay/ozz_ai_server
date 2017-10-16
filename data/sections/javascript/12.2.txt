@@ -1,0 +1,72 @@
+12.2. Using DOM attributes and properties
+When accessing the values of element attributes, we have two options: using the traditional DOM methods of getAttribute and setAttribute, or using properties of the DOM objects that correspond to the attributes.
+For example, to obtain the id of an element whose reference is stored in variable e, we could use either of the following:
+e.getAttribute('id')
+e.id
+Either will give us the value of the id.
+Let’s examine the following code to better understand how attribute values and their corresponding properties behave.
+Listing 12.5. Accessing attribute values via DOM methods and properties
+<div></div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+const div = document.querySelector("div");
+#A
+div.setAttribute("id","ninja-1");
+#B
+assert(div.getAttribute('id') === "ninja-1",
+#B
+"Attribute successfully changed");
+#B
+div.id = "ninja-2";
+#C
+assert(div.id === "ninja-2",
+#C
+"Property successfully changed");
+#C
+assert(div.getAttribute('id') === "ninja-2",
+#D
+"Attribute successfully changed via property");
+#D
+div.setAttribute("id","ninja-3");
+#E
+assert(div.id === "ninja-3",
+"Property successfully changed via attribute");
+assert(div.getAttribute('id') === "ninja-3",
+"Attribute successfully changed");
+});
+</script>
+#A - Obtains an element reference
+#B - Changes the value of the id attribute with the setAttribute method and tests that the value has changed
+#C - Changes the value of the property and tests that the value has changed
+#D - Changing the property also changes the value obtained with getAttribute.
+#E - Using setAttribute also changes the value obtained through the property.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+This example shows interesting behavior with respect to element attributes and element properties. It starts by defining a simple <div> element that we’ll use as a test subject. Within the document’s DOMContentLoaded handler (to ensure that the DOM is fully built), we obtain a reference to the lone <div> element, const div = document.querySelector("div"), and then run a few tests.
+In the first test, we set the id attribute to the value ninja-1 via the setAttribute() method. Then we assert that getAttribute() returns the same value for that attribute. It should be no surprise that this test works just fine when we load the page:
+div.setAttribute("id", "ninja-1");
+assert(div.getAttribute('id') === "ninja-1",
+"Attribute successfully changed");
+Similarly, in the next test, we set the id property to the value ninja-2 and then verify that the property value has indeed changed. No problem.
+div.id = "ninja-2";
+assert(div.id === "ninja-2",
+"Property successfully changed");
+The next test is when things get interesting. We again set the id property to a new value, in this case ninja-3, and again verify that the property value has changed. But then we also assert that not only should the property value change, but also the value of the id attribute. Both assertions pass. From this we learn that the id property and the id attribute are somehow linked together. Changing the id property value also changes the id attribute value:
+div.id = "ninja-3";
+assert(div.id === "ninja-3",
+"Property successfully changed");
+assert(div.getAttribute('id') === "ninja-3",
+"Attribute successfully changed via property");
+The next test proves that it also works the other way around: Setting an attribute value also changes the corresponding property value.
+div.setAttribute("id","ninja-4");
+assert(div.id === "ninja-4",
+"Property successfully changed via attribute");
+assert(div.getAttribute('id') === "ninja-4","Attribute changed");
+But don’t let this fool you into thinking that the property and attribute are sharing the same value—they aren’t. We’ll see later in this chapter that the attribute and corresponding property, although linked, aren’t always identical.
+It’s important to note that not all attributes are represented by element properties. Although it’s generally true for attributes that are natively specified by the HTML DOM, custom attributes that we may place on the elements in our pages don’t automatically become represented by element properties. To access the value of a custom attribute, we need to use the DOM methods getAttribute() and setAttribute().
+If you’re not sure whether a property for an attribute exists, you can always test for it and fall back to the DOM methods if it doesn’t exist. Here’s an example:
+const value = element.someValue ? element.someValue
+: element.getAttribute('someValue');
+Tip
+In HTML5, use the prefix data- for all custom attributes to keep them valid in the eye of the HTML5 specification. It’s a good convention that clearly separates custom attributes from native attributes.

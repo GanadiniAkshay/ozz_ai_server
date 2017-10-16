@@ -1,0 +1,9 @@
+
+With that, you can start the application with npm start. Visit http://localhost:3000, type in a ZIP code, and watch the temperature appear!
+
+Figure 5.1 Temperature by ZIP code in action
+
+That's our simple application! It takes advantage of Express's helpful routing features, serves HTML views, JSON, and static files.
+
+If you'd like, you can extend this application to work with more than just United States ZIP codes, or show more than just the temperature, or add API documentation, or add better error handling, or maybe more!
+The application in action

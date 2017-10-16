@@ -1,0 +1,104 @@
+3.4.2. Default parameters
+Note
+Default parameters are added by the ES6 standard (for browser compatibility, see http://mng.bz/wI8w).
+Many web UI components (especially jQuery plugins) can be configured. For example, if we’re developing a slider component, we might want to give our users an option to specify a timer interval after which one item is replaced with another, as well as an animation that will be used as the change occurs. At the same time, maybe some users don’t care and are happy to use whatever settings we offer. Default parameters are ideal for such situations!
+Our little example with slider component settings is just a specific case of a situation in which almost all function calls use the same value for a particular parameter (notice the emphasis on almost). Consider a simpler case in which most of our ninjas are used to skulking around, but not Yagyu, who cares only about simple sneaking:
+function
+performAction(ninja, action) {
+return ninja + " " + action;
+}
+performAction("Fuma", "skulking");
+performAction("Yoshi", "skulking");
+performAction("Hattori", "skulking");
+performAction("Yagyu", "sneaking");
+Doesn’t it seem tedious to always have to repeat the same argument, skulking, simply because Yagyu is obstinate and refuses to act like a proper ninja?
+In other programming languages, this problem is most often solved with function overloading (specifying additional functions with the same name but a different set of parameters). Unfortunately, JavaScript doesn’t support function overloading, so when faced with this situation in the past, developers often resorted to something like the following listing.
+Listing 3.8. Tackling default parameters before ES6
+function performAction(ninja, action){
+action = typeof action === "undefined" ? "skulking" : action;
+#A
+return ninja + " " + action;
+}
+assert(performAction("Fuma") === "Fuma skulking",
+#B
+"The default value is used for Fuma");
+#B
+#B
+assert(performAction("Yoshi") === "Yoshi skulking",
+#B
+"The default value is used for Yoshi");
+#B
+assert(performAction("Hattori") === "Hattori skulking",
+#B
+"The default value is used for Hattori");
+#B
+assert(performAction("Yagyu", "sneaking") === "Yagyu sneaking",
+#C
+"Yagyu can do whatever he pleases, even sneak!");
+#C
+#A - If the action parameter is undefined, we use a default value, skulking, and if it’s defined, we keep the passed-in value.
+#B - We haven’t passed in a second argument, the value of the action parameter; after executing the first function, the body statement will default to skulking.
+#C - Pass a string as the value of the action parameter; that value will be used throughout the function body.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[]"}
+!@%STYLE%@!
+Here we define a performAction function, which checks whether the value of the action parameter is undefined (by using the typeof operator), and if it is, the function sets the value of the action variable to skulking. If the action parameter is sent through a function call (it’s not undefined), we keep the value.
+Note
+The typeof operator returns a string indicating the type of the operand. If the operand isn’t defined (for example, if we haven’t supplied a matching argument for a function parameter), the return value is the string undefined.
+This is a commonly occurring pattern that’s tedious to write, so the ES6 standard has added support for default parameters, as shown in the following listing.
+Listing 3.9. Tackling default parameters in ES6
+function performAction(ninja, action = "skulking"){
+#A
+return ninja + " " + action;
+}
+assert(performAction("Fuma") === "Fuma skulking",
+#B
+"The default value is used for Fuma");
+#B
+#B
+assert(performAction("Yoshi") === "Yoshi skulking",
+#B
+"The default value is used for Yoshi");
+#B
+#B
+assert(performAction("Hattori") === "Hattori skulking",
+#B
+"The default value is used for Hattori");
+#B
+assert(performAction("Yagyu", "sneaking") === "Yagyu sneaking",
+#C
+"Yagyu can do whatever he pleases, even sneak!");
+#C
+#A - In ES6, it’s possible to assign a value to a function parameter.
+#B - If the value isn’t passed in, the default value is used.
+#C - The passed value is used.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":2},{\"line\":0,\"ch\":53}]]"}
+!@%STYLE%@!
+Here you can see the syntax of default function parameters in JavaScript. To create a default parameter, we assign a value to a function parameter:
+function performAction(ninja, action = "skulking"){
+return ninja + " " + action;
+}
+Then, when we make a function call and the matching argument value is left out, as with Fuma, Yoshi, and Hattori, the default value (in this case, skulking), is used:
+assert(performAction("Fuma") === "Fuma skulking",
+"The default value is used for Fuma");
+assert(performAction("Yoshi") === "Yoshi skulking",
+"The default value is used for Yoshi");
+assert(performAction("Hattori") === "Hattori skulking",
+"The default value is used for Hattori");
+If, on the other hand, we specify the value, the default value is overridden:
+assert(performAction("Yagyu", "sneaking") === "Yagyu sneaking",
+"Yagyu can do whatever he pleases, even sneak!");
+We can assign any values to default parameters: simple, primitive values such as numbers or strings, but also complex types such as objects, arrays, and even functions. The values are evaluated on each function call, from left to right, and when assigning values to later default parameters, we can reference previous parameters, as in the following listing.
+Listing 3.10. Referencing previous default parameters
+function performAction(ninja, action = "skulking",
+message = ninja + " " + action) {
+#A
+return message;
+}
+assert(performAction("Yoshi") === "Yoshi skulking", "Yoshi is skulking");
+#A - We can place arbitrary expressions as default parameter values, in the process even referencing previous function parameters.
+!@%STYLE%@!
+{"css":"{\"css\": \"font-weight: bold;\"}","target":"[[{\"line\":0,\"ch\":30},{\"line\":0,\"ch\":49}],[{\"line\":1,\"ch\":23},{\"line\":1,\"ch\":53}],[{\"line\":5,\"ch\":21},{\"line\":5,\"ch\":28}],[{\"line\":5,\"ch\":34},{\"line\":5,\"ch\":50}],[{\"line\":5,\"ch\":52},{\"line\":5,\"ch\":71}],[{\"line\":7,\"ch\":0},{\"line\":7,\"ch\":130}]]"}
+!@%STYLE%@!
+Even though JavaScript allows you to do something like this, we urge caution. In our opinion, this doesn’t enhance code readability and should be avoided, whenever possible. But moderate use of default parameters—as a means of avoiding null values, or as relatively simple flags that configure the behaviors of our functions—can lead to much simpler and more elegant code.

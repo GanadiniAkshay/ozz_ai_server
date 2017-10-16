@@ -1,0 +1,33 @@
+
+Friends, gather round. This chapter marks a new beginning. Today, we exit the abstract but critical "core Express" and enter the real world. For the rest of this book, we'll be building much more real systems atop Express. We'll start with APIs.
+
+"API" is a pretty broad term.
+
+It stands for "Application Programming Interface", which doesn't demystify the term much. If it were up to me (and it isn't), I'd rename it to something like "Software Interface". Where a user interface is meant to be consumed by human users, a software interface is meant to be consumed by code. At some level, all user interfaces sit on top of software interfaces—all user interfaces sit on top of some APIs.
+
+At a high level, APIs are just ways for one piece of code to talk to another piece of code. This could mean a computer talking to itself or a computer talking to another computer over a network. For example, a video game might consume an API that allows the code to draw graphics to the screen. We've seen a few methods available in the Express API, like app.use or app.get. These are just interfaces that you as a programmer can use to "talk to" other code.
+
+There are also computer-to-computer APIs. These happen over a network, and usually over the Internet. These computers may be running different programming languages and/or different operating systems, so they've developed common ways to communicate. Some simply send plain text, while others might choose JSON or XML. Either way, both parties have to agree that they're going to send data a certain way. In this chapter, the APIs we create will use JSON.
+
+We'll talk about APIs that interact you can build with Express. These APIs will take HTTP requests and respond with JSON data.
+
+By the end of this chapter, programmers will be able to build applications that consume JSON APIs of your creation. We'll also aim to design good APIs. The core principle behind good API design is to do what developers consuming your API expect. Most of these expectations can be met by following the HTTP specification. Rather than instruct you to read a long, dry (but very interesting) specification document, I'll tell you the parts you need to know so that you can write a good API.
+
+NOTE If you want to learn a lot more about HTTP, check out Appendix A which is a detailed overview of HTTP.
+
+Just like the nebulous concepts of "good code" versus "bad code", there aren't a lot of hard lines in the sand here. A lot of this is open to your interpretation. You could come up with many examples where you might want to deviate from these established best practices, but remember: the goal is to do what other developers expect.
+
+In this chapter, we'll learn:
+
+·   What an API is and isn't
+
+·   The fundamentals of building an API with Express
+
+·   HTTP methods and how they relate to common application actions
+
+·   How to create different versions of your API and why you want to do it
+
+·   How to properly use HTTP status codes
+
+Let's get started.
+ Building APIs

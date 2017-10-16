@@ -1,0 +1,7 @@
+1.5. Summary
+Client-side web applications are among the most popular today, and the concepts, tools, and techniques once used only for their development have permeated other application domains. Understanding the foundations of client-side web applications will help you develop applications for a wide variety of domains.
+To improve your development skills, you have to gain a deep understanding of the core mechanics of JavaScript, as well as the infrastructure provided by the browsers.
+This book focuses on core JavaScript mechanisms such as functions, function closures, and prototypes, as well as on new JavaScript features such as generators, promises, proxies, maps, sets, and modules.
+JavaScript can be executed in a large number of environments, but the environment where it all began, and the environment we’ll concentrate on, is the browser.
+In addition to JavaScript, we’ll explore browser internals such as the DOM (a structured representation of the web page UI) and events, because client-side web applications are event-driven applications.
+We’ll do this exploration with best practices in mind: debugging, testing, and performance analysis.

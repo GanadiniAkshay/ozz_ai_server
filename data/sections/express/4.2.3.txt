@@ -1,0 +1,35 @@
+
+At a high level, this is what the static file server middleware should do:
+
+1. Check if the requested file exists in the static directory.
+
+2. If it exists, respond with the file and call it a day. In code terms, this is a call to res.sendFile.
+
+3. If the file doesn't exist, continue onto the next middleware in the stack. In code terms, this is a call to next.
+
+Let's turn that requirement into code. We'll make use of Node's built-in path module, which will let us determine the path that the user requests. To determine whether the file exists, we'll use another Node built-in: the fs module.
+
+Add this to app.js after your logging middleware:
+
+Listing 4.5  Adding static file middleware to the middleware stack
+
+#A Use path.join to find the path where the file should be (whether it's there or not).
+
+#B Built-in fs.exists will call your callback when it determines whether your file exists.
+
+#C If the file exists, call res.sendFile.
+
+#D Otherwise, continue onto the next middleware.
+
+The first thing we do in this function is use path.join to determine the path of the file. If the user visits /celine.mp3, req.url will be the string "/celine.mp3". Therefore, filePath will be something like "/path/to/your/project/static/celine.mp3". The path will look pretty different depending on where you've stored your project and on your operating system, but it'll be the path to the file that was requested.
+
+Next, we call fs.exists. This is a function that takes two arguments. The first is the path to check (the filePath we just figured out) and the second is a function. When Node has determined whether the file exists, it'll call this callback with one argument: true (the file exists) or false (the file doesn't exist).
+
+Express applications have asynchronous behavior like this all the time. That's why we have to have next in the first place! If everything in were synchronous, Express would know exactly where every middleware ended: when the function finished (either by calling return or hitting the end). We wouldn't need to have next anywhere. But because things are asynchronous, we need manually to tell Express when to continue onto the next middleware in the stack.
+
+Once the callback has completed, we run through a simple conditional. If the file exists, send the file. Otherwise, continue onto the next middleware.
+
+Now, when you run your app with npm start, try visiting some resources you've put into the static file directory. If you have a file called secret_plans.txt in the static file folder, visit localhost:3000/secret_plans.txt to see it. You should also continue to see the logging, just as before.
+
+If you visit a URL that doesn’t have a corresponding file, you should still see the error message from before. This is because you're calling next and there's no more middleware in the stack. Let's add the final one—the 404 handler.
+The static file server middleware

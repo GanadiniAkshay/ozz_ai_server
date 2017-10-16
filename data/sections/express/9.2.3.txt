@@ -1,0 +1,9 @@
+
+As you might expect, we’ll actually want to run these tests written with Mocha and Chai in order to make sure that our code works. How do we do this?
+
+First, as you can see above, we’ve defined the test script in our package.json. This allows us to type npm test into the command line. This runs Mocha which in turn runs our tests, as you can see in Figure 2.
+
+Figure 9.2 What happens when we type “npm test” into our command line.
+
+Now we've set everything up. It's time to start writing some tests.
+What happens when we run our tests
