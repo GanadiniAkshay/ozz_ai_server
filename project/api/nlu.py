@@ -357,114 +357,137 @@ def retrain():
     nlu.train()
     return jsonify({"success":True})
 
-
+@nlu_blueprint.route('/api/download/<bot_guid>', methods=['GET'])
+def download(bot_guid):
+    code, user_id = checkAuth(request)
+    # code, user_id = 200,16
+    if code == 200:
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        if bot:
+            if bot.user_id == user_id:
+                ozz_data = {"ozz_data":{"intents":[],"entities":[]}}
+                intents = Intent.query.filter_by(bot_guid=bot_guid).all()
+                entities = Entity.query.filter_by(bot_guid=bot_guid).all()
+                
+                for intent in intents:
+                    intent_obj = {}
+                    intent_obj['name'] = intent.name
+                    intent_obj['utterances'] = intent.utterances
+                    ozz_data['ozz_data']['intents'].append(intent_obj)
+                
+                for entity in entities:
+                    ent_obj = {}
+                    ent_obj['name'] = entity.name 
+                    ent_obj['values'] = []
+                    for value in entity.examples:
+                        value_obj = {}
+                        value_obj['name'] = value
+                        value_obj['synonyms'] = entity.examples[value]
+                        ent_obj['values'].append(value_obj)
+                    
+                    ozz_data['ozz_data']['entities'].append(ent_obj)
+                return jsonify(ozz_data)
+            else:
+                return jsonify({"error":"Not Authorized"}),401
+        else:
+            return jsonify({"error":"Bot doesn't exist"}),404
+    elif code == 400:
+        return jsonify({"error":"Invalid Authorization Token"}),400
+    elif code == 401:
+        return jsonify({"error":"No Authorization Token Sent"}),401
+        
 @nlu_blueprint.route('/api/upload/<bot_guid>', methods=['POST'])
 def upload(bot_guid):
-    if request.method == 'POST':
-        code,user_id = checkAuth(request)
+    code,user_id = checkAuth(request)
 
-        if code == 200:
-            bot = Bot.query.filter_by(bot_guid=bot_guid).first()
-            if bot:
-                if bot.user_id == user_id:
-                    # The folder for all the users data
-                    user_path = os.path.join(os.getcwd(),'data',str(user_id))
+    if code == 200:
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        if bot:
+            if bot.user_id == user_id:
+                #Get the file information
+                file = request.files['file']
+                filename = secure_filename(file.filename)
+                
+                data = json.load(file)
+                
+                intent_data = {}
+                intents = data['ozz_data']['intents']
 
-                    # Create the folder if it doesn't exist
-                    if not os.path.exists(user_path):
-                        os.makedirs(user_path)
-
-                    # The folder for the bot's data for a given user
-                    bot_path = os.path.join(user_path,bot_guid)
-
-                    # Create the folder if it doesn't exist
-                    if not os.path.exists(bot_path):
-                        os.makedirs(bot_path)
-
-                    #Get the file information
-                    file = request.files['file']
-                    filename = secure_filename(file.filename)
+                for intent_obj in intents:
+                    intent_name = intent_obj["name"]
+                    intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                     
-                    data = json.load(file)
-                    
-                    intent_data = {}
-                    intents = data['ozz_data']['intents']
-
-                    for intent_obj in intents:
-                        intent_name = intent_obj["name"]
-                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
+                    stop_words = [" a "," an "," the "," is "]
+                    for utt_copy in intent_obj["utterances"]:
+                        for word in stop_words:
+                            utt_copy = utt_copy.replace(word," ")
                         
-                        stop_words = [" a "," an "," the "," is "]
-                        for utt_copy in intent_obj["utterances"]:
-                            for word in stop_words:
-                                utt_copy = utt_copy.replace(word," ")
-                            
-                            utt_words = utt_copy.split(" ")
+                        utt_words = utt_copy.split(" ")
 
-                            words_json = json.loads(bot.words) 
-                            if type(words_json) == str:
-                                words_json = {}
-                            for word in utt_words:
-                                if word in words_json:
-                                    if intent_name in words_json[word]:
-                                        words_json[word][intent_name] += 1
-                                    else:
-                                        words_json[word][intent_name] = 1
+                        words_json = json.loads(bot.words) 
+                        if type(words_json) == str:
+                            words_json = {}
+                        for word in utt_words:
+                            if word in words_json:
+                                if intent_name in words_json[word]:
+                                    words_json[word][intent_name] += 1
                                 else:
-                                    words_json[word] = {intent_name:1}
-                        
-                        if intent:
-                            intent.utterances = intent_obj["utterances"]
-                            flag_modified(intent, "utterances")
-                            db.session.commit()
-                        else:
-                            name = intent_name
-                            utterances = intent_obj["utterances"]
-                            responses = []
-                            has_entities = False
-                            intent = Intent(
-                                name = name,
-                                bot_guid=bot_guid,
-                                utterances=utterances,
-                                has_entities=has_entities,
-                                responses = responses,
-                                patterns=[]
-                            )
-                            db.session.add(intent)
-                            db.session.commit()
-
-                    entities = data['ozz_data']['entities']
-
-                    for entity_obj in entities:
-                        name = entity_obj['name']
-                        
-                        new_examples = {}
-                        for value in entity_obj['values']:
-                            new_examples[value["value"]] = value["synonyms"]
-
-                        entity = Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
-                        
-                        if entity:
-                            entity.examples = json.dumps(new_examples)
-                        else:
-                            entity = Entity(
-                                name = name.lower(),
-                                bot_guid=bot_guid,
-                                examples=json.dumps(new_examples)
-                            )
-                            db.session.add(entity)
+                                    words_json[word][intent_name] = 1
+                            else:
+                                words_json[word] = {intent_name:1}
+                    
+                    if intent:
+                        intent.utterances = intent_obj["utterances"]
+                        flag_modified(intent, "utterances")
+                        db.session.commit()
+                    else:
+                        name = intent_name
+                        utterances = intent_obj["utterances"]
+                        responses = []
+                        has_entities = False
+                        intent = Intent(
+                            name = name,
+                            bot_guid=bot_guid,
+                            utterances=utterances,
+                            has_entities=has_entities,
+                            responses = responses,
+                            patterns=[]
+                        )
+                        db.session.add(intent)
                         db.session.commit()
 
+                entities = data['ozz_data']['entities']
+
+                for entity_obj in entities:
+                    name = entity_obj['name']
                     
-                    return jsonify({"filename":filename,"type":file.content_type})
-                else:
-                    return jsonify({"error":"Not Authorized"}),401
+                    new_examples = {}
+                    for value in entity_obj['values']:
+                        new_examples[value["value"]] = value["synonyms"]
+
+                    entity = Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
+                    
+                    if entity:
+                        entity.examples = json.dumps(new_examples)
+                    else:
+                        entity = Entity(
+                            name = name.lower(),
+                            bot_guid=bot_guid,
+                            examples=json.dumps(new_examples)
+                        )
+                        db.session.add(entity)
+                    db.session.commit()
+
+                
+                return jsonify({"filename":filename,"type":file.content_type})
             else:
-                return jsonify({"error":"Bot doesn't exist"}),404
-        elif code == 400:
-            return jsonify({"error":"Invalid Authorization Token"}),400
-        elif code == 401:
-            return jsonify({"error":"No Authorization Token Sent"}),401
+                return jsonify({"error":"Not Authorized"}),401
+        else:
+            return jsonify({"error":"Bot doesn't exist"}),404
+    elif code == 400:
+        return jsonify({"error":"Invalid Authorization Token"}),400
+    elif code == 401:
+        return jsonify({"error":"No Authorization Token Sent"}),401
 
 
 @nlu_blueprint.route('/api/upload/excel/<bot_guid>', methods=['POST'])
