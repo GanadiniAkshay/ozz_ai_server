@@ -1,0 +1,57 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nomnffl"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Nekdg"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "Fesf"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "this is the this"
+      },
+      {
+        "intent": "None",
+        "entities": [],
+        "text": "likesdike mike"
+      },
+      {
+        "intent": "book appointment",
+        "entities": [],
+        "text": "appointment tonight"
+      },
+      {
+        "intent": "book appointment",
+        "entities": [],
+        "text": "should i get to the clinic tomorrow"
+      },
+      {
+        "intent": "book appointment",
+        "entities": [],
+        "text": "is it possible to come down tomorrow?"
+      },
+      {
+        "intent": "book appointment",
+        "entities": [],
+        "text": "can i get an appointment?"
+      },
+      {
+        "intent": "book appointment",
+        "entities": [],
+        "text": "can i schedule an appointment"
+      }
+    ],
+    "regex_features": []
+  }
+}
