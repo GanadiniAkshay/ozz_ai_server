@@ -35,5 +35,3 @@ tqdm==4.11.2
 numpy==1.12.1
 python3-memcached==1.51
 duckling==1.7.1
-Flask-PyMongo==0.5.1
-pymongo==3.4.0

@@ -239,6 +239,7 @@ def train(bot_guid):
                 intents = Intent.query.filter_by(bot_guid=bot_guid)
                 entities = Entity.query.filter_by(bot_guid=bot_guid)
                 ent_data = {}
+                words_json = {}
                 for entity in entities:
                     ent_data[entity.name] = []
                     if type(entity.examples) == str:
@@ -248,6 +249,24 @@ def train(bot_guid):
                         rasa_data['rasa_nlu_data']['entity_synonyms'].append({"value":example_key,"synonyms":entity.examples[example_key]})
                 for intent in intents:
                     for utterance in intent.utterances:
+                        stop_words = [" a "," an "," the "," is "]
+                        utt_copy = utterance
+                        intent_name = intent.name
+                        for word in stop_words:
+                            utt_copy = utt_copy.replace(word," ")
+                        
+                        utt_words = utt_copy.split(" ")
+                        
+                        
+                        for word in utt_words:
+                            if word in words_json:
+                                if intent_name in words_json[word]:
+                                    words_json[word][intent_name] += 1
+                                else:
+                                    words_json[word][intent_name] = 1
+                            else:
+                                words_json[word] = {intent_name:1}
+
                         terminals = [] 
                         common_example = {}
                         common_example['text'] = utterance.lower()
@@ -311,7 +330,7 @@ def train(bot_guid):
                     
                     training_data = load_train_data(rasa_data)
                     trainer.train(training_data)
-                    model_directory = trainer.persist('models')
+                    model_directory = trainer.persist('/var/lib/ozz/models')
                     print(model_directory)
 
                     current_model = bot.active_model
@@ -322,6 +341,7 @@ def train(bot_guid):
                         if os.path.exists(current_model):
                             shutil.rmtree(current_model)
 
+                    bot.words = json.dumps(words_json)
                     bot.active_model = str(model_directory)
                     interpreters[model_directory] = NLUParser(model_directory,config)
                     db.session.commit()

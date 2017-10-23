@@ -106,10 +106,10 @@ def create_app():
 
 def create_interpreters(db):
     from project.helpers.parser import NLUParser
-    if os.path.exists('./models'):
-        directories =os.listdir('./models')
+    if os.path.exists('/var/lib/ozz/models'):
+        directories =os.listdir('/var/lib/ozz/models')
         config = './project/config.json'
         for directory in directories:
-            active_model = 'models/' + directory
+            active_model = '/var/lib/ozz/models/' + directory
             print(active_model)
             interpreters[active_model] = NLUParser(active_model,config, builder)
