@@ -1,0 +1,12 @@
+{
+    "intents":[
+        {
+            "name":"ozz.persona.hi",
+            "utterances":["hi","hey","hello","hola","namaste","hello sunshine","howdy","howdy partner","hello partner","hiya!","hiya","Ahoy","Ahoy mate","Ahoy buddy","hello buddy","Howdy doody","Hey there freshman","hey there","peek-a-boo","peekaboo","anniyang haseyo","salut","namaskar","namaskaram","Ello","Ello Govno","Aloha","Aloha!","Hola!","Bonjour","Bonjour!","Hallo","Hallo!","Konnichiwa"]
+        },
+        {
+            "name":"how are you",
+            "utterances":["how are you",""]
+        }
+    ]
+}
