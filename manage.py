@@ -13,9 +13,6 @@ from project.api.models.schedule import Schedule
 from project.api.models.logs import Logs
 from project.api.models.knowledge import Knowledge
 
-from flask_migrate import MigrateCommand
-from flask_pymongo import PyMongo
-
 app = create_app()
 manager = Manager(app)
 user_tsv_file = 'users.tsv'
