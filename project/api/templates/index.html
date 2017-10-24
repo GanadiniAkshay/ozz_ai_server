@@ -30,16 +30,35 @@
   <meta name="msapplication-square150x150logo" content="mstile-150x150.png" />
   <meta name="msapplication-wide310x150logo" content="mstile-310x150.png" />
   <meta name="msapplication-square310x310logo" content="mstile-310x310.png" />
-  <!--Import Google Icon Font-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!--Import Font Awesome Font Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- Compiled and minified CSS -->
-  <link rel="stylesheet" href="{{ cdn }}/css/materialize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 	<!--[if IE]>
 		<script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <style>
+    /* fallback */
+    @font-face {
+      font-family: 'Material Icons';
+      font-style: normal;
+      font-weight: 400;
+      src: url(https://fonts.gstatic.com/s/materialicons/v30/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2) format('woff2');
+    }
+
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
     .ozz-badge {
       position: absolute;
       top: -50%;
@@ -609,8 +628,14 @@
 </head>
 <body>
   <div id="app"></div>
-  <script async type="text/javascript" src="{{ cdn }}/js/jquery-3.1.1.min.js"></script>
-  <script async src="{{ cdn }}/js/materialize.min.js"></script>
+  <script async src="https://use.fontawesome.com/340b542126.js"></script>
+  <script
+  async
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <!-- Compiled and minified JavaScript -->
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
   <script async src="{{ cdn }}/js/bundle.js"></script>
 </body>
 
