@@ -1,32 +1,15 @@
 import os
 import json
 
-files = os.listdir('./Small-Talk/intents')
+with open('./persona.json') as jsonFile:
+    jsonData = json.loads(jsonFile.read())
 
-generated = {"intents":[]}
-intents = []
+    intents = jsonData['ozz_data']['intents']
 
-for file in files:
-    name = file.split('.')[-2]
+    responses = {}
 
-    if "_usersays_" not in name:
-        continue
-    
-    else:
-        intent_obj = {"name":name,"utterances":[]}
-        utterances = []
-        with open('./Small-Talk/intents/' + file) as jsonFile:
-            jsonData = json.loads(jsonFile.read())
-            
-            for value in jsonData:
-                text = ""
-                for example in value['data']:
-                    text+=example['text']
-                utterances.append(text)
-        intent_obj["utterances"] = utterances
-        intents.append(intent_obj)
+    for intent in intents:
+        responses[intent['name']] = []
 
-generated["intents"] = intents
-
-with open('extracted.json','w') as outFile:
-    json.dump(generated,outFile)
+    with open('./millenial/millenial.json','w') as outFile:
+        json.dump(responses,outFile, indent=2)

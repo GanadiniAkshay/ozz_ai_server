@@ -17,10 +17,11 @@ class Bot(db.Model):
     active_model = db.Column(db.String())
     team = db.Column(JSON)
     words = db.Column(db.String())
+    persona = db.Column(db.Integer, default=-1)
     created = db.Column(db.DateTime(timezone=False))
     used = db.Column(db.DateTime(timezone=False))
 
-    def __init__(self, user_id, name, words={},platforms={}):
+    def __init__(self, user_id, name, persona=-1, words={},platforms={}):
         self.bot_guid = str(uuid.uuid1())
         self.user_id = user_id
         self.name = name
@@ -29,6 +30,7 @@ class Bot(db.Model):
         self.used = datetime.datetime.now()
         self.active_model = ""
         self.words = words
+        self.persona = persona
         self.team = {"admins":[{"user_id":user_id}],"developers":[]}
 
     def __repr__(self):

@@ -14,6 +14,30 @@ from project.shared.checkAuth import checkAuth
 
 bots_blueprint = Blueprint('bots', __name__, template_folder='./templates')
 
+@bots_blueprint.route('/api/bots/<string:bot_guid>/persona', methods=['GET','PUT'])
+def persona(bot_guid):
+    # code, user_id = checkAuth(request)
+    code = 200
+    user_id = 16
+    if code == 200:
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        if not bot:
+            return jsonify({"error":"Bot Not Found"}),404
+        if bot.user_id == user_id:
+            if request.method == 'GET':
+                return jsonify({"persona":bot.persona})
+            elif request.method == 'PUT':
+                put_data = request.get_json()
+                bot.persona = put_data['persona']
+                db.session.commit()
+                return jsonify({"persona":bot.persona})
+        else:
+            return jsonify({"error":"Unauthorized"}),401
+    elif code == 400:
+        return jsonify({"error":"Invalid Authorization Token"}),400
+    elif code == 401:
+        return jsonify({"error":"No Authorization Token Sent"}),401
+
 @bots_blueprint.route('/api/bots/<string:bot_guid>', methods=['PUT','DELETE'])
 def update_bots(bot_guid):
     code, user_id = checkAuth(request)

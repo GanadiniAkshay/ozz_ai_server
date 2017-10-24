@@ -21,12 +21,8 @@ class NLUParser(object):
 
     def parse(self, message):
         parsed_data = self.interpreter.parse(message)
-        print(parsed_data)
         confidence = parsed_data['intent']['confidence']
-        if confidence < self.percentage:
-            intent = 'None'
-        else:
-            intent = parsed_data['intent']['name']
+        intent = parsed_data['intent']['name']
         entities = []
         for ent in parsed_data['entities']:
             entities.append({"entity":ent['entity'],"value":ent['value'],"start":ent['start'],"end":ent['end'],'type':'builtin'})
