@@ -49,6 +49,8 @@ def update_bots(bot_guid):
             return jsonify({"error":"Bot Not Found"}),404
         if bot.user_id == user_id:
             if request.method == 'PUT':
+                put_data = request.get_json()
+                bot.persona = put_data['persona']
                 bot.used = datetime.datetime.now()
                 try:
                     db.session.commit()
@@ -95,6 +97,7 @@ def bots():
                 bot_obj['bot_guid'] = bot.bot_guid
                 bot_obj['user_id'] = bot.user_id
                 bot_obj['name'] = bot.name
+                bot_obj['persona'] = bot.persona
                 bot_obj['used'] = (bot.used - datetime.datetime(1970, 1, 1)).total_seconds()
 
                 bots_obj.append(bot_obj)
