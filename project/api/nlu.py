@@ -34,6 +34,8 @@ import time
 import random
 import re
 import operator
+import csv
+import codecs
 
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
@@ -464,7 +466,7 @@ def upload(bot_guid):
                     intent_name = intent_obj["name"]
                     intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                     
-                    stop_words = [" a "," an "," the "," is "]
+                    stop_words = [" a "," an "," the "," is "," this "," I "," am "," to "," they "]
                     for utt_copy in intent_obj["utterances"]:
                         for word in stop_words:
                             utt_copy = utt_copy.replace(word," ")
@@ -537,34 +539,70 @@ def upload(bot_guid):
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 
-@nlu_blueprint.route('/api/upload/excel/<bot_guid>', methods=['POST'])
+@nlu_blueprint.route('/api/upload_csv/<bot_guid>', methods=['POST'])
 def uploadexcel(bot_guid):
     if request.method == 'POST':
         code,user_id = checkAuth(request)
-
         if code == 200:
             bot = Bot.query.filter_by(bot_guid=bot_guid).first()
             if bot:
                 if bot.user_id == user_id:
-                    # The folder for all the users data
-                    user_path = os.path.join(os.getcwd(),'data',str(user_id))
+                    tsv_file = request.files['file']
+                    filename = secure_filename(tsv_file.filename)
+                    tsv_file_read = tsv_file.readlines()
+                    for row in tsv_file_read:
+                        line = row.decode('utf-8')
+                        
+                        intent_name,questions,answers = line.split('\t')
+                        questions = questions.split('<->')
+                        answers = answers.split('<->')
 
-                    # Create the folder if it doesn't exist
-                    if not os.path.exists(user_path):
-                        os.makedirs(user_path)
-
-                    # The folder for the bot's data for a given user
-                    bot_path = os.path.join(user_path,bot_guid)
-
-                    # Create the folder if it doesn't exist
-                    if not os.path.exists(bot_path):
-                        os.makedirs(bot_path)
-
-                    #Get the file information
-                    file = request.files['file']
-                    filename = secure_filename(file.filename)
+                        if intent_name == 'Intent' or intent_name == 'intent':
+                            continue
+                        else:
+                            intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                     
-                    return jsonify({"filename":filename,"type":file.content_type})
+                            stop_words = [" a "," an "," the "," is "," this "," I "," am "," to "," they "]
+                            for utt_copy in questions:
+                                for word in stop_words:
+                                    utt_copy = utt_copy.replace(word," ")
+                                
+                                utt_words = utt_copy.split(" ")
+
+                                words_json = json.loads(bot.words) 
+                                if type(words_json) == str:
+                                    words_json = {}
+                                for word in utt_words:
+                                    if word in words_json:
+                                        if intent_name in words_json[word]:
+                                            words_json[word][intent_name] += 1
+                                        else:
+                                            words_json[word][intent_name] = 1
+                                    else:
+                                        words_json[word] = {intent_name:1}
+                            
+                            if intent:
+                                intent.utterances = questions
+                                intent.responses += answers
+                                flag_modified(intent, "utterances")
+                                flag_modified(intent, "responses")
+                                db.session.commit()
+                            else:
+                                name = intent_name
+                                utterances = questions
+                                responses = answers
+                                has_entities = False
+                                intent = Intent(
+                                    name = name,
+                                    bot_guid=bot_guid,
+                                    utterances=utterances,
+                                    has_entities=has_entities,
+                                    responses = responses,
+                                    patterns=[]
+                                )
+                                db.session.add(intent)
+                                db.session.commit()
+                    return jsonify({"success":True})
                 else:
                     return jsonify({"error":"Not Authorized"}),401
             else:
