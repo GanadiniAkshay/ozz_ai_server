@@ -70,8 +70,9 @@ def parse(bot_guid):
     message = message.lower()
     intent, entities, confidence = nlu.parse(message)
     response = ""
+    print(intent)
     print(confidence)
-    if intent != 'None' and confidence>0.85:
+    if intent != 'None' and confidence>0.70:
         intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
         if intent_obj:
             intent_obj.calls += 1
