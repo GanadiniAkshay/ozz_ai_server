@@ -1,6 +1,7 @@
 import os
 import time
 import spacy
+import redis
 
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
@@ -19,6 +20,8 @@ from project.config import DevelopmentConfig
 
 # instantiate the db
 db = SQLAlchemy()
+# instantiate the redis db
+redis_db = redis.Redis('localhost')
 # instantiate flask migrate
 migrate = Migrate()
 # instantiate a cache

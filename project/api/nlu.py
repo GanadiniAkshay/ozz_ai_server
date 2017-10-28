@@ -12,7 +12,7 @@ from project.api.models.intents import Intent
 from project.api.models.entities import Entity
 from project.api.models.analytics import Analytics
 from project.api.models.knowledge import Knowledge
-from project import db, cache, interpreters, trainer, nlp, d
+from project import db, cache, interpreters, trainer, nlp, d, redis_db
 from sqlalchemy import exc
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -36,6 +36,7 @@ import re
 import operator
 import csv
 import codecs
+import ast
 
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
@@ -60,6 +61,15 @@ def parse(bot_guid):
     if bot:
         model = bot.active_model
         words_json = json.loads(bot.words)
+        key = bot_guid+"_"+message
+        if redis_db.exists(key):
+            event = redis_db.hgetall(key)
+            intent = str(event[b'intent'],'utf-8')
+            entities = ast.literal_eval(str(event[b'entities'],'utf-8'))
+            response = str(event[b'response'],'utf-8')
+            end_time =time.time()
+            print(str(end_time - start_time))
+            return jsonify({"intent":intent,"entities":entities,"response":response})
 
         if type(words_json) == str:
             words_json = {} 
@@ -236,6 +246,15 @@ def parse(bot_guid):
             )
     db.session.add(row)
     db.session.commit()
+    # redis_db.hmset(bot_guid + "_" + message,intent)
+    key=bot_guid+"_"+message
+    event = {}
+    event["intent"] = intent
+    event["entities"] = entities
+    event["response"] = response
+    redis_db.delete(key) #remove old keys
+    redis_db.hmset(key, event)
+    redis_db.expire(key, 259200)
     return jsonify({"intent":intent,"entities":entities,"response":response})
     
 
