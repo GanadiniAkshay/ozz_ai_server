@@ -18,10 +18,13 @@ from duckling import Duckling
 
 from project.config import DevelopmentConfig
 
+
 # instantiate the db
 db = SQLAlchemy()
 # instantiate the redis db
-redis_db = redis.Redis('localhost')
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+redis_db = redis.StrictRedis(host=REDIS_HOST,port=REDIS_PORT)
 # instantiate flask migrate
 migrate = Migrate()
 # instantiate a cache
