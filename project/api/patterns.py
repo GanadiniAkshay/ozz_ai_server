@@ -21,9 +21,9 @@ patterns_blueprint = Blueprint('patterns', __name__, template_folder='./template
 
 @patterns_blueprint.route('/api/intents/<bot_guid>/<intent_name>/patterns', methods=['GET','POST','PUT','DELETE'])
 def pattern(bot_guid,intent_name):
-    # code,user_id = checkAuth(request)
-    code = 200
-    user_id = 16
+    code,user_id = checkAuth(request)
+    # code = 200
+    # user_id = 16
     if code == 200:
         global interpreters
         nlus = interpreters
@@ -99,6 +99,10 @@ def pattern(bot_guid,intent_name):
                         return jsonify({"success":True})
                 else:
                    return jsonify({"error":"Intent Doesn't exist"}),404 
+            else:
+                return jsonify({"error":"Not Authorized"}),401
+        else:
+            return jsonify({"error":"Bot Doesn't exist"}),404
     elif code == 400:
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
