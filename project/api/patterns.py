@@ -67,7 +67,7 @@ def pattern(bot_guid,intent_name):
                         pats = [json.dumps(new_obj)] + intent.patterns
                         intent.patterns = [p for p in pats]
                         db.session.commit()
-                        return jsonify({"success":True})
+                        return jsonify({"pattern":new_obj})
                     elif request.method == 'PUT':
                         put_data = request.get_json()
                         old_pattern = put_data['old_pattern']

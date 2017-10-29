@@ -72,6 +72,7 @@ def intents(bot_guid):
                         intent_obj['name'] = intent.name
                         intent_obj['utterances'] = len(intent.utterances)
                         intent_obj['responses'] = len(intent.responses)
+                        intent_obj['patterns'] = len(intent.patterns)
                         intent_obj['calls'] = intent.calls
                         intents_obj.append(intent_obj)
                     return jsonify({"intents":intents_obj})

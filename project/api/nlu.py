@@ -79,43 +79,64 @@ def parse(bot_guid):
             return jsonify({"error":"Please train the bot before testing"})
     else:
         return jsonify({"error":"Bot doesn't exist"}),404
+    
     message = message.lower()
-    intent, entities, confidence = nlu.parse(message)
+    
+    regex_match = False
+    intents = Intent.query.filter_by(bot_guid=bot_guid)
+    entities = []
     response = ""
-    print(intent)
-    print(confidence)
-    if intent != 'None' and confidence>0.70:
-        intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
-        if intent_obj:
-            intent_obj.calls += 1
-            if (len(intent_obj.responses) > 0):
-                response = random.choice(intent_obj.responses)
-            db.session.commit()
-            
-    else:
-
-        if bot.persona and bot.persona != -1:
-            persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
-            if persona_bot:
-                persona_model = persona_bot.active_model
-                persona_nlu = nlus[persona_model]
-
-                intent, entities, confidence = persona_nlu.parse(message)
-
-                if bot.persona == 1:
-                    with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
-                        responses = json.loads(jsonFile.read())
-                    
-                    if intent in responses and len(responses[intent]) > 0:
-                        response = random.choice(responses[intent])
+    for intent_obj in intents:
+        patterns = intent_obj.patterns
+        for pattern in patterns:
+            pattern = json.loads(pattern)
+            regex = pattern["regex"]
+            express = re.compile(regex,re.IGNORECASE)  
+            match = express.match(message)
+            if match:
+                intent = intent_obj.name
+                regex_match = True
+                entity_start = 0
+                entity_end = -1
+                parameters = pattern['entities']
+                for parameter in parameters:
+                    if parameter['first'] != -1:    
+                        entity_start = parameter['first']
+                        if parameter['post'] and parameter['post'] in message:
+                            entity_end = entity_start + message[entity_start:].index(parameter['post'])
+                        if entity_end == -1:
+                            entity_value = message[entity_start:]
+                        else:
+                            entity_value = message[entity_start:entity_end]
+                        entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
                     else:
-                        response = ""
-                else:
-                    response = ""
-            else:
-                intent='None'
-                entities=[]
-                response=""
+                        mid_expression= message[entity_end:]
+                        if parameter['prior'] and parameter['prior'] in mid_expression:
+                            entity_start = mid_expression.index(parameter['prior']) + len(parameter['prior']) + 1
+                        if parameter['post'] and parameter['post'] in mid_expression:
+                            entity_end = mid_expression.index(parameter['post'])
+                        else:
+                            entity_end = -1
+                        if entity_end == -1:
+                            entity_value = mid_expression[entity_start:]
+                        else:
+                            entity_value = mid_expression[entity_start:entity_end]
+                        start = message.index(entity_value)
+                        entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
+                break
+    if not regex_match:
+        intent, entities, confidence = nlu.parse(message)
+        response = ""
+        print(intent)
+        print(confidence)
+        if intent != 'None' and confidence>0.70:
+            intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
+            if intent_obj:
+                intent_obj.calls += 1
+                if (len(intent_obj.responses) > 0):
+                    response = random.choice(intent_obj.responses)
+                db.session.commit()
+                
         else:
             message_words = message.split(" ")
             scores = {}
@@ -139,94 +160,73 @@ def parse(bot_guid):
                         response = random.choice(intent_obj.responses)
                     db.session.commit()
             else:
-                regex_match = False
-                intents = Intent.query.filter_by(bot_guid=bot_guid)
-                
-                for intent_obj in intents:
-                    patterns = intent_obj.patterns
-                    for pattern in patterns:
-                        pattern = json.loads(pattern)
-                        regex = pattern["regex"]
-                        express = re.compile(regex,re.IGNORECASE)  
-                        match = express.match(message)
-                        if match:
-                            intent = intent_obj.name
-                            print(intent)
-                            regex_match = True
-                            entity_start = 0
-                            entity_end = -1
-                            parameters = pattern['entities']
-                            for parameter in parameters:
-                                if parameter['first'] != -1:    
-                                    entity_start = parameter['first']
-                                    if parameter['post'] and parameter['post'] in message:
-                                        entity_end = entity_start + message[entity_start:].index(parameter['post'])
-                                    if entity_end == -1:
-                                        entity_value = message[entity_start:]
-                                    else:
-                                        entity_value = message[entity_start:entity_end]
-                                    entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
+                knowledges = Knowledge.query.filter_by(bot_guid=bot_guid).all()
+                k_flag = False
+                for knowledge in knowledges:
+                    if knowledge.kid == 'cardealership_1507914955':
+                        k_flag = True
+                if k_flag == True:
+                    with open('./data/data.json','r') as f:
+                        data = json.load(f)
+                    with open('./data/invindex_new.json') as f:
+                        inv_index = json.load(f)
+                    query = message
+
+                    #remove ? symbol
+                    query = query.replace("?","")
+
+                    #turn to lowercase
+                    query = query.lower()
+
+                    #result set as a dictionary of key-value
+                    res_set = {}
+
+                    #get list of words to query over
+                    words = query.split(" ")
+                    words = list(set(words))
+
+                    #get top 10 documents for each word
+                    for word in words:
+                        if not word in inv_index:
+                            continue
+                        else:
+                            responses = inv_index[word][:10]
+
+                            for response in responses:
+                                file,score = response
+
+                                if file in res_set:
+                                    res_set[file] += score
                                 else:
-                                    mid_expression= message[entity_end:]
-                                    if parameter['prior'] and parameter['prior'] in mid_expression:
-                                        entity_start = mid_expression.index(parameter['prior']) + len(parameter['prior']) + 1
-                                    if parameter['post'] and parameter['post'] in mid_expression:
-                                        entity_end = mid_expression.index(parameter['post'])
-                                    else:
-                                        entity_end = -1
-                                    if entity_end == -1:
-                                        entity_value = mid_expression[entity_start:]
-                                    else:
-                                        entity_value = mid_expression[entity_start:entity_end]
-                                    start = message.index(entity_value)
-                                    entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
-                            break
+                                    res_set[file] = score
 
-                if not regex_match:
-                    knowledges = Knowledge.query.filter_by(bot_guid=bot_guid).all()
-                    k_flag = False
-                    for knowledge in knowledges:
-                        if knowledge.kid == 'cardealership_1507914955':
-                            k_flag = True
-                    if k_flag == True:
-                        with open('./data/data.json','r') as f:
-                            data = json.load(f)
-                        with open('./data/invindex_new.json') as f:
-                            inv_index = json.load(f)
-                        query = message
+                                
+                    sorted_results = sorted(res_set.items(), key=operator.itemgetter(1), reverse=True)
+                    print(sorted_results[:5])
+                    response = random.choice(data[sorted_results[0][0]])
+                else:
+                    if bot.persona and bot.persona != -1:
+                        persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
+                        if persona_bot:
+                            persona_model = persona_bot.active_model
+                            persona_nlu = nlus[persona_model]
 
-                        #remove ? symbol
-                        query = query.replace("?","")
+                            intent, entities, confidence = persona_nlu.parse(message)
 
-                        #turn to lowercase
-                        query = query.lower()
-
-                        #result set as a dictionary of key-value
-                        res_set = {}
-
-                        #get list of words to query over
-                        words = query.split(" ")
-                        words = list(set(words))
-
-                        #get top 10 documents for each word
-                        for word in words:
-                            if not word in inv_index:
-                                continue
+                            if bot.persona == 1:
+                                with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
+                                    responses = json.loads(jsonFile.read())
+                                
+                                if intent in responses and len(responses[intent]) > 0:
+                                    response = random.choice(responses[intent])
+                                else:
+                                    response = ""
                             else:
-                                responses = inv_index[word][:10]
-
-                                for response in responses:
-                                    file,score = response
-
-                                    if file in res_set:
-                                        res_set[file] += score
-                                    else:
-                                        res_set[file] = score
-
-                                    
-                        sorted_results = sorted(res_set.items(), key=operator.itemgetter(1), reverse=True)
-                        print(sorted_results[:5])
-                        response = random.choice(data[sorted_results[0][0]])
+                                response = ""
+                        else:
+                            intent='None'
+                            entities=[]
+                            response=""
                     else:
                         eliza = Eliza()
                         response = eliza.analyze(message)
