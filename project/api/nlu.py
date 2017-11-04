@@ -95,6 +95,7 @@ def parse(bot_guid):
             match = express.match(message)
             if match:
                 intent = intent_obj.name
+                response = random.choice(intent_obj.responses)
                 regex_match = True
                 entity_start = 0
                 entity_end = -1
