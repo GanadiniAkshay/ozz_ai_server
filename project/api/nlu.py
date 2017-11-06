@@ -65,11 +65,18 @@ def parse(bot_guid):
         if redis_db.exists(key):
             event = redis_db.hgetall(key)
             intent = str(event[b'intent'],'utf-8')
-            entities = ast.literal_eval(str(event[b'entities'],'utf-8'))
-            response = str(event[b'response'],'utf-8')
-            end_time =time.time()
-            print(str(end_time - start_time))
-            return jsonify({"intent":intent,"entities":entities,"response":response})
+            is_ozz = intent.split('.')[0] == 'ozz'
+            if not is_ozz:
+                entities = ast.literal_eval(str(event[b'entities'],'utf-8'))
+                response = ""
+                intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
+                if intent_obj:
+                    intent_obj.calls += 1
+                    if (len(intent_obj.responses) > 0):
+                        response = random.choice(intent_obj.responses)
+                end_time =time.time()
+                print(str(end_time - start_time))
+                return jsonify({"intent":intent,"entities":entities,"response":response})
 
         if type(words_json) == str:
             words_json = {} 
@@ -271,6 +278,8 @@ def train(bot_guid):
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if bot:
             if bot.user_id == user_id:
+                for key in redis_db.scan_iter(match=bot_guid+'_*'):
+                    redis_db.delete(key)
                 print('training')
                 rasa_data = {
                                 "rasa_nlu_data": 
