@@ -22,8 +22,11 @@ def logs():
     pat = post_data['pat']
     pid = post_data['pid']
     url = post_data['url']
+    is_human = post_data['is_human']
+    source = post_data['source']
+    user_data = post_data["user_data"]
 
-    log = Logs(message=message,bot_guid=bot_guid,pat=pat,pid=pid,url=url)
+    log = Logs(message=message,bot_guid=bot_guid,pat=pat,pid=pid,url=url,user_data=user_data,is_human=is_human,source=source)
     try:
         db.session.add(log)
         db.session.commit()

@@ -18,7 +18,7 @@ class Analytics(db.Model):
     response_time = db.Column(db.String(),unique=False, default="0")
     created = db.Column(db.DateTime(timezone=False))
 
-    def __init__(self,bot_guid, message="", intent=None, entities={}, confident=False, response_time="0"):
+    def __init__(self,bot_guid, message="", intent=None, entities={}, user_data={},confident=False, response_time="0",source="web",is_human=1):
         self.bot_guid = bot_guid
         self.message = message
         self.intent = intent
