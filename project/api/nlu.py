@@ -65,6 +65,8 @@ def parse(bot_guid):
         if redis_db.exists(key):
             event = redis_db.hgetall(key)
             intent = str(event[b'intent'],'utf-8')
+            print('redis')
+            print(intent)
             is_ozz = intent.split('.')[0] == 'ozz'
             if not is_ozz:
                 entities = ast.literal_eval(str(event[b'entities'],'utf-8'))
@@ -102,6 +104,8 @@ def parse(bot_guid):
             match = express.match(message)
             if match:
                 intent = intent_obj.name
+                print("regex")
+                print(intent)
                 intent_obj.calls += 1
                 db.session.commit()
                 response = random.choice(intent_obj.responses)
@@ -136,6 +140,8 @@ def parse(bot_guid):
                 break
     if not regex_match:
         intent, entities, confidence = nlu.parse(message)
+        print("nlu")
+        print(intent)
         response = ""
         print(intent)
         print(confidence)
@@ -148,6 +154,7 @@ def parse(bot_guid):
                 db.session.commit()
                 
         else:
+            intent = "None"
             message_words = message.split(" ")
             scores = {}
             for word in message_words:
@@ -163,6 +170,8 @@ def parse(bot_guid):
 
             if len(scores) > 0:
                 intent = scores[0][0]
+                print("words")
+                print(intent)
                 intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
                 if intent_obj:
                     intent_obj.calls += 1
@@ -222,7 +231,8 @@ def parse(bot_guid):
                             persona_nlu = nlus[persona_model]
 
                             intent, entities, confidence = persona_nlu.parse(message)
-
+                            print('persona')
+                            print(intent)
                             if bot.persona == 1:
                                 with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
                                     responses = json.loads(jsonFile.read())
@@ -237,9 +247,9 @@ def parse(bot_guid):
                             intent='None'
                             entities=[]
                             response=""
-                    else:
-                        eliza = Eliza()
-                        response = eliza.analyze(message)
+                    # else:
+                    #     eliza = Eliza()
+                    #     response = eliza.analyze(message)
     end_time = time.time()
     runtime = str(end_time - start_time)
     if intent == 'None':
