@@ -22,8 +22,5 @@ RUN wget -P /usr/src/app/data/ https://s3-eu-west-1.amazonaws.com/mitie/total_wo
 # add app
 ADD . /usr/src/app
 
-# download nltk data
-RUN python -m nltk.downloader stopwords
-
 # run server
 CMD gunicorn -b 0.0.0.0:5000 manage:app --timeout 3000
