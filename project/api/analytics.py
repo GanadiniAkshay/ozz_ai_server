@@ -38,10 +38,6 @@ def analytics(bot_guid):
                     resp_time = 0.0
                     times = []
                     for log in analytics_logs:
-                        if log.is_human == 1:
-                            incoming_count += 1
-                        if log.is_human == 0:
-                            outgoing_count += 1
                         if log.confident:
                             success_count += 1.0
                         if log.intent in intent_count:

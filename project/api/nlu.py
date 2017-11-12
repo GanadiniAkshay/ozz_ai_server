@@ -12,7 +12,7 @@ from project.api.models.intents import Intent
 from project.api.models.entities import Entity
 from project.api.models.analytics import Analytics
 from project.api.models.knowledge import Knowledge
-from project import db, cache, interpreters, trainer, nlp, d, redis_db
+from project import db, cache, interpreters, trainer, nlp, d, redis_db, stopWords
 from sqlalchemy import exc
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -158,7 +158,9 @@ def parse(bot_guid):
             message_words = message.split(" ")
             scores = {}
             for word in message_words:
-                if word in words_json:
+                if word in stopWords:
+                    continue
+                elif word in words_json:
                     intents = words_json[word]
                     for intent_key in intents:
                         if intent_key in scores:
@@ -318,10 +320,9 @@ def train(bot_guid):
                         rasa_data['rasa_nlu_data']['entity_synonyms'].append({"value":example_key,"synonyms":entity.examples[example_key]})
                 for intent in intents:
                     for utterance in intent.utterances:
-                        stop_words = [" a "," an "," the "," is "]
                         utt_copy = utterance
                         intent_name = intent.name
-                        for word in stop_words:
+                        for word in stopWords:
                             utt_copy = utt_copy.replace(word," ")
                         
                         utt_words = utt_copy.split(" ")
@@ -507,9 +508,8 @@ def upload(bot_guid):
                     intent_name = intent_obj["name"]
                     intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                     
-                    stop_words = [" a "," an "," the "," is "," this "," I "," am "," to "," they "]
                     for utt_copy in intent_obj["utterances"]:
-                        for word in stop_words:
+                        for word in stopWords:
                             utt_copy = utt_copy.replace(word," ")
                         
                         utt_words = utt_copy.split(" ")
@@ -603,9 +603,8 @@ def uploadexcel(bot_guid):
                         else:
                             intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                     
-                            stop_words = [" a "," an "," the "," is "," this "," I "," am "," to "," they "]
                             for utt_copy in questions:
-                                for word in stop_words:
+                                for word in stopWords:
                                     utt_copy = utt_copy.replace(word," ")
                                 
                                 utt_words = utt_copy.split(" ")

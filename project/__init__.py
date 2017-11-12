@@ -15,6 +15,7 @@ from rasa_nlu.components import ComponentBuilder
 from werkzeug.contrib.cache import SimpleCache
 from cachetools import LRUCache
 from duckling import Duckling
+from nltk.corpus import stopwords
 
 from project.config import DevelopmentConfig
 
@@ -38,6 +39,9 @@ d.load()
 
 
 interpreters = {}
+
+#load the stop words
+stopWords = set(stopwords.words('english'))
 
 
 #set up the trainer
