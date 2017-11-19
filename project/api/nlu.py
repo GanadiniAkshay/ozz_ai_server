@@ -235,7 +235,8 @@ def parse(bot_guid):
                             intent, entities, confidence = persona_nlu.parse(message)
                             print('persona')
                             print(intent)
-                            if bot.persona == 1:
+                            print(confidence)
+                            if bot.persona == 1 and confidence > 0.25:
                                 with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
                                     responses = json.loads(jsonFile.read())
                                 
@@ -244,6 +245,8 @@ def parse(bot_guid):
                                 else:
                                     response = ""
                             else:
+                                intent = 'None'
+                                entities = []
                                 response = ""
                         else:
                             intent='None'
