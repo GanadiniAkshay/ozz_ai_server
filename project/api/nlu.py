@@ -55,8 +55,7 @@ def parse(bot_guid):
         message = post_data['q']
     if type(message) != str:
         message = message.decode('utf-8')
-    
-    
+
     bot = Bot.query.filter_by(bot_guid=bot_guid).first()
     if bot:
         model = bot.active_model
@@ -81,16 +80,16 @@ def parse(bot_guid):
                 return jsonify({"intent":intent,"entities":entities,"response":response})
 
         if type(words_json) == str:
-            words_json = {} 
+            words_json = {}
         if model:
             nlu = nlus[model]
         else:
             return jsonify({"error":"Please train the bot before testing"})
     else:
         return jsonify({"error":"Bot doesn't exist"}),404
-    
+
     message = message.lower()
-    
+
     regex_match = False
     intents = Intent.query.filter_by(bot_guid=bot_guid)
     entities = []
@@ -100,7 +99,7 @@ def parse(bot_guid):
         for pattern in patterns:
             pattern = json.loads(pattern)
             regex = pattern["regex"]
-            express = re.compile(regex,re.IGNORECASE)  
+            express = re.compile(regex,re.IGNORECASE)
             match = express.match(message)
             if match:
                 intent = intent_obj.name
@@ -114,7 +113,7 @@ def parse(bot_guid):
                 entity_end = -1
                 parameters = pattern['entities']
                 for parameter in parameters:
-                    if parameter['first'] != -1:    
+                    if parameter['first'] != -1:
                         entity_start = parameter['first']
                         if parameter['post'] and parameter['post'] in message:
                             entity_end = entity_start + message[entity_start:].index(parameter['post'])
@@ -152,7 +151,6 @@ def parse(bot_guid):
                 if (len(intent_obj.responses) > 0):
                     response = random.choice(intent_obj.responses)
                 db.session.commit()
-                
         else:
             intent = "None"
             message_words = message.split(" ")
@@ -221,7 +219,6 @@ def parse(bot_guid):
                                 else:
                                     res_set[file] = score
 
-                                
                     sorted_results = sorted(res_set.items(), key=operator.itemgetter(1), reverse=True)
                     print(sorted_results[:5])
                     response = random.choice(data[sorted_results[0][0]])
@@ -239,7 +236,20 @@ def parse(bot_guid):
                             if bot.persona == 1 and confidence > 0.25:
                                 with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
                                     responses = json.loads(jsonFile.read())
-                                
+                                if intent in responses and len(responses[intent]) > 0:
+                                    response = random.choice(responses[intent])
+                                else:
+                                    response = ""
+                            elif bot.persona == 2 and confidence > 0.25:
+                                with open(os.getcwd() + '/data/persona/average/average.json') as jsonFile:
+                                    responses = json.loads(jsonFile.read())
+                                if intent in responses and len(responses[intent]) > 0:
+                                    response = random.choice(responses[intent])
+                                else:
+                                    response = ""
+                            elif bot.persona == 3 and confidence > 0.25:
+                                with open(os.getcwd() + '/data/persona/professional/professional.json') as jsonFile:
+                                    responses = json.loads(jsonFile.read())
                                 if intent in responses and len(responses[intent]) > 0:
                                     response = random.choice(responses[intent])
                                 else:
