@@ -83,6 +83,7 @@
       height: 40px;
       border: 0;
       border-radius: 10%;
+      z-index: 1000;
       box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06), 0 2px 32px rgba(0, 0, 0, 0.16);
       -webkit-transition: box-shadow 200ms ease;
       transition: box-shadow 200ms ease;
@@ -102,7 +103,7 @@
       position: absolute;
       top: 30%;
       left: 50%;
-      z-index: 100;
+      z-index: 1000;
       -webkit-transform: translate(-50%, -50%);
               transform: translate(-50%, -50%);
       -webkit-transform-origin: top left;
@@ -138,7 +139,7 @@
       z-index: 100;
       flex-direction: column;
     }
-
+  
     .ozz-base-demo {
       position: fixed;
       left: 70px;
@@ -161,7 +162,7 @@
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
       padding-left: 0;
     }
-
+  
     .ozz-list{
       height:80%;
       width: 100%;
@@ -289,6 +290,7 @@
         white-space: -o-pre-wrap;    /* Opera 7 */
         word-wrap: break-word;       /* Internet Explorer 5.5+ */
     }
+    
 
 
     .not_found_backgorund{
