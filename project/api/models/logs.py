@@ -28,7 +28,7 @@ class Logs(db.Model):
         self.user_data = user_data
         self.is_human = is_human
         self.source = source
-        self.created = datetime.datetime.now()
+        self.created = datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<message {}>'.format(self.message)

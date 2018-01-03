@@ -36,12 +36,18 @@ def intent(bot_guid,intent_name):
                         intent_obj = {}
                         intent_obj['responses'] = intent.responses
                         intent_obj['utterances'] = []
+                        intent.modified = datetime.datetime.utcnow()
                         for utterance in intent.utterances:
                             if nlu:
                                 int, entities, confidence = nlu.parse(utterance)
                             else:
                                 entities = []
                             intent_obj['utterances'].append({"utterance":utterance,"entities":entities})
+                        try:
+                            db.session.commit()
+                        except Exception as inst:
+                            error = type(inst).__name__
+                            return jsonify({'errors':error}),400
                         return jsonify(intent_obj)
                 else:
                    return jsonify({"error":"Intent Doesn't exist"}),404 
@@ -74,6 +80,7 @@ def intents(bot_guid):
                         intent_obj['responses'] = len(intent.responses)
                         intent_obj['patterns'] = len(intent.patterns)
                         intent_obj['calls'] = intent.calls
+                        intent_obj['modified'] = intent.modified
                         intents_obj.append(intent_obj)
                     return jsonify({"intents":intents_obj})
                 elif request.method == 'POST':

@@ -25,7 +25,7 @@ class Analytics(db.Model):
         self.entities = entities
         self.response_time = response_time
         self.confident = confident
-        self.created = datetime.datetime.now()
+        self.created = datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<name {}>'.format(self.message)

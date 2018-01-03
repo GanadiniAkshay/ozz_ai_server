@@ -18,7 +18,7 @@ class Entity(db.Model):
         self.name = name
         self.bot_guid = bot_guid
         self.examples = examples
-        self.created = datetime.datetime.now()
+        self.created = datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<name {}>'.format(self.name)

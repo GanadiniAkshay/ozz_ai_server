@@ -26,8 +26,8 @@ class Bot(db.Model):
         self.user_id = user_id
         self.name = name
         self.platforms = platforms
-        self.created = datetime.datetime.now()
-        self.used = datetime.datetime.now()
+        self.created = datetime.datetime.utcnow()
+        self.used = datetime.datetime.utcnow()
         self.active_model = ""
         self.words = words
         self.persona = persona

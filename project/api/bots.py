@@ -51,7 +51,7 @@ def update_bots(bot_guid):
             if request.method == 'PUT':
                 put_data = request.get_json()
                 bot.persona = put_data['persona']
-                bot.used = datetime.datetime.now()
+                bot.used = datetime.datetime.utcnow()
                 try:
                     db.session.commit()
                 except Exception as inst:

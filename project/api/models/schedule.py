@@ -13,7 +13,7 @@ class Schedule(db.Model):
 
     def __init__(self,message=""):
         self.message = message
-        self.created = datetime.datetime.now()
+        self.created = datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<name {}>'.format(self.message)
