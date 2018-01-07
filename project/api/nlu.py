@@ -107,7 +107,10 @@ def parse(bot_guid):
                 print(intent)
                 intent_obj.calls += 1
                 db.session.commit()
-                response = random.choice(intent_obj.responses)
+                if len(intent_obj.responses) > 0:
+                    response = random.choice(intent_obj.responses)
+                else:
+                    response = ""
                 regex_match = True
                 entity_start = 0
                 entity_end = -1
