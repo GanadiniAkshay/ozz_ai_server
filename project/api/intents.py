@@ -73,9 +73,23 @@ def intents(bot_guid):
                 if request.method == 'GET':
                     intents = Intent.query.filter_by(bot_guid=bot_guid)
                     intents_obj = []
+                    folder_list = {}
                     for intent in intents:
                         intent_obj = {}
-                        intent_obj['name'] = intent.name
+                        folders = intent.name.split('.')
+                        if len(folders) > 1:
+                            pattern = '.'.join(folders[:-1])+'.%'
+                            folder_name = folders[0]
+                            if not folder_name in folder_list:
+                                folder_list[folder_name] = intent.modified
+                                matched_intents = Intent.query.filter(Intent.name.like(pattern)).all()
+                                intent_obj['is_folder'] = True
+                                intent_obj['name'] = folder_name
+                                intent_obj['count'] = len(matched_intents)
+                        else:
+                            intent_obj['is_folder'] = intent.is_folder
+                            intent_obj['name'] = intent.name
+                            intent_obj['count'] = 0
                         intent_obj['utterances'] = len(intent.utterances)
                         intent_obj['responses'] = len(intent.responses)
                         intent_obj['patterns'] = len(intent.patterns)
@@ -96,6 +110,8 @@ def intents(bot_guid):
                         utterances = post_data.get('utterances')
                         responses = post_data.get('responses')
                         has_entities = post_data.get('has_entities')
+
+                        print(name)
                         
                         intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
                         if intent:

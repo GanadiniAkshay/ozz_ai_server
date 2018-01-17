@@ -17,10 +17,11 @@ class Intent(db.Model):
     has_entities = db.Column(Boolean, unique=False, default=False)
     responses = db.Column(ARRAY(db.String()))
     calls = db.Column(db.Integer,default=0)
+    is_folder = db.Column(Boolean, unique=False, default=False)
     modified = db.Column(db.DateTime(timezone=False))
     created = db.Column(db.DateTime(timezone=False))
 
-    def __init__(self,bot_guid, name, has_entities, utterances=[], responses=[], patterns=[]):
+    def __init__(self,bot_guid, name, has_entities, is_folder=False, utterances=[], responses=[], patterns=[]):
         self.name = name
         self.bot_guid = bot_guid
         self.utterances = utterances
@@ -28,6 +29,7 @@ class Intent(db.Model):
         self.has_entities = has_entities
         self.responses = responses
         self.calls = 0
+        self.is_folder = is_folder
         self.modified = datetime.datetime.utcnow()
         self.created = datetime.datetime.utcnow()
 
