@@ -110,10 +110,11 @@ def intents(bot_guid):
                         utterances = post_data.get('utterances')
                         responses = post_data.get('responses')
                         has_entities = post_data.get('has_entities')
+                        is_folder = post_data.get('is_folder')
 
                         print(name)
                         
-                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
+                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=name).filter_by(is_folder=is_folder).first()
                         if intent:
                             return jsonify({"success":False,"error":"An intent with that name already exists"})
                         else:
@@ -123,6 +124,7 @@ def intents(bot_guid):
                                 utterances=utterances,
                                 has_entities=has_entities,
                                 responses = responses,
+                                is_folder=is_folder,
                                 patterns=[]
                             )
                             db.session.add(intent)
