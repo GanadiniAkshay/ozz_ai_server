@@ -16,6 +16,21 @@ from project.shared.checkAuth import checkAuth
 
 intents_blueprint = Blueprint('intents', __name__, template_folder='./templates')
 
+@intents_blueprint.route('/api/intents_is_folder/<bot_guid>/<intent_name>', methods=['GET'])
+def intent_is_folder(bot_guid,intent_name):
+    bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+    if bot:
+        print(intent_name)
+        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
+        if intent:
+            return jsonify({"is_folder": intent.is_folder})
+        else:
+            folders = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(intent_name+".%")).all()
+            if folders:
+                return jsonify({"is_folder": True})
+            else:
+                return jsonify({"error":"Intent Doesn't exist"}),404 
+
 @intents_blueprint.route('/api/intents/<bot_guid>/<intent_name>', methods=['GET','PUT'])
 def intent(bot_guid,intent_name):
     code,user_id = checkAuth(request)
@@ -35,6 +50,7 @@ def intent(bot_guid,intent_name):
                         nlu = None
                     if request.method == 'GET':
                         intent_obj = {}
+                        intent_obj['is_folder'] = False
                         intent_obj['responses'] = intent.responses
                         intent_obj['utterances'] = []
                         intent.modified = datetime.datetime.utcnow()
@@ -69,9 +85,13 @@ def intents(bot_guid):
         global interpreters
         nlus = interpreters
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        base = request.args.get('base')
+        if not base:
+            base = '/'
         if bot:
             if bot.user_id == user_id:
                 if request.method == 'GET':
+                    print(base)
                     intents = Intent.query.filter_by(bot_guid=bot_guid)
                     intents_obj = []
                     folder_list = {}
