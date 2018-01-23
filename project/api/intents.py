@@ -136,7 +136,10 @@ def intents(bot_guid):
                         }
                         return jsonify(response_object), 400
                     else:
-                        prefix = '.'.join(base[1:].split('/'))+'.'
+                        if base == '/':
+                            prefix = ''
+                        else: 
+                            prefix = '.'.join(base[1:].split('/'))+'.'
                         name = prefix + post_data.get('name')
                         utterances = post_data.get('utterances')
                         responses = post_data.get('responses')
