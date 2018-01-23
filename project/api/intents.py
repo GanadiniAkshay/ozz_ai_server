@@ -107,13 +107,14 @@ def intents(bot_guid):
                             else:
                                 folder_name = folders[0]
                             if folders[-1] == folder_name:
-                                intent_obj['is_folder'] = intent.is_folder
+                                is_folder = intent.is_folder
                             else:
-                                intent_obj['is_folder'] = True
+                                is_folder = True
                             if not folder_name in folder_list:
                                 folder_list[folder_name] = intent.modified
                                 matched_intents = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(pattern)).all()
                                 intent_obj['name'] = folder_name
+                                intent_obj['is_folder'] = is_folder
                                 intent_obj['count'] = len(matched_intents)
                         else:
                             intent_obj['is_folder'] = intent.is_folder
