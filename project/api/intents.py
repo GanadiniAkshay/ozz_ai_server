@@ -20,7 +20,6 @@ intents_blueprint = Blueprint('intents', __name__, template_folder='./templates'
 def intent_is_folder(bot_guid,intent_name):
     bot = Bot.query.filter_by(bot_guid=bot_guid).first()
     if bot:
-        print(intent_name)
         intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
         if intent:
             return jsonify({"is_folder": intent.is_folder})
@@ -40,7 +39,6 @@ def intent(bot_guid,intent_name):
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if bot:
             if bot.user_id == user_id:
-                print(intent_name)
                 intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                 if intent:
                     model = bot.active_model
@@ -91,8 +89,12 @@ def intents(bot_guid):
         if bot:
             if bot.user_id == user_id:
                 if request.method == 'GET':
-                    print(base)
-                    intents = Intent.query.filter_by(bot_guid=bot_guid)
+                    if base == '/':
+                        intents = Intent.query.filter_by(bot_guid=bot_guid)
+                        base_pattern = '/'
+                    else:
+                        base_pattern = '.'.join(base[1:].split('/')) + '.%'
+                        intents = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(base_pattern)).all()
                     intents_obj = []
                     folder_list = {}
                     for intent in intents:
@@ -100,11 +102,17 @@ def intents(bot_guid):
                         folders = intent.name.split('.')
                         if len(folders) > 1:
                             pattern = '.'.join(folders[:-1])+'.%'
-                            folder_name = folders[0]
+                            if not base_pattern == '/':
+                                folder_name = folders[len(base_pattern[:-2].split('.'))]
+                            else:
+                                folder_name = folders[0]
+                            if folders[-1] == folder_name:
+                                intent_obj['is_folder'] = intent.is_folder
+                            else:
+                                intent_obj['is_folder'] = True
                             if not folder_name in folder_list:
                                 folder_list[folder_name] = intent.modified
-                                matched_intents = Intent.query.filter(Intent.name.like(pattern)).all()
-                                intent_obj['is_folder'] = True
+                                matched_intents = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(pattern)).all()
                                 intent_obj['name'] = folder_name
                                 intent_obj['count'] = len(matched_intents)
                         else:
@@ -133,7 +141,6 @@ def intents(bot_guid):
                         has_entities = post_data.get('has_entities')
                         is_folder = post_data.get('is_folder')
 
-                        print(name)
                         
                         intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=name).filter_by(is_folder=is_folder).first()
                         if intent:
