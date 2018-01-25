@@ -116,16 +116,22 @@ def intents(bot_guid):
                                 intent_obj['name'] = folder_name
                                 intent_obj['is_folder'] = is_folder
                                 intent_obj['count'] = len(matched_intents)
+                                intent_obj['utterances'] = len(intent.utterances)
+                                intent_obj['responses'] = len(intent.responses)
+                                intent_obj['patterns'] = len(intent.patterns)
+                                intent_obj['calls'] = intent.calls
+                                intent_obj['modified'] = intent.modified
+                                intents_obj.append(intent_obj)
                         else:
                             intent_obj['is_folder'] = intent.is_folder
                             intent_obj['name'] = intent.name
                             intent_obj['count'] = 0
-                        intent_obj['utterances'] = len(intent.utterances)
-                        intent_obj['responses'] = len(intent.responses)
-                        intent_obj['patterns'] = len(intent.patterns)
-                        intent_obj['calls'] = intent.calls
-                        intent_obj['modified'] = intent.modified
-                        intents_obj.append(intent_obj)
+                            intent_obj['utterances'] = len(intent.utterances)
+                            intent_obj['responses'] = len(intent.responses)
+                            intent_obj['patterns'] = len(intent.patterns)
+                            intent_obj['calls'] = intent.calls
+                            intent_obj['modified'] = intent.modified
+                            intents_obj.append(intent_obj)
                     return jsonify({"intents":intents_obj})
                 elif request.method == 'POST':
                     post_data = request.get_json()
