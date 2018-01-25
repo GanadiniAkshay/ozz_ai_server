@@ -37,6 +37,7 @@ def intent(bot_guid,intent_name):
                             nlu = nlus[model]
                         else:
                             nlu = None
+                        intent.modified = datetime.datetime.utcnow()
                         if request.method == 'POST':
                             post_data = request.get_json()
                             new_utterance = post_data['value']

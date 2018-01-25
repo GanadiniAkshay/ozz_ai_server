@@ -51,7 +51,6 @@ def intent(bot_guid,intent_name):
                         intent_obj['is_folder'] = False
                         intent_obj['responses'] = intent.responses
                         intent_obj['utterances'] = []
-                        intent.modified = datetime.datetime.utcnow()
                         for utterance in intent.utterances:
                             if nlu:
                                 int, entities, confidence = nlu.parse(utterance)

@@ -30,6 +30,7 @@ def response(bot_guid,intent_name):
             if bot.user_id == user_id:
                 intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                 if intent:
+                    intent.modified = datetime.datetime.utcnow()
                     if request.method == 'POST':
                         post_data = request.get_json()
                         new_response = post_data['value']
