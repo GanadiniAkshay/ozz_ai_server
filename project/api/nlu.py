@@ -480,6 +480,7 @@ def download(bot_guid):
                     intent_obj = {}
                     intent_obj['name'] = intent.name
                     intent_obj['utterances'] = intent.utterances
+                    intent_obj['responses'] = intent.responses
                     ozz_data['ozz_data']['intents'].append(intent_obj)
                 
                 for entity in entities:
@@ -544,12 +545,13 @@ def upload(bot_guid):
                     
                     if intent:
                         intent.utterances = intent_obj["utterances"]
+                        intent.responses = intent_obj["responses"]
                         flag_modified(intent, "utterances")
                         db.session.commit()
                     else:
                         name = intent_name
                         utterances = intent_obj["utterances"]
-                        responses = []
+                        responses = intent_obj["responses"]
                         has_entities = False
                         intent = Intent(
                             name = name,
