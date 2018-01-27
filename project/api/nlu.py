@@ -503,6 +503,22 @@ def download(bot_guid):
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
         return jsonify({"error":"No Authorization Token Sent"}),401
+
+@nlu_blueprint.route('/api/import/<bot_guid>/<persona_type>',methods=['GET'])
+def imp(bot_guid,persona_type):
+    try:
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        if bot:
+            if persona_type == 'millenial':
+                data = json.load(open(os.getcwd() + '/data/persona/millenial/import_persona_millenial.json'))
+            elif persona_type == 'average':
+                data = json.load(open(os.getcwd() + '/data/persona/average/import_persona_avg.json'))
+            elif persona_type == 'professional':
+                data = json.load(open(os.getcwd() + '/data/persona/professional/import_persona_professional.json'))
+            load_from_json(data,bot,bot_guid)
+    except Exception as e:
+        return jsonify({"error":e})
+    return jsonify({"success":"true"})
         
 @nlu_blueprint.route('/api/upload/<bot_guid>', methods=['POST'])
 def upload(bot_guid):
@@ -517,76 +533,7 @@ def upload(bot_guid):
                 filename = secure_filename(file.filename)
                 
                 data = json.load(file)
-                
-                intent_data = {}
-                intents = data['ozz_data']['intents']
-
-                for intent_obj in intents:
-                    intent_name = intent_obj["name"]
-                    intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
-                    
-                    for utt_copy in intent_obj["utterances"]:
-                        for word in stopWords:
-                            utt_copy = utt_copy.replace(word," ")
-                        
-                        utt_words = utt_copy.split(" ")
-
-                        words_json = json.loads(bot.words) 
-                        if type(words_json) == str:
-                            words_json = {}
-                        for word in utt_words:
-                            if word in words_json:
-                                if intent_name in words_json[word]:
-                                    words_json[word][intent_name] += 1
-                                else:
-                                    words_json[word][intent_name] = 1
-                            else:
-                                words_json[word] = {intent_name:1}
-                    
-                    if intent:
-                        intent.utterances = intent_obj["utterances"]
-                        intent.responses = intent_obj["responses"]
-                        flag_modified(intent, "utterances")
-                        db.session.commit()
-                    else:
-                        name = intent_name
-                        utterances = intent_obj["utterances"]
-                        responses = intent_obj["responses"]
-                        has_entities = False
-                        intent = Intent(
-                            name = name,
-                            bot_guid=bot_guid,
-                            utterances=utterances,
-                            has_entities=has_entities,
-                            responses = responses,
-                            patterns=[]
-                        )
-                        db.session.add(intent)
-                        db.session.commit()
-
-                entities = data['ozz_data']['entities']
-
-                for entity_obj in entities:
-                    name = entity_obj['name']
-                    
-                    new_examples = {}
-                    for value in entity_obj['values']:
-                        new_examples[value["value"]] = value["synonyms"]
-
-                    entity = Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
-                    
-                    if entity:
-                        entity.examples = json.dumps(new_examples)
-                    else:
-                        entity = Entity(
-                            name = name.lower(),
-                            bot_guid=bot_guid,
-                            examples=json.dumps(new_examples)
-                        )
-                        db.session.add(entity)
-                    db.session.commit()
-
-                
+                load_from_json(data,bot,bot_guid)
                 return jsonify({"filename":filename,"type":file.content_type})
             else:
                 return jsonify({"error":"Not Authorized"}),401
@@ -694,3 +641,72 @@ def generate(string,sub_string,values, intent_name, entities):
                         common_example['entities'].append({"start":start,"end":end,"value":value,"entity":ent_name})
         new_values.append(common_example)
     return new_values
+
+def load_from_json(data,bot,bot_guid):
+    intent_data = {}
+    intents = data['ozz_data']['intents']
+
+    for intent_obj in intents:
+        intent_name = intent_obj["name"]
+        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
+        
+        for utt_copy in intent_obj["utterances"]:
+            for word in stopWords:
+                utt_copy = utt_copy.replace(word," ")
+            
+            utt_words = utt_copy.split(" ")
+
+            words_json = json.loads(bot.words) 
+            if type(words_json) == str:
+                words_json = {}
+            for word in utt_words:
+                if word in words_json:
+                    if intent_name in words_json[word]:
+                        words_json[word][intent_name] += 1
+                    else:
+                        words_json[word][intent_name] = 1
+                else:
+                    words_json[word] = {intent_name:1}
+        
+        if intent:
+            intent.utterances = intent_obj["utterances"]
+            intent.responses = intent_obj["responses"]
+            flag_modified(intent, "utterances")
+            db.session.commit()
+        else:
+            name = intent_name
+            utterances = intent_obj["utterances"]
+            responses = intent_obj["responses"]
+            has_entities = False
+            intent = Intent(
+                name = name,
+                bot_guid=bot_guid,
+                utterances=utterances,
+                has_entities=has_entities,
+                responses = responses,
+                patterns=[]
+            )
+            db.session.add(intent)
+            db.session.commit()
+
+    entities = data['ozz_data']['entities']
+
+    for entity_obj in entities:
+        name = entity_obj['name']
+        
+        new_examples = {}
+        for value in entity_obj['values']:
+            new_examples[value["value"]] = value["synonyms"]
+
+        entity = Entity.query.filter_by(bot_guid=bot_guid).filter_by(name=name).first()
+        
+        if entity:
+            entity.examples = json.dumps(new_examples)
+        else:
+            entity = Entity(
+                name = name.lower(),
+                bot_guid=bot_guid,
+                examples=json.dumps(new_examples)
+            )
+            db.session.add(entity)
+        db.session.commit()
