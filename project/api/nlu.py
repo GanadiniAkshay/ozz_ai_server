@@ -107,14 +107,11 @@ def parse(bot_guid):
                 print(intent)
                 intent_obj.calls += 1
                 db.session.commit()
-                if len(intent_obj.responses) > 0:
-                    response = random.choice(intent_obj.responses)
-                else:
-                    response = ""
                 regex_match = True
                 entity_start = 0
                 entity_end = -1
                 parameters = pattern['entities']
+                ents ={}
                 for parameter in parameters:
                     if parameter['first'] != -1:
                         entity_start = parameter['first']
@@ -124,6 +121,7 @@ def parse(bot_guid):
                             entity_value = message[entity_start:]
                         else:
                             entity_value = message[entity_start:entity_end]
+                        ents[parameter['entity'][1:]] = entity_value
                         entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
                     else:
                         mid_expression= message[entity_end:]
@@ -139,6 +137,18 @@ def parse(bot_guid):
                             entity_value = mid_expression[entity_start:entity_end]
                         start = message.index(entity_value)
                         entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
+                if len(intent_obj.responses) > 0:
+                    response = random.choice(intent_obj.responses)
+                    resp_words = response.split(" ")
+                    for word in resp_words:
+                        if word[0] == '@':
+                            ent = word[1:]
+                            if ent in ents:
+                                response = response.replace(word,ents[ent])
+                            else:
+                                response = response.replace(word,"undefined")
+                else:
+                    response = ""
                 break
     if not regex_match:
         intent, entities, confidence = nlu.parse(message)
