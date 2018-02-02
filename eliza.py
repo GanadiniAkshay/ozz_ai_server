@@ -210,7 +210,7 @@ psychobabble = [
     [r'quit',
      ["Thank you for talking with me.",
       "Good-bye.",
-      "Thank you, that will be $150.  Have a good day!"]],
+      "Thank you.  Have a good day!"]],
  
     [r'(.*)',
      ["Please tell me more.",

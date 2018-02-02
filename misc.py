@@ -1,6 +1,8 @@
 import json
 from pprint import pprint
 
+import eliza
+
 
 new_json = {
     "ozz_data":{
@@ -11,24 +13,30 @@ new_json = {
 
 new_intents = []
 
-qdata = json.load(open('./data/persona/professional/persona_professional.json'))
-intents = qdata["ozz_data"]["intents"]
 
-rdata = json.load(open('./data/persona/professional/professional.json'))
+for obj in eliza.psychobabble:
+    new_intent_obj = {}
 
-for intent_obj in intents:
-    new_int_obj = {}
-    name = intent_obj["name"]
-    new_int_obj["name"] = name
-    new_int_obj["utterances"] = intent_obj["utterances"]
+    new_intent_obj['name'] = 'eliza.placeholder'
+    phrase = obj[0]
+    phrase = phrase.replace('(.*)','@capture')
+    phrase = phrase.replace('([^\?]*)','@capture')
+    phrase = phrase.replace("\'?","'")
+    phrase = phrase.replace("\'","'")
 
-    if name in rdata:
-        new_int_obj["responses"] = rdata[name]
-    else:
-        new_int_obj["responses"] = []
-    new_intents.append(new_int_obj)
+    new_intent_obj['utterances'] = [phrase]
 
-new_json["ozz_data"]["intents"] =  new_intents
+    new_intent_obj['responses']  = []
+    answers = obj[1]
+    for answer in answers:
+        answer = answer.replace('{0}','@capture')
+        new_intent_obj['responses'].append(answer)
+    
+    new_intents.append(new_intent_obj)
 
-with open('./data/persona/professional/import_persona_professional.json','w') as outFile:
-    json.dump(new_json, outFile)
+
+new_json['ozz_data']['intents'] = new_intents
+
+
+with open("eliza.json","w") as jsonFile:
+    json.dump(new_json,jsonFile)
