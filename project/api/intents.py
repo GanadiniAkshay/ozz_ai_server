@@ -95,6 +95,7 @@ def intents(bot_guid):
                         base_pattern = '.'.join(base[1:].split('/')) + '.%'
                         intents = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(base_pattern)).all()
                     intents_obj = []
+                    empty_folders = []
                     folder_list = {}
                     for intent in intents:
                         intent_obj = {}
@@ -130,7 +131,13 @@ def intents(bot_guid):
                             intent_obj['patterns'] = len(intent.patterns)
                             intent_obj['calls'] = intent.calls
                             intent_obj['modified'] = intent.modified
-                            intents_obj.append(intent_obj)
+                            if not intent.is_folder:
+                                intents_obj.append(intent_obj)
+                            else:
+                                empty_folders.append(intent_obj)
+                    for folder in empty_folders:
+                        if not (folder['name'] in folder_list):
+                            intents_obj.append(folder)
                     return jsonify({"intents":intents_obj})
                 elif request.method == 'POST':
                     post_data = request.get_json()
