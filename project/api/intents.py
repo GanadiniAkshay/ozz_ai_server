@@ -101,7 +101,6 @@ def intents(bot_guid):
                         intent_obj = {}
                         folders = intent.name.split('.')
                         if len(folders) > 1:
-                            pattern = '.'.join(folders[:-1])+'.%'
                             if not base_pattern == '/':
                                 folder_name = folders[len(base_pattern[:-2].split('.'))]
                             else:
@@ -111,11 +110,15 @@ def intents(bot_guid):
                             else:
                                 is_folder = True
                             if not folder_name in folder_list:
+                                if base_pattern == '/':
+                                    pattern = folder_name +'.%'
+                                else:
+                                    pattern = base_pattern[:-1] + folder_name + '.%'
+                                contents = Intent.query.filter_by(bot_guid=bot_guid).filter_by(is_folder=False).filter(Intent.name.like(pattern)).all()
                                 folder_list[folder_name] = intent.modified
-                                matched_intents = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(pattern)).all()
                                 intent_obj['name'] = folder_name
                                 intent_obj['is_folder'] = is_folder
-                                intent_obj['count'] = len(matched_intents)
+                                intent_obj['count'] = len(contents)
                                 intent_obj['utterances'] = len(intent.utterances)
                                 intent_obj['responses'] = len(intent.responses)
                                 intent_obj['patterns'] = len(intent.patterns)
