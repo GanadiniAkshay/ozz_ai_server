@@ -204,16 +204,27 @@ def intents(bot_guid):
                             return jsonify({"success":"false"})
                 elif request.method == 'DELETE':
                     intent_name = request.args['intent']
-                    intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
-                    if intent:
-                        db.session.delete(intent)
+                    if intent_name[0] == '.':
+                        intent_name = intent_name[1:]
+                    if intent_name[-1] == '%':
                         try:
+                            query = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(intent_name))
+                            query.delete(synchronize_session=False)
                             db.session.commit()
                         except Exception as e:
                             return jsonify({"success":"false"})
                         return jsonify({"success":"true"})
                     else:
-                        return jsonify({"success":"false"})
+                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
+                        if intent:
+                            db.session.delete(intent)
+                            try:
+                                db.session.commit()
+                            except Exception as e:
+                                return jsonify({"success":"false"})
+                            return jsonify({"success":"true"})
+                        else:
+                            return jsonify({"success":"false"})
     elif code == 400:
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
