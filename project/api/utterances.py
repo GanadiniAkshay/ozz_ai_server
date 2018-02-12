@@ -79,6 +79,7 @@ def intent(bot_guid,intent_name):
                             old_utterance = put_data['old_utterance']
                             new_utterance = put_data['value']
                             intent.utterances = [new_utterance if u == old_utterance else u for u in intent.utterances]
+                            intent.modified = datetime.datetime.utcnow()
                             int, entities, confidence = nlu.parse(new_utterance)
                             db.session.commit()
                             return jsonify({"utterance":new_utterance,"entities":entities})
@@ -89,6 +90,7 @@ def intent(bot_guid,intent_name):
                                 if (utterance != old_utterance):
                                     new_utterances.append(utterance)
                             intent.utterances = new_utterances
+                            intent.modified = datetime.datetime.utcnow()
                             db.session.commit()
                             return jsonify({"success":True})
                     else:

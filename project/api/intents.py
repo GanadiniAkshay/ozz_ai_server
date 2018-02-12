@@ -192,16 +192,30 @@ def intents(bot_guid):
                     else:
                         old_name = put_data['old_name']
                         new_name = put_data['new_name']
-                        intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=old_name).first()
-                        if intent:
-                            intent.name = new_name
-                            try:
-                                db.session.commit()
-                            except Exception as e:
-                                return jsonify({"success":"false"})
+
+                        if old_name[-1] == "%":
+                            intents = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(old_name)).all()
+                            for intent in intents:
+                                name = intent.name
+                                intent.name = name.replace(old_name[:-1],new_name)
+                                intent.modified = datetime.datetime.utcnow()
+                                try:
+                                    db.session.commit()
+                                except Exception as e:
+                                    return jsonify({"success":"false"})
                             return jsonify({"success":"true"})
                         else:
-                            return jsonify({"success":"false"})
+                            intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=old_name).first()
+                            if intent:
+                                intent.name = new_name
+                                intent.modified = datetime.datetime.utcnow()
+                                try:
+                                    db.session.commit()
+                                except Exception as e:
+                                    return jsonify({"success":"false"})
+                                return jsonify({"success":"true"})
+                            else:
+                                return jsonify({"success":"false"})
                 elif request.method == 'DELETE':
                     intent_name = request.args['intent']
                     if intent_name[0] == '.':
