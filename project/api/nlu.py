@@ -94,14 +94,24 @@ def parse(bot_guid):
     intents = Intent.query.filter_by(bot_guid=bot_guid)
     entities = []
     response = ""
+    is_matched = False
     for intent_obj in intents:
+        if is_matched:
+            break
         patterns = intent_obj.patterns
         for pattern in patterns:
             pattern = json.loads(pattern)
-            regex = pattern["regex"]
-            express = re.compile(regex,re.IGNORECASE)
-            match = express.match(message)
+            if (intent_obj.name[:5] == 'eliza'):
+                regex = pattern["regex"]
+            else:
+                regex = pattern["regex"].lower().strip()
+            if len(regex) > 0:
+                express = re.compile(regex,re.IGNORECASE)
+                match = express.match(message)
+            else:
+                match = False
             if match:
+                is_matched = True
                 intent = intent_obj.name
                 print("regex")
                 print(intent)
@@ -141,8 +151,11 @@ def parse(bot_guid):
                     response = random.choice(intent_obj.responses)
                     resp_words = response.split(" ")
                     for word in resp_words:
-                        if word[0] == '@':
+                        if len(word)>0 and word[0] == '@':
                             ent = word[1:]
+
+                            if ent[-1] == '?' or ent[-1] == '.':
+                                ent = ent[:-1]
                             if ent in ents:
                                 response = response.replace(word,ents[ent])
                             else:
@@ -157,7 +170,7 @@ def parse(bot_guid):
         response = ""
         print(intent)
         print(confidence)
-        if intent != 'None' and confidence>0.70:
+        if intent != 'None':
             intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
             if intent_obj:
                 intent_obj.calls += 1
@@ -420,7 +433,7 @@ def train(bot_guid):
                         #         child_count += 1
                         # print(child_count)
                 try:
-                    print(rasa_data['rasa_nlu_data']['common_examples'])
+                    # print(rasa_data['rasa_nlu_data']['common_examples'])
                     config = './project/config.json'
                     user_path = os.path.join(os.getcwd(),'data',str(user_id))
                     bot_path = os.path.join(user_path,bot_guid)
@@ -491,6 +504,7 @@ def download(bot_guid):
                     intent_obj['name'] = intent.name
                     intent_obj['utterances'] = intent.utterances
                     intent_obj['responses'] = intent.responses
+                    intent_obj['patterns'] = intent.patterns
                     ozz_data['ozz_data']['intents'].append(intent_obj)
                 
                 for entity in entities:
@@ -573,12 +587,25 @@ def uploadexcel(bot_guid):
                         questions = questions.split('<->')
                         answers = answers.split('<->')
 
+                        questions = [ q for q in questions if len(q) > 0]
+                        answers = [a for a in answers if len(a) > 0]
+
                         if intent_name == 'Intent' or intent_name == 'intent':
                             continue
                         else:
                             intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
-                    
+                            patterns = []
                             for utt_copy in questions:
+                                if len(utt_copy) == 0:
+                                    continue
+                                parameters,regex = get_regex(utt_copy)
+                                new_obj = {}
+                                new_obj['string'] = utt_copy
+                                new_obj['regex']  = regex
+                                new_obj['entities'] = parameters
+                                new_obj['len'] = len(utt_copy)
+                                patterns.append(json.dumps(new_obj))
+            
                                 for word in stopWords:
                                     utt_copy = utt_copy.replace(word," ")
                                 
@@ -599,8 +626,10 @@ def uploadexcel(bot_guid):
                             if intent:
                                 intent.utterances = questions
                                 intent.responses += answers
+                                intent.patterns = patterns
                                 flag_modified(intent, "utterances")
                                 flag_modified(intent, "responses")
+                                flag_modified(intent, "patterns")
                                 db.session.commit()
                             else:
                                 name = intent_name
@@ -613,7 +642,7 @@ def uploadexcel(bot_guid):
                                     utterances=utterances,
                                     has_entities=has_entities,
                                     responses = responses,
-                                    patterns=[]
+                                    patterns=patterns
                                 )
                                 db.session.add(intent)
                                 db.session.commit()
@@ -657,10 +686,18 @@ def load_from_json(data,bot,bot_guid):
     intents = data['ozz_data']['intents']
 
     for intent_obj in intents:
+        patterns = []
         intent_name = intent_obj["name"]
         intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
         
         for utt_copy in intent_obj["utterances"]:
+            parameters,regex = get_regex(utt_copy)
+            new_obj = {}
+            new_obj['string'] = utt_copy
+            new_obj['regex']  = regex
+            new_obj['entities'] = parameters
+            new_obj['len'] = len(utt_copy)
+            patterns.append(json.dumps(new_obj))
             for word in stopWords:
                 utt_copy = utt_copy.replace(word," ")
             
@@ -681,6 +718,7 @@ def load_from_json(data,bot,bot_guid):
         if intent:
             intent.utterances = intent_obj["utterances"]
             intent.responses = intent_obj["responses"]
+            intent.patterns = patterns
             flag_modified(intent, "utterances")
             db.session.commit()
         else:
@@ -694,7 +732,7 @@ def load_from_json(data,bot,bot_guid):
                 utterances=utterances,
                 has_entities=has_entities,
                 responses = responses,
-                patterns=[]
+                patterns=patterns
             )
             db.session.add(intent)
             db.session.commit()
@@ -720,3 +758,31 @@ def load_from_json(data,bot,bot_guid):
             )
             db.session.add(entity)
         db.session.commit()
+
+
+def get_regex(string):
+    pattern = string #str(input('Enter the pattern: '))
+    pattern_words =  pattern.split(" ")
+    
+    parameters = []
+    regex = []
+    
+    first = False
+    for i in range(len(pattern_words)):
+        word = pattern_words[i]
+        if len(word) > 0 and word[0] == '@':
+            if not first:
+                first= len(' '.join(pattern_words[0:i]) + ' ')
+            else:
+                first=-1
+            if i == len(pattern_words) - 1:
+                post = None
+            else:
+                post = pattern_words[i+1]
+            regex.append("[\d\D\s]+")
+            parameters.append({"entity":word,"first":first,"prior":pattern_words[i-1],"post":post})
+        else:
+            regex.append(word)
+
+    regex = ' '.join(regex)
+    return parameters,regex

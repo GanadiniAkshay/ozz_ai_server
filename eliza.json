@@ -130,10 +130,6 @@
 			"utterances": ["@capture child@capture"],
 			"responses": ["Did you have close friends as a child?", "What is your favorite childhood memory?", "Do you remember any dreams or nightmares from childhood?", "Did the other children sometimes tease you?", "How do you think your childhood experiences relate to your feelings today?"]
 		}, {
-			"name": "eliza.open question",
-			"utterances": ["@capture?"],
-			"responses": ["Why do you ask that?", "Please consider whether you can answer your own question.", "Perhaps the answer lies within yourself?", "Why don't you tell me?"]
-		}, {
 			"name": "eliza.quit",
 			"utterances": ["quit"],
 			"responses": ["Thank you for talking with me.", "Good-bye.", "Thank you.  Have a good day!"]
