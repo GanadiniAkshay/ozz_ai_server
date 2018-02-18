@@ -113,8 +113,8 @@ def parse(bot_guid):
             if match:
                 is_matched = True
                 intent = intent_obj.name
-                #print("regex")
-                #print(intent)
+                # print("regex")
+                # print(intent)
                 intent_obj.calls += 1
                 db.session.commit()
                 regex_match = True
@@ -156,6 +156,7 @@ def parse(bot_guid):
 
                             if ent[-1] == '?' or ent[-1] == '.':
                                 ent = ent[:-1]
+                                word = word[:-1]
                             if ent in ents:
                                 response = response.replace(word,ents[ent])
                             else:
