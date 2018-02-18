@@ -64,8 +64,8 @@ def parse(bot_guid):
         if redis_db.exists(key):
             event = redis_db.hgetall(key)
             intent = str(event[b'intent'],'utf-8')
-            print('redis')
-            print(intent)
+            #print('redis')
+            #print(intent)
             is_ozz = intent.split('.')[0] == 'ozz'
             if not is_ozz:
                 entities = ast.literal_eval(str(event[b'entities'],'utf-8'))
@@ -76,7 +76,7 @@ def parse(bot_guid):
                     if (len(intent_obj.responses) > 0):
                         response = random.choice(intent_obj.responses)
                 end_time =time.time()
-                print(str(end_time - start_time))
+                #print(str(end_time - start_time))
                 return jsonify({"intent":intent,"entities":entities,"response":response})
 
         if type(words_json) == str:
@@ -113,8 +113,8 @@ def parse(bot_guid):
             if match:
                 is_matched = True
                 intent = intent_obj.name
-                print("regex")
-                print(intent)
+                #print("regex")
+                #print(intent)
                 intent_obj.calls += 1
                 db.session.commit()
                 regex_match = True
@@ -165,11 +165,53 @@ def parse(bot_guid):
                 break
     if not regex_match:
         intent, entities, confidence = nlu.parse(message)
-        print("nlu")
-        print(intent)
+        #print("nlu")
+        #print(intent)
         response = ""
-        print(intent)
-        print(confidence)
+        #print(intent)
+        #print(confidence)
+        if bot.persona and bot.persona != -1:
+            #print('here')
+            persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
+            if persona_bot:
+                persona_model = persona_bot.active_model
+                persona_nlu = nlus[persona_model]
+
+                ozz_intent, ozz_entities, ozz_confidence = persona_nlu.parse(message)
+                #print('persona')
+                #print(ozz_intent)
+                #print(ozz_confidence)
+                if bot.persona == 1 and ozz_confidence > confidence:
+                    intent, entities = ozz_intent, ozz_entities
+                    with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
+                        responses = json.loads(jsonFile.read())
+                    if intent in responses and len(responses[intent]) > 0:
+                        response = random.choice(responses[intent])
+                    else:
+                        response = ""
+                elif bot.persona == 2 and ozz_confidence > confidence:
+                    intent, entities = ozz_intent, ozz_entities
+                    with open(os.getcwd() + '/data/persona/average/average.json') as jsonFile:
+                        responses = json.loads(jsonFile.read())
+                    if intent in responses and len(responses[intent]) > 0:
+                        response = random.choice(responses[intent])
+                    else:
+                        response = ""
+                elif bot.persona == 3 and ozz_confidence > confidence:
+                    intent, entities = ozz_intent, ozz_entities
+                    with open(os.getcwd() + '/data/persona/professional/professional.json') as jsonFile:
+                        responses = json.loads(jsonFile.read())
+                    if intent in responses and len(responses[intent]) > 0:
+                        response = random.choice(responses[intent])
+                    else:
+                        response = ""
+                elif bot.persona == 4 and ozz_confidence > confidence:
+                    intent, entities = ozz_intent, ozz_entities
+                    intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
+                    if intent_obj:
+                        response = random.choice(intent_obj.responses)
+                    else:
+                        response = ""
         if intent != 'None':
             intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
             if intent_obj:
@@ -196,98 +238,14 @@ def parse(bot_guid):
 
             if len(scores) > 0:
                 intent = scores[0][0]
-                print("words")
-                print(intent)
+                #print("words")
+                #print(intent)
                 intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
                 if intent_obj:
                     intent_obj.calls += 1
                     if (len(intent_obj.responses) > 0):
                         response = random.choice(intent_obj.responses)
                     db.session.commit()
-            else:
-                knowledges = Knowledge.query.filter_by(bot_guid=bot_guid).all()
-                k_flag = False
-                for knowledge in knowledges:
-                    if knowledge.kid == 'cardealership_1507914955':
-                        k_flag = True
-                if k_flag == True:
-                    with open('./data/data.json','r') as f:
-                        data = json.load(f)
-                    with open('./data/invindex_new.json') as f:
-                        inv_index = json.load(f)
-                    query = message
-
-                    #remove ? symbol
-                    query = query.replace("?","")
-
-                    #turn to lowercase
-                    query = query.lower()
-
-                    #result set as a dictionary of key-value
-                    res_set = {}
-
-                    #get list of words to query over
-                    words = query.split(" ")
-                    words = list(set(words))
-
-                    #get top 10 documents for each word
-                    for word in words:
-                        if not word in inv_index:
-                            continue
-                        else:
-                            responses = inv_index[word][:10]
-
-                            for response in responses:
-                                file,score = response
-
-                                if file in res_set:
-                                    res_set[file] += score
-                                else:
-                                    res_set[file] = score
-
-                    sorted_results = sorted(res_set.items(), key=operator.itemgetter(1), reverse=True)
-                    print(sorted_results[:5])
-                    response = random.choice(data[sorted_results[0][0]])
-                else:
-                    if bot.persona and bot.persona != -1:
-                        persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
-                        if persona_bot:
-                            persona_model = persona_bot.active_model
-                            persona_nlu = nlus[persona_model]
-
-                            intent, entities, confidence = persona_nlu.parse(message)
-                            print('persona')
-                            print(intent)
-                            print(confidence)
-                            if bot.persona == 1 and confidence > 0.25:
-                                with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
-                                    responses = json.loads(jsonFile.read())
-                                if intent in responses and len(responses[intent]) > 0:
-                                    response = random.choice(responses[intent])
-                                else:
-                                    response = ""
-                            elif bot.persona == 2 and confidence > 0.25:
-                                with open(os.getcwd() + '/data/persona/average/average.json') as jsonFile:
-                                    responses = json.loads(jsonFile.read())
-                                if intent in responses and len(responses[intent]) > 0:
-                                    response = random.choice(responses[intent])
-                                else:
-                                    response = ""
-                            elif bot.persona == 3 and confidence > 0.25:
-                                with open(os.getcwd() + '/data/persona/professional/professional.json') as jsonFile:
-                                    responses = json.loads(jsonFile.read())
-                                if intent in responses and len(responses[intent]) > 0:
-                                    response = random.choice(responses[intent])
-                                else:
-                                    response = ""
-                            else:
-                                intent = 'None'
-                                entities = []
-                                response = ""
-                        else:
-                            intent='None'
-                            entities=[]
-                            response=""
                     # else:
                     #     eliza = Eliza()
                     #     response = eliza.analyze(message)
@@ -331,7 +289,7 @@ def train(bot_guid):
             if bot.user_id == user_id:
                 for key in redis_db.scan_iter(match=bot_guid+'_*'):
                     redis_db.delete(key)
-                print('training')
+                #print('training')
                 rasa_data = {
                                 "rasa_nlu_data": 
                                     {   
@@ -346,7 +304,8 @@ def train(bot_guid):
                                         "regex_features":[]
                                     }
                             }
-                intents = Intent.query.filter_by(bot_guid=bot_guid)
+                intents = Intent.query.filter_by(bot_guid=bot_guid).filter(~Intent.name.like('ozz.%')).filter(~Intent.name.like('eliza.%')).all()
+                #print(intents)
                 entities = Entity.query.filter_by(bot_guid=bot_guid)
                 ent_data = {}
                 words_json = {}
@@ -399,7 +358,7 @@ def train(bot_guid):
                                     test_utterance = ' ' + utterance + ' '
                                     test_example  =' ' + example + ' '
                                     if test_example in test_utterance:
-                                        print("here")
+                                        #print("here")
                                         start = utterance.find(example)
                                         end = start + len(example)
                                         is_valid = True
@@ -441,7 +400,7 @@ def train(bot_guid):
                     training_data = load_train_data(rasa_data)
                     trainer.train(training_data)
                     model_directory = trainer.persist('/var/lib/ozz/models')
-                    print(model_directory)
+                    #print(model_directory)
 
                     current_model = bot.active_model
 
@@ -456,7 +415,7 @@ def train(bot_guid):
                     interpreters[model_directory] = NLUParser(model_directory,config)
                     db.session.commit()
                 except Exception as e:
-                    print(e)
+                    #print(e)
                     return jsonify({"success":False})
             else:
                 return jsonify({"error":"Not Authorized"}),401
@@ -533,6 +492,8 @@ def imp(bot_guid,persona_type):
     try:
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if bot:
+            query = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like('ozz.persona.%'))
+            query.delete(synchronize_session=False)
             if persona_type == 'millenial':
                 data = json.load(open(os.getcwd() + '/data/persona/millenial/import_persona_millenial.json'))
             elif persona_type == 'average':
@@ -540,6 +501,8 @@ def imp(bot_guid,persona_type):
             elif persona_type == 'professional':
                 data = json.load(open(os.getcwd() + '/data/persona/professional/import_persona_professional.json'))
             load_from_json(data,bot,bot_guid)
+            bot.persona = 4
+            db.session.commit()
     except Exception as e:
         return jsonify({"error":e})
     return jsonify({"success":"true"})

@@ -26,14 +26,6 @@
 			"utterances": ["Are you @capture?"],
 			"responses": ["Why does it matter whether I am @capture?", "Would you prefer it if I were not @capture?", "Perhaps you believe I am @capture.", "I may be @capture -- what do you think?"]
 		}, {
-			"name": "eliza.what",
-			"utterances": ["What @capture"],
-			"responses": ["Why do you ask?", "How would an answer to that help you?", "What do you think?"]
-		}, {
-			"name": "eliza.how",
-			"utterances": ["How @capture"],
-			"responses": ["How do you suppose?", "Perhaps you can answer your own question.", "What is it you're really asking?"]
-		}, {
 			"name": "eliza.reason",
 			"utterances": ["Because @capture"],
 			"responses": ["Is that the real reason?", "What other reasons come to mind?", "Does that reason apply to anything else?", "If @capture, what else must be true?"]
@@ -109,10 +101,6 @@
 			"name": "eliza.you",
 			"utterances": ["You @capture"],
 			"responses": ["We should be discussing you, not me.", "Why do you say that about me?", "Why do you care whether I @capture?"]
-		}, {
-			"name": "eliza.reason",
-			"utterances": ["Why @capture"],
-			"responses": ["Why don't you tell me the reason why @capture?", "Why do you think @capture?"]
 		}, {
 			"name": "eliza.want",
 			"utterances": ["I want @capture"],
