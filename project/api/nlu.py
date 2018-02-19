@@ -113,7 +113,7 @@ def parse(bot_guid):
             if match:
                 is_matched = True
                 intent = intent_obj.name
-                # print("regex")
+                print("regex")
                 # print(intent)
                 intent_obj.calls += 1
                 db.session.commit()
