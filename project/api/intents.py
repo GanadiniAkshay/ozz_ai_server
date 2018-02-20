@@ -245,3 +245,41 @@ def intents(bot_guid):
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 
+@intents_blueprint.route('/api/folders/<bot_guid>', methods=['DELETE'])
+def folders(bot_guid):
+    code,user_id = checkAuth(request)
+    print(code)
+    if code == 200:
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        if bot:
+            if bot.user_id == user_id:
+                if request.method == 'DELETE':
+                    folders = request.args.getlist('folders[]')
+                    base = request.args['base']
+                    print(base)
+                    try:
+                        for folder in folders:
+                            pres = '.'.join(base.split('/')[1:])
+                            if base != '/':
+                                folder = pres + '.' + folder
+                        
+                            intent_name = folder + '%'
+                            query = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(intent_name))
+                            query.delete(synchronize_session=False)
+                        db.session.commit()
+                    except Exception as e:
+                        print(e)
+                        return jsonify({"success":"false"})
+                    return jsonify({"success":"true"})
+                else:
+                    return jsonify({"error":"Method Not Allowed"}),405
+            else:
+                return jsonify({"error":"Not Authorized"}),401
+        else:
+            return jsonify({"error":"Bot Not Found"}),404
+    elif code == 400:
+        return jsonify({"error":"Invalid Authorization Token"}),400
+    elif code == 401:
+        return jsonify({"error":"No Authorization Token Sent"}),401
+
+
