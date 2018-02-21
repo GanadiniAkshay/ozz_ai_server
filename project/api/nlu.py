@@ -418,7 +418,7 @@ def train(bot_guid):
                     db.session.commit()
                 except Exception as e:
                     print(e)
-                    return jsonify({"success":False})
+                    return jsonify({"success":False,"error":str(e)})
             else:
                 return jsonify({"error":"Not Authorized"}),401
         else:
