@@ -99,6 +99,9 @@ def create_app():
     app.register_blueprint(knowledge_blueprint)
     app.register_blueprint(session_blueprint)
 
+    if not os.path.exists('/var/lib/ozz/logs'):
+        os.mkdir('/var/lib/ozz/logs')
+
     # initialize the log handler
     logHandler = RotatingFileHandler('/var/lib/ozz/logs/info.log', maxBytes=10240, backupCount=10)
 

@@ -64,8 +64,8 @@ def parse(bot_guid):
         if redis_db.exists(key):
             event = redis_db.hgetall(key)
             intent = str(event[b'intent'],'utf-8')
-            #print('redis')
-            #print(intent)
+            print('redis')
+            print(intent)
             is_ozz = intent.split('.')[0] == 'ozz'
             if not is_ozz:
                 entities = ast.literal_eval(str(event[b'entities'],'utf-8'))
@@ -76,7 +76,7 @@ def parse(bot_guid):
                     if (len(intent_obj.responses) > 0):
                         response = random.choice(intent_obj.responses)
                 end_time =time.time()
-                #print(str(end_time - start_time))
+                print(str(end_time - start_time))
                 app.logger.info('/api/parse/'+ bot_guid + ' parsed intents and entities ' + str(end_time - start_time))
                 return jsonify({"intent":intent,"entities":entities,"response":response})
 
@@ -116,8 +116,8 @@ def parse(bot_guid):
             if match:
                 is_matched = True
                 intent = intent_obj.name
-                #print("regex")
-                # print(intent)
+                print("regex")
+                print(intent)
                 intent_obj.calls += 1
                 db.session.commit()
                 regex_match = True
@@ -169,12 +169,12 @@ def parse(bot_guid):
                 break
     if not regex_match:
         intent, entities, confidence = nlu.parse(message)
-        #print("nlu")
-        #print(intent)
+        print("nlu")
+        print(intent)
         response = ""
-        #print(intent)
-        #print(confidence)
-        if bot.persona and bot.persona != -1:
+        # print(intent)
+        print(confidence)
+        if bot.persona and (bot.persona != -1 or bot.persona !=4):
             #print('here')
             persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
             if persona_bot:
@@ -182,9 +182,9 @@ def parse(bot_guid):
                 persona_nlu = nlus[persona_model]
 
                 ozz_intent, ozz_entities, ozz_confidence = persona_nlu.parse(message)
-                #print('persona')
-                #print(ozz_intent)
-                #print(ozz_confidence)
+                print('persona')
+                print(ozz_intent)
+                print(ozz_confidence)
                 if bot.persona == 1 and ozz_confidence > confidence:
                     intent, entities = ozz_intent, ozz_entities
                     with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
@@ -207,13 +207,6 @@ def parse(bot_guid):
                         responses = json.loads(jsonFile.read())
                     if intent in responses and len(responses[intent]) > 0:
                         response = random.choice(responses[intent])
-                    else:
-                        response = ""
-                elif bot.persona == 4 and ozz_confidence > confidence:
-                    intent, entities = ozz_intent, ozz_entities
-                    intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
-                    if intent_obj:
-                        response = random.choice(intent_obj.responses)
                     else:
                         response = ""
         if intent != 'None':
@@ -242,8 +235,8 @@ def parse(bot_guid):
 
             if len(scores) > 0:
                 intent = scores[0][0]
-                #print("words")
-                #print(intent)
+                print("words")
+                print(intent)
                 intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
                 if intent_obj:
                     intent_obj.calls += 1
