@@ -287,10 +287,11 @@ def train(bot_guid):
     if code == 200:
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if bot:
+            print('here')
             if bot.user_id == user_id:
                 for key in redis_db.scan_iter(match=bot_guid+'_*'):
                     redis_db.delete(key)
-                #print('training')
+                print('training')
                 rasa_data = {
                                 "rasa_nlu_data": 
                                     {   
@@ -305,8 +306,8 @@ def train(bot_guid):
                                         "regex_features":[]
                                     }
                             }
-                intents = Intent.query.filter_by(bot_guid=bot_guid).filter(~Intent.name.like('ozz.%')).filter(~Intent.name.like('eliza.%')).all()
-                #print(intents)
+                intents = Intent.query.filter_by(bot_guid=bot_guid).filter(~Intent.name.like('eliza.%')).all()
+                print(intents)
                 entities = Entity.query.filter_by(bot_guid=bot_guid)
                 ent_data = {}
                 words_json = {}
@@ -393,7 +394,7 @@ def train(bot_guid):
                         #         child_count += 1
                         # print(child_count)
                 try:
-                    # print(rasa_data['rasa_nlu_data']['common_examples'])
+                    print(rasa_data['rasa_nlu_data']['common_examples'])
                     config = './project/config.json'
                     user_path = os.path.join(os.getcwd(),'data',str(user_id))
                     bot_path = os.path.join(user_path,bot_guid)
@@ -401,7 +402,7 @@ def train(bot_guid):
                     training_data = load_train_data(rasa_data)
                     trainer.train(training_data)
                     model_directory = trainer.persist('/var/lib/ozz/models')
-                    #print(model_directory)
+                    print(model_directory)
 
                     current_model = bot.active_model
 
@@ -416,7 +417,7 @@ def train(bot_guid):
                     interpreters[model_directory] = NLUParser(model_directory,config)
                     db.session.commit()
                 except Exception as e:
-                    #print(e)
+                    print(e)
                     return jsonify({"success":False})
             else:
                 return jsonify({"error":"Not Authorized"}),401
