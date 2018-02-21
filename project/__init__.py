@@ -100,7 +100,7 @@ def create_app():
     app.register_blueprint(session_blueprint)
 
     # initialize the log handler
-    logHandler = RotatingFileHandler('info.log', maxBytes=10240, backupCount=10)
+    logHandler = RotatingFileHandler('/var/lib/ozz/logs/info.log', maxBytes=10240, backupCount=10)
 
     logHandler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
