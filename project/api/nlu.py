@@ -12,7 +12,7 @@ from project.api.models.intents import Intent
 from project.api.models.entities import Entity
 from project.api.models.analytics import Analytics
 from project.api.models.knowledge import Knowledge
-from project import db, cache, interpreters, trainer, nlp, d, redis_db, stopWords
+from project import db, cache, interpreters, trainer, nlp, d, redis_db, stopWords, app
 from sqlalchemy import exc
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -77,6 +77,7 @@ def parse(bot_guid):
                         response = random.choice(intent_obj.responses)
                 end_time =time.time()
                 #print(str(end_time - start_time))
+                app.logger.info('/api/parse/'+ bot_guid + ' parsed intents and entities ' + str(end_time - start_time))
                 return jsonify({"intent":intent,"entities":entities,"response":response})
 
         if type(words_json) == str:
@@ -84,8 +85,10 @@ def parse(bot_guid):
         if model:
             nlu = nlus[model]
         else:
+            app.logger.error('/api/parse/'+ bot_guid + ' bot not trained')
             return jsonify({"error":"Please train the bot before testing"})
     else:
+        app.logger.warning('/api/parse/'+ bot_guid + ' bot does not exist')
         return jsonify({"error":"Bot doesn't exist"}),404
 
     message = message.lower()
@@ -275,6 +278,7 @@ def parse(bot_guid):
     redis_db.delete(key) #remove old keys
     redis_db.hmset(key, event)
     redis_db.expire(key, 259200)
+    app.logger.info('/api/parse/'+ bot_guid + ' bot successfully parsed')
     return jsonify({"intent":intent,"entities":entities,"response":response})
     
 
@@ -417,17 +421,21 @@ def train(bot_guid):
                     interpreters[model_directory] = NLUParser(model_directory,config)
                     db.session.commit()
                 except Exception as e:
-                    print(e)
+                    app.logger.error('GET /api/train/'+ bot_guid + ' ' + str(e))
                     return jsonify({"success":False,"error":str(e)})
             else:
+                app.logger.warning('GET /api/train/'+ bot_guid + ' not authorized')
                 return jsonify({"error":"Not Authorized"}),401
         else:
+            app.logger.warning('GET /api/train/'+ bot_guid + ' bot does not exist')
             return jsonify({"error":"Bot doesn't exist"}),404
     elif code == 400:
+        app.logger.warning('GET /api/train/'+ bot_guid + ' invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('GET /api/train/'+ bot_guid + ' no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
-    
+    app.logger.info('GET /api/train/'+ bot_guid + ' bot successfully trained')
     return jsonify({"success":True})
 
 @nlu_blueprint.route('/api/retrain',methods=['GET'])
@@ -445,7 +453,12 @@ def retrain():
     data["rasa_nlu_data"]["intent_examples"].append(new_intent_example)
     with open(os.path.join(path, 'demo-data.json'),"w") as jsonFile:
             json.dump(data, jsonFile)
-    nlu.train()
+    try:
+        nlu.train()
+    except Exception as e:
+        app.logger.error('GET /api/retrain/'+ bot_guid + ' ' + str(e))
+        return jsonify({"success":False,"error":str(e)})
+    app.logger.info('GET /api/retrain/'+ bot_guid + ' bot successfully retrained')
     return jsonify({"success":True})
 
 @nlu_blueprint.route('/api/download/<bot_guid>', methods=['GET'])
@@ -479,14 +492,19 @@ def download(bot_guid):
                         ent_obj['values'].append(value_obj)
                     
                     ozz_data['ozz_data']['entities'].append(ent_obj)
+                app.logger.info('GET /api/download/'+ bot_guid + ' successfully downloaded ozz data')
                 return jsonify(ozz_data)
             else:
+                app.logger.warning('GET /api/download/'+ bot_guid + ' not authorized')
                 return jsonify({"error":"Not Authorized"}),401
         else:
+            app.logger.warning('GET /api/download/'+ bot_guid + ' bot does not exist')
             return jsonify({"error":"Bot doesn't exist"}),404
     elif code == 400:
+        app.logger.warning('GET /api/download/'+ bot_guid + ' invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('GET /api/download/'+ bot_guid + ' no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 @nlu_blueprint.route('/api/import/<bot_guid>/<persona_type>',methods=['GET'])
@@ -506,8 +524,10 @@ def imp(bot_guid,persona_type):
             bot.persona = 4
             db.session.commit()
     except Exception as e:
-        return jsonify({"error":e})
-    return jsonify({"success":"true"})
+        app.logger.error('GET /api/import/'+ bot_guid + ' ' + str(e))
+        return jsonify({"success":False,"error":str(e)})
+    app.logger.info('GET /api/import/'+ bot_guid + ' successfully imported ozz persona')
+    return jsonify({"success":True})
         
 @nlu_blueprint.route('/api/upload/<bot_guid>', methods=['POST'])
 def upload(bot_guid):
@@ -523,14 +543,19 @@ def upload(bot_guid):
                 
                 data = json.load(file)
                 load_from_json(data,bot,bot_guid)
+                app.logger.info('POST /api/upload/'+ bot_guid + ' successfully uploaded ozz data')
                 return jsonify({"filename":filename,"type":file.content_type})
             else:
+                app.logger.warning('POST /api/upload/'+ bot_guid + ' not authorized')
                 return jsonify({"error":"Not Authorized"}),401
         else:
+            app.logger.warning('POST /api/upload/'+ bot_guid + ' bot does not exist')
             return jsonify({"error":"Bot doesn't exist"}),404
     elif code == 400:
+        app.logger.warning('POST /api/upload/'+ bot_guid + ' invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('POST /api/upload/'+ bot_guid + ' no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 
@@ -587,38 +612,46 @@ def uploadexcel(bot_guid):
                                             words_json[word][intent_name] = 1
                                     else:
                                         words_json[word] = {intent_name:1}
-                            
-                            if intent:
-                                intent.utterances = questions
-                                intent.responses += answers
-                                intent.patterns = patterns
-                                flag_modified(intent, "utterances")
-                                flag_modified(intent, "responses")
-                                flag_modified(intent, "patterns")
-                                db.session.commit()
-                            else:
-                                name = intent_name
-                                utterances = questions
-                                responses = answers
-                                has_entities = False
-                                intent = Intent(
-                                    name = name,
-                                    bot_guid=bot_guid,
-                                    utterances=utterances,
-                                    has_entities=has_entities,
-                                    responses = responses,
-                                    patterns=patterns
-                                )
-                                db.session.add(intent)
-                                db.session.commit()
+                            try:
+                                if intent:
+                                    intent.utterances = questions
+                                    intent.responses += answers
+                                    intent.patterns = patterns
+                                    flag_modified(intent, "utterances")
+                                    flag_modified(intent, "responses")
+                                    flag_modified(intent, "patterns")
+                                    db.session.commit()
+                                else:
+                                    name = intent_name
+                                    utterances = questions
+                                    responses = answers
+                                    has_entities = False
+                                    intent = Intent(
+                                        name = name,
+                                        bot_guid=bot_guid,
+                                        utterances=utterances,
+                                        has_entities=has_entities,
+                                        responses = responses,
+                                        patterns=patterns
+                                    )
+                                    db.session.add(intent)
+                                    db.session.commit()
+                            except Exception as e:
+                                app.logger.error('POST /api/upload_csv/'+ bot_guid + ' ' + str(e))
+                                return jsonify({"success":False,"errors":str(e)})
+                    app.logger.info('POST /api/upload_csv/'+ bot_guid + ' uploaded bot data from csv')
                     return jsonify({"success":True})
                 else:
+                    app.logger.warning('POST /api/upload_csv/'+ bot_guid + ' not authorized')
                     return jsonify({"error":"Not Authorized"}),401
             else:
+                app.logger.warning('POST /api/upload_csv/'+ bot_guid + ' bot does not exist')
                 return jsonify({"error":"Bot doesn't exist"}),404
         elif code == 400:
+            app.logger.warning('POST /api/upload_csv/'+ bot_guid + ' invalid authorization token')
             return jsonify({"error":"Invalid Authorization Token"}),400
         elif code == 401:
+            app.logger.warning('POST /api/upload_csv/'+ bot_guid + ' no authorization token sent')
             return jsonify({"error":"No Authorization Token Sent"}),401
     return render_template('file.html')
 

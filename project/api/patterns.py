@@ -8,7 +8,7 @@ from flask import Blueprint, jsonify, request, render_template
 
 from project.api.models.intents import Intent 
 from project.api.models.bots import Bot
-from project import db, cache, interpreters, nlp, d
+from project import db, cache, interpreters, nlp, d, app
 from sqlalchemy import exc
 
 from project.config import DevelopmentConfig
@@ -49,6 +49,7 @@ def pattern(bot_guid,intent_name):
                             pat_obj["entities"] = pattern['entities']
                             patterns_obj.append(pat_obj)
                         patterns_obj = sorted(patterns_obj, key=lambda k: k['len'],reverse=True)
+                        app.logger.info('GET /api/intents/'+ bot_guid + '/' + intent_name + '/patterns successfully returned patterns')
                         return jsonify({"patterns":patterns_obj})
                     if request.method == 'POST':
                         post_data = request.get_json()
@@ -66,7 +67,12 @@ def pattern(bot_guid,intent_name):
                         new_obj['len'] = len(new_pattern)
                         pats = [json.dumps(new_obj)] + intent.patterns
                         intent.patterns = [p for p in pats]
-                        db.session.commit()
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            app.logger.error('POST /api/intents/'+ bot_guid + '/' + intent_name + '/patterns ' + str(e))
+                            return jsonify({"success":False,"errors":str(e)})
+                        app.logger.info('POST /api/intents/'+ bot_guid + '/' + intent_name + '/patterns successfully added patterns')
                         return jsonify({"pattern":new_obj})
                     elif request.method == 'PUT':
                         put_data = request.get_json()
@@ -85,7 +91,12 @@ def pattern(bot_guid,intent_name):
                                 pattern["len"] = len(new_pattern)
                             new_patterns.append(json.dumps(pattern))
                         intent.patterns = new_patterns
-                        db.session.commit()
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            app.logger.error('PUT /api/intents/'+ bot_guid + '/' + intent_name + '/patterns ' + str(e))
+                            return jsonify({"success":False,"errors":str(e)})
+                        app.logger.info('GET /api/intents/'+ bot_guid + '/' + intent_name + '/patterns successfully updated patterns')
                         return jsonify({"success":True})
                     elif request.method == 'DELETE':
                         old_pattern = request.args['pattern']
@@ -95,17 +106,27 @@ def pattern(bot_guid,intent_name):
                             if (pattern['string'] != old_pattern):
                                 new_patterns.append(json.dumps(pattern))
                         intent.patterns = new_patterns
-                        db.session.commit()
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            app.logger.error('DELETE /api/intents/'+ bot_guid + '/' + intent_name + '/patterns ' + str(e))
+                            return jsonify({"success":False,"errors":str(e)})
+                        app.logger.info('DELETE /api/intents/'+ bot_guid + '/' + intent_name + '/patterns successfully deleted patterns')
                         return jsonify({"success":True})
                 else:
+                   app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/patterns intent does not exist')
                    return jsonify({"error":"Intent Doesn't exist"}),404 
             else:
+                app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/patterns not authorized')
                 return jsonify({"error":"Not Authorized"}),401
         else:
+            app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/patterns bot does not exist')
             return jsonify({"error":"Bot Doesn't exist"}),404
     elif code == 400:
+        app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/patterns invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/patterns no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 

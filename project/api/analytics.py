@@ -7,7 +7,7 @@ from flask import Blueprint, jsonify, request, render_template
 from project.api.models.analytics import Analytics
 from project.api.models.intents import Intent
 from project.api.models.bots import Bot
-from project import db, cache, interpreters, nlp, d
+from project import db, cache, interpreters, nlp, d, app
 from sqlalchemy import exc
 
 from project.shared.checkAuth import checkAuth
@@ -47,14 +47,20 @@ def analytics(bot_guid):
                         times.append(log.created)
                     avg_resp_time = float("{:.3f}".format(resp_time/calls)) 
                     success_percentage = float("{:.3f}".format((success_count/calls) * 100))
+                    app.logger.info('GET /analytics - analytics response success')
                     return jsonify({"calls":calls,"avg_resp_time":avg_resp_time,"success_percentage":success_percentage,"intent_count":intent_count,"times":times})
                 else:
+                    app.logger.warning('GET /analytics not authorized')
                     return jsonify({"error":"Not Authorized"}),401
             else:
+                app.logger.warning('/analytics not authorized')
                 return jsonify({"error":"Not Authorized"}),401
         else:
+            app.logger.warning('/analytics bot does not exist')
             return jsonify({"error":"Bot Doesn't exist"}),404
     elif code == 400:
+        app.logger.warning('/analytics invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('/analytics no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401

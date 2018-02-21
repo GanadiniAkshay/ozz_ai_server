@@ -2,7 +2,9 @@ import os
 import time
 import spacy
 import redis
+import logging
 
+from logging.handlers import RotatingFileHandler
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -49,14 +51,14 @@ config = os.path.join(os.getcwd(),'project', 'config.json')
 builder = ComponentBuilder(use_cache=True) 
 trainer = Trainer(RasaNLUConfig(config),builder)
 
+# instantiate the app
+app = Flask(__name__)
+
+# enable CORS
+CORS(app)
+
 
 def create_app():
-
-    # instantiate the app
-    app = Flask(__name__)
-
-    # enable CORS
-    CORS(app)
 
     # set config
     app_settings = os.getenv('APP_SETTINGS')
@@ -96,6 +98,28 @@ def create_app():
     app.register_blueprint(analytics_blueprint)
     app.register_blueprint(knowledge_blueprint)
     app.register_blueprint(session_blueprint)
+
+    # initialize the log handler
+    logHandler = RotatingFileHandler('info.log', maxBytes=10240, backupCount=10)
+
+    logHandler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+    
+    # set the log handler level
+    logHandler.setLevel(logging.INFO)
+
+    # set the app logger level
+    app.logger.setLevel(logging.INFO)
+
+    app.logger.addHandler(logHandler)
+    app.logger.info('Server started')
+
+    @app.route("/log")
+    def logTest():
+        app.logger.warning('testing warning log')
+        app.logger.error('testing error log')
+        app.logger.info('testing info log')
+        return "Code Handbook !! Log testing."
 
     @app.route('/demo/steve')
     def steve():

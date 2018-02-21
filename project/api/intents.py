@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request, render_template
 
 from project.api.models.intents import Intent 
 from project.api.models.bots import Bot
-from project import db, cache, interpreters, nlp, d
+from project import db, cache, interpreters, nlp, d, app
 from sqlalchemy import exc
 
 from project.config import DevelopmentConfig
@@ -22,12 +22,15 @@ def intent_is_folder(bot_guid,intent_name):
     if bot:
         intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
         if intent:
+            app.logger.info('GET /api/intents_is_folder/'+bot_guid+ '/'+ intent_name+ ' successfully returned intent is folder status')
             return jsonify({"is_folder": intent.is_folder})
         else:
             folders = Intent.query.filter_by(bot_guid=bot_guid).filter(Intent.name.like(intent_name+".%")).all()
             if folders:
+                app.logger.info('GET /api/intents_is_folder/'+bot_guid+ '/'+ intent_name+ ' successfully returned intent is folder status')
                 return jsonify({"is_folder": True})
             else:
+                app.logger.warning('GET /api/intents_is_folder/'+bot_guid+ '/'+ intent_name+ ' intent does not exist')
                 return jsonify({"error":"Intent Doesn't exist"}),404 
 
 @intents_blueprint.route('/api/intents/<bot_guid>/<intent_name>', methods=['GET','PUT'])
@@ -59,19 +62,25 @@ def intent(bot_guid,intent_name):
                             intent_obj['utterances'].append({"utterance":utterance,"entities":entities})
                         try:
                             db.session.commit()
-                        except Exception as inst:
-                            error = type(inst).__name__
-                            return jsonify({'errors':error}),400
+                        except Exception as e:
+                            app.logger.error('GET /api/intents/'+bot_guid+ '/'+ intent_name+ ' ' + str(e))
+                            return jsonify({"success":False,'errors':str(e)}),400
+                        app.logger.info('GET /api/intents/'+bot_guid+ '/'+ intent_name+ ' successfully returned intent information')
                         return jsonify(intent_obj)
                 else:
+                   app.logger.warning('/api/intents/'+bot_guid+ '/'+ intent_name+ ' intent does not exist')
                    return jsonify({"error":"Intent Doesn't exist"}),404 
             else:
+                app.logger.warning('/api/intents/'+bot_guid+ '/'+ intent_name+ ' not authorized')
                 return jsonify({"error":"Not Authorized"}),401
         else:
+            app.logger.warning('/api/intents/'+bot_guid+ '/'+ intent_name+ ' bot does not exist')
             return jsonify({"error":"Bot Doesn't exist"}),404
     elif code == 400:
+        app.logger.warning('/api/intents/'+bot_guid+ '/'+ intent_name+ ' invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('/api/intents/'+bot_guid+ '/'+ intent_name+ ' authorization token not sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 
@@ -141,6 +150,7 @@ def intents(bot_guid):
                     for folder in empty_folders:
                         if not (folder['name'] in folder_list):
                             intents_obj.append(folder)
+                    app.logger.info('GET /api/intents/'+bot_guid+ ' successfully returned list of intents')
                     return jsonify({"intents":intents_obj})
                 elif request.method == 'POST':
                     post_data = request.get_json()
@@ -179,8 +189,10 @@ def intents(bot_guid):
                         try:
                             db.session.commit()
                         except Exception as e:
-                            return jsonify({"success":False})
-                        return jsonify({"success":"true"})
+                            app.logger.error('POST /api/intents/'+bot_guid+ ' ' + str(e))
+                            return jsonify({"success":False,"errors":str(e)})
+                        app.logger.info('POST /api/intents/'+bot_guid+ ' successfully added intent')
+                        return jsonify({"success":True})
                 elif request.method == 'PUT':
                     put_data = request.get_json()
                     if not put_data:
@@ -188,6 +200,7 @@ def intents(bot_guid):
                             'status': 'fail',
                             'message': 'Invalid payload.'
                         }
+                        app.logger.warning('PUT /api/intents/'+bot_guid+ ' invalid put object')
                         return jsonify(response_object), 400
                     else:
                         old_name = put_data['old_name']
@@ -202,8 +215,10 @@ def intents(bot_guid):
                                 try:
                                     db.session.commit()
                                 except Exception as e:
-                                    return jsonify({"success":"false"})
-                            return jsonify({"success":"true"})
+                                    app.logger.error('PUT /api/intents/'+bot_guid+ ' ' + str(e))
+                                    return jsonify({"success":False})
+                            app.logger.info('PUT /api/intents/'+bot_guid+ ' successfully updated intent')
+                            return jsonify({"success":True})
                         else:
                             intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=old_name).first()
                             if intent:
@@ -212,10 +227,13 @@ def intents(bot_guid):
                                 try:
                                     db.session.commit()
                                 except Exception as e:
-                                    return jsonify({"success":"false"})
-                                return jsonify({"success":"true"})
+                                    app.logger.error('PUT /api/intents/'+bot_guid+ ' ' + str(e))
+                                    return jsonify({"success":False})
+                                app.logger.info('GET /api/intents/'+bot_guid+ ' successfully updated intent')
+                                return jsonify({"success":True})
                             else:
-                                return jsonify({"success":"false"})
+                                app.logger.warning('PUT /api/intents/'+bot_guid+ ' intent does not exist')
+                                return jsonify({"success":False,"errors":"Intent doesn't exist"})
                 elif request.method == 'DELETE':
                     intent_name = request.args['intent']
                     if intent_name[0] == '.':
@@ -226,8 +244,10 @@ def intents(bot_guid):
                             query.delete(synchronize_session=False)
                             db.session.commit()
                         except Exception as e:
-                            return jsonify({"success":"false"})
-                        return jsonify({"success":"true"})
+                            app.logger.error('DELETE /api/intents/'+bot_guid+ ' ' + str(e))
+                            return jsonify({"success":False,"errors":str(e)})
+                        app.logger.info('DELETE /api/intents/'+bot_guid+ ' successfully deleted intent')
+                        return jsonify({"success":True})
                     else:
                         intent = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent_name).first()
                         if intent:
@@ -235,13 +255,18 @@ def intents(bot_guid):
                             try:
                                 db.session.commit()
                             except Exception as e:
-                                return jsonify({"success":"false"})
-                            return jsonify({"success":"true"})
+                                app.logger.error('DELETE /api/intents/'+bot_guid+ ' ' + str(e))
+                                return jsonify({"success":False,"errors":str(e)})
+                            app.logger.info('DELETE /api/intents/'+bot_guid+ ' successfully deleted intent')
+                            return jsonify({"success":True})
                         else:
-                            return jsonify({"success":"false"})
+                            app.logger.warning('DELETE /api/intents/'+bot_guid+ ' intent does not exist')
+                            return jsonify({"success":False,"errors":"intent doesn't exist"})
     elif code == 400:
+        app.logger.warning('/api/intents/'+bot_guid+ ' invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('/api/intents/'+bot_guid+ ' no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 
@@ -268,18 +293,24 @@ def folders(bot_guid):
                             query.delete(synchronize_session=False)
                         db.session.commit()
                     except Exception as e:
-                        print(e)
-                        return jsonify({"success":"false"})
-                    return jsonify({"success":"true"})
+                        app.logger.error('DELETE /api/folders/'+bot_guid+ ' ' + str(e))
+                        return jsonify({"success":False,"errors":str(e)})
+                    app.logger.info('DELETE /api/folders/'+bot_guid+ ' successfully deleted folder')
+                    return jsonify({"success":True})
                 else:
+                    app.logger.warning('/api/folders/'+bot_guid+ ' method not allowed')
                     return jsonify({"error":"Method Not Allowed"}),405
             else:
+                app.logger.warning('/api/folders/'+bot_guid+ ' not authorized')
                 return jsonify({"error":"Not Authorized"}),401
         else:
+            app.logger.warning('/api/folders/'+bot_guid+ ' bot not found')
             return jsonify({"error":"Bot Not Found"}),404
     elif code == 400:
+        app.logger.warning('/api/folders/'+bot_guid+ ' invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('/api/folders/'+bot_guid+ ' no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
 
 

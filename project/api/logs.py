@@ -8,7 +8,7 @@ from project.api.models.logs import Logs
 from sqlalchemy import exc
 
 from project.config import DevelopmentConfig
-from project import db
+from project import db, app
 from project.keys import super_secret
 
 logs_blueprint = Blueprint('logs', __name__, template_folder='./templates')
@@ -31,8 +31,9 @@ def logs():
         db.session.add(log)
         db.session.commit()
     except Exception as e:
-        print(e)
-        return jsonify({"success":"false"})
-    return jsonify({"success":"true"})
+        app.logger.error('POST /api/logs/ '+ str(e))
+        return jsonify({"success":False,"error":str(e)})
+    app.logger.info('POST /api/logs/ successfully added logs')
+    return jsonify({"success":True})
                    
 

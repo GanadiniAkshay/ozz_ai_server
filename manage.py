@@ -18,8 +18,6 @@ from flask_migrate import MigrateCommand
 app = create_app()
 manager = Manager(app)
 
-
-
 user_tsv_file = 'users.tsv'
 bots_tsv_file = 'bots.tsv'
 

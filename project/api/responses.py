@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request, render_template
 
 from project.api.models.intents import Intent 
 from project.api.models.bots import Bot
-from project import db, cache, interpreters, nlp, d
+from project import db, cache, interpreters, nlp, d, app
 from sqlalchemy import exc
 
 from project.config import DevelopmentConfig
@@ -40,14 +40,24 @@ def response(bot_guid,intent_name):
                         else:
                             resps = [new_response] + intent.responses
                             intent.responses = [r for r in resps]
-                            db.session.commit()
+                            try:
+                                db.session.commit()
+                            except Exception as e:
+                                app.logger.error('POST /api/intents/'+ bot_guid + '/' + intent_name + '/responses ' + str(e))
+                                return jsonify({"success":False,"errors":str(e)})
+                            app.logger.info('POST /api/intents/'+ bot_guid + '/' + intent_name + '/responses successfully added response')
                             return jsonify({"success":True})
                     elif request.method == 'PUT':
                         put_data = request.get_json()
                         old_response = put_data['old_response']
                         new_response = put_data['value']
                         intent.responses = [new_response if u == old_response else u for u in intent.responses]
-                        db.session.commit()
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            app.logger.error('PUT /api/intents/'+ bot_guid + '/' + intent_name + '/responses ' + str(e))
+                            return jsonify({"success":False,"errors":str(e)})
+                        app.logger.info('PUT /api/intents/'+ bot_guid + '/' + intent_name + '/responses successfully updated response')
                         return jsonify({"success":True})
                     elif request.method == 'DELETE':
                         old_response = request.args['response']
@@ -56,12 +66,20 @@ def response(bot_guid,intent_name):
                             if (response != old_response):
                                 new_responses.append(response)
                         intent.responses = new_responses
-                        db.session.commit()
+                        try:
+                            db.session.commit()
+                        except Exception as e:
+                            app.logger.error('DELETE /api/intents/'+ bot_guid + '/' + intent_name + '/responses ' + str(e))
+                            return jsonify({"success":False,"errors":str(e)})
+                        app.logger.info('DELETE /api/intents/'+ bot_guid + '/' + intent_name + '/responses successfully deleted response')
                         return jsonify({"success":True})
                 else:
-                   return jsonify({"error":"Intent Doesn't exist"}),404 
+                    app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/responses intent does not exist')
+                    return jsonify({"error":"Intent Doesn't exist"}),404 
     elif code == 400:
+        app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/responses invalid authorization token')
         return jsonify({"error":"Invalid Authorization Token"}),400
     elif code == 401:
+        app.logger.warning('/api/intents/'+ bot_guid + '/' + intent_name + '/responses no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
 
