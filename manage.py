@@ -1,9 +1,11 @@
 import unittest
 import csv
+import redis
+import os
 
 from flask_script import Manager
 
-from project import create_app, db
+from project import create_app, db, redis_db, q
 from project.api.models.users import User
 from project.api.models.bots import Bot
 from project.api.models.intents import Intent
@@ -14,6 +16,8 @@ from project.api.models.logs import Logs
 from project.api.models.knowledge import Knowledge
 
 from flask_migrate import MigrateCommand
+
+from rq import Connection, Worker
 
 app = create_app()
 manager = Manager(app)
@@ -61,6 +65,17 @@ def add_all_users():
 
             print("Creating account for " + name)
             add_user(name,email,hashed)
+
+@manager.command
+def runworker():
+    # instantiate the redis db
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    REDIS_PORT = os.getenv('REDIS_PORT')
+    redis_db = redis.StrictRedis(host=REDIS_HOST,port=REDIS_PORT)
+
+    with Connection(redis_db):
+        worker = Worker(["default"])
+        worker.work()
 
 @manager.command
 def connect_bots():
