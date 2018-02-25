@@ -12,7 +12,7 @@ from project.api.models.intents import Intent
 from project.api.models.entities import Entity
 from project.api.models.analytics import Analytics
 from project.api.models.knowledge import Knowledge
-from project import db, cache, interpreters, trainer, nlp, d, redis_db, stopWords, app
+from project import db, cache, interpreters, trainer, nlp, d, q, redis_db, stopWords, app
 from sqlalchemy import exc
 from sqlalchemy.orm.attributes import flag_modified
 
@@ -284,7 +284,6 @@ def train(bot_guid):
     if code == 200:
         bot = Bot.query.filter_by(bot_guid=bot_guid).first()
         if bot:
-            print('here')
             if bot.user_id == user_id:
                 for key in redis_db.scan_iter(match=bot_guid+'_*'):
                     redis_db.delete(key)
@@ -304,7 +303,6 @@ def train(bot_guid):
                                     }
                             }
                 intents = Intent.query.filter_by(bot_guid=bot_guid).filter(~Intent.name.like('eliza.%')).all()
-                print(intents)
                 entities = Entity.query.filter_by(bot_guid=bot_guid)
                 ent_data = {}
                 words_json = {}
@@ -390,34 +388,12 @@ def train(bot_guid):
                         #     if type(val) == dict:
                         #         child_count += 1
                         # print(child_count)
-                try:
-                    print(rasa_data['rasa_nlu_data']['common_examples'])
-                    with open('data.json', 'w') as outfile:
-                        json.dump(rasa_data, outfile)
-                    config = './project/config.json'
-                    user_path = os.path.join(os.getcwd(),'data',str(user_id))
-                    bot_path = os.path.join(user_path,bot_guid)
-                    
-                    training_data = load_train_data(rasa_data)
-                    trainer.train(training_data)
-                    model_directory = trainer.persist('/var/lib/ozz/models')
-                    print(model_directory)
-
-                    current_model = bot.active_model
-
-                    if current_model and current_model != "":
-                        global interpreters
-                        interpreters.pop(current_model,0)
-                        if os.path.exists(current_model):
-                            shutil.rmtree(current_model)
-
-                    bot.words = json.dumps(words_json)
-                    bot.active_model = str(model_directory)
-                    interpreters[model_directory] = NLUParser(model_directory,config)
-                    db.session.commit()
-                except Exception as e:
-                    app.logger.error('GET /api/train/'+ bot_guid + ' ' + str(e))
-                    return jsonify({"success":False,"error":str(e)})
+                #print(rasa_data['rasa_nlu_data']['common_examples'])
+                job = q.enqueue(train_bot,bot,rasa_data,words_json)
+                print(job.get_id())
+                app.logger.info('GET /api/train/'+ bot_guid + ' bot training started')
+                return jsonify({"success":True})
+                #train_bot(bot,rasa_data, words_json)
             else:
                 app.logger.warning('GET /api/train/'+ bot_guid + ' not authorized')
                 return jsonify({"error":"Not Authorized"}),401
@@ -430,8 +406,6 @@ def train(bot_guid):
     elif code == 401:
         app.logger.warning('GET /api/train/'+ bot_guid + ' no authorization token sent')
         return jsonify({"error":"No Authorization Token Sent"}),401
-    app.logger.info('GET /api/train/'+ bot_guid + ' bot successfully trained')
-    return jsonify({"success":True})
 
 @nlu_blueprint.route('/api/retrain',methods=['GET'])
 def retrain():
@@ -650,6 +624,25 @@ def uploadexcel(bot_guid):
             return jsonify({"error":"No Authorization Token Sent"}),401
     return render_template('file.html')
 
+
+def train_bot(bot,rasa_data, words_json):
+    try:
+        config = './project/config.json'
+        
+        training_data = load_train_data(rasa_data)
+        trainer.train(training_data)
+        model_directory = trainer.persist('/var/lib/ozz/models')
+
+        print(model_directory)
+
+        result = {}
+        result["words"] = json.dumps(words_json)
+        result["active_model"] = str(model_directory)
+        result["bot_guid"] = bot.bot_guid
+
+        return json.dumps(result)
+    except Exception as e:
+        app.logger.error('GET /api/train/'+ bot.bot_guid + ' ' + str(e))
 
 def generate(string,sub_string,values, intent_name, entities):
     new_values = []

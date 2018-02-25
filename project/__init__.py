@@ -4,6 +4,7 @@ import spacy
 import redis
 import logging
 import requests
+import json
 import rq_dashboard
 
 from logging.handlers import RotatingFileHandler
@@ -40,6 +41,8 @@ nlp = spacy.load('en')
 # set up duckling
 d = Duckling()
 d.load()
+# set up redis queue
+q = Queue(connection=redis_db)
 
 
 interpreters = {}
@@ -89,9 +92,6 @@ def create_app():
     # set up extensions
     db.init_app(app)
     migrate.init_app(app, db)
-
-    # set up redis queue
-    q = Queue(connection=redis_db)
 
     # register blueprints
     from project.api.users import users_blueprint
@@ -151,6 +151,25 @@ def create_app():
         redis_db.expire(job_name, 19500)
         result = q.enqueue(count_words_at_url, 'http://nvie.com')
         return "task started"
+
+    @app.route('/status/<job_id>')
+    def job_status(job_id):
+        job = q.fetch_job(job_id)
+        if job is None:
+            response = {'status': 'unknown'}
+        else:
+            status = job.get_status()
+            if status == 'finished':
+                result = json.loads(job.result)
+            else:
+                result = None
+            response = {
+                'status': status,
+                'result': result
+            }
+            if job.is_failed:
+                response['message'] = job.exc_info.strip().split('\n')[-1]
+        return jsonify(response)
 
     @app.route("/log")
     def logTest():
