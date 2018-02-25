@@ -12,7 +12,7 @@ from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from rq import Queue
+from rq import Queue, Connection, Worker
 
 from rasa_nlu.config import RasaNLUConfig
 from rasa_nlu.model import Trainer
@@ -88,6 +88,7 @@ def create_app():
         WEB_BACKGROUND = "black",
         DELETE_JOBS = False)
     app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
+
 
     # set up extensions
     db.init_app(app)
