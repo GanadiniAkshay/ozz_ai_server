@@ -3,12 +3,15 @@ import time
 import spacy
 import redis
 import logging
+import requests
+import rq_dashboard
 
 from logging.handlers import RotatingFileHandler
 from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from rq import Queue
 
 from rasa_nlu.config import RasaNLUConfig
 from rasa_nlu.model import Trainer
@@ -58,15 +61,28 @@ app = Flask(__name__)
 CORS(app)
 
 
+def count_words_at_url(url):
+    resp = requests.get(url)
+    print(len(resp.text.split()))
+    return len(resp.text.split())
+
+
 def create_app():
 
     # set config
     app_settings = os.getenv('APP_SETTINGS')
     app.config.from_object(app_settings)
 
+    # set up rq dashboard
+    app.config.from_object(rq_dashboard.default_settings)
+    app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
+
     # set up extensions
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # set up redis queue
+    q = Queue(connection=redis_db)
 
     # register blueprints
     from project.api.users import users_blueprint
@@ -116,6 +132,16 @@ def create_app():
 
     app.logger.addHandler(logHandler)
     app.logger.info('Server started')
+
+    @app.route('/task/<job_name>')
+    def start_task(job_name):
+        event = {}
+        event["url"] = "http://nvie.com"
+        redis_db.delete(job_name) #remove old keys
+        redis_db.hmset(job_name, event)
+        redis_db.expire(job_name, 19500)
+        result = q.enqueue(count_words_at_url, 'http://nvie.com')
+        return "task started"
 
     @app.route("/log")
     def logTest():

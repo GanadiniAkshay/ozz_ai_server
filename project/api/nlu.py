@@ -392,6 +392,8 @@ def train(bot_guid):
                         # print(child_count)
                 try:
                     print(rasa_data['rasa_nlu_data']['common_examples'])
+                    with open('data.json', 'w') as outfile:
+                        json.dump(rasa_data, outfile)
                     config = './project/config.json'
                     user_path = os.path.join(os.getcwd(),'data',str(user_id))
                     bot_path = os.path.join(user_path,bot_guid)
