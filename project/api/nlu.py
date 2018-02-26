@@ -627,18 +627,24 @@ def uploadexcel(bot_guid):
 
 def train_bot(bot,rasa_data, words_json):
     try:
+        start_time = time.time()
         config = './project/config.json'
         
         training_data = load_train_data(rasa_data)
         trainer.train(training_data)
         model_directory = trainer.persist('/var/lib/ozz/models')
 
+        end_time = time.time()
+        runtime = str(end_time - start_time)
+
         print(model_directory)
+        print(runtime)
 
         result = {}
         result["words"] = json.dumps(words_json)
         result["active_model"] = str(model_directory)
         result["bot_guid"] = bot.bot_guid
+        result["train_time"] = runtime
 
         return json.dumps(result)
     except Exception as e:

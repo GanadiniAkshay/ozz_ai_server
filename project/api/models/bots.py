@@ -15,6 +15,7 @@ class Bot(db.Model):
     name = db.Column(db.String())
     platforms = db.Column(JSON)
     active_model = db.Column(db.String())
+    last_trained = db.Column(db.DateTime(timezone=False))
     team = db.Column(JSON)
     words = db.Column(db.String())
     persona = db.Column(db.Integer, default=-1)
@@ -28,6 +29,7 @@ class Bot(db.Model):
         self.platforms = platforms
         self.created = datetime.datetime.utcnow()
         self.used = datetime.datetime.utcnow()
+        self.last_trained = None
         self.active_model = ""
         self.words = words
         self.persona = persona

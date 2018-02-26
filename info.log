@@ -1,2 +1,0 @@
-2018-02-21 22:26:20,641 INFO: GET /api/bots list of bots returned successfully [in /Users/akshaykulkarni/Documents/ozz/code/ozz_nlp/project/api/bots.py:118]
-2018-02-21 22:26:20,813 INFO: PUT /api/bots/5bfa11ca-14d4-11e8-9fb9-a4d18ce57784 bot updated successfully [in /Users/akshaykulkarni/Documents/ozz/code/ozz_nlp/project/api/bots.py:69]
