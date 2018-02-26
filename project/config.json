@@ -1,6 +1,6 @@
 {
     "pipeline": "spacy_sklearn",
-    "num_threads": 4,
+    "num_threads": 2,
     "path": "/var/lib/ozz/models", 
     "log_level":"ERROR"
 }
