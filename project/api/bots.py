@@ -112,6 +112,7 @@ def bots():
                 bot_obj['user_id'] = bot.user_id
                 bot_obj['name'] = bot.name
                 bot_obj['persona'] = bot.persona
+                bot_obj['last_trained'] = bot.last_trained
                 bot_obj['used'] = (bot.used - datetime.datetime(1970, 1, 1)).total_seconds()
 
                 bots_obj.append(bot_obj)

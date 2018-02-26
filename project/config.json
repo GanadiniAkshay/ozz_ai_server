@@ -1,7 +1,6 @@
 {
     "pipeline": "spacy_sklearn",
-    "num_threads": 1,
-    "mitie_file": "./data/total_word_feature_extractor.dat", 
+    "num_threads": 4,
     "path": "/var/lib/ozz/models", 
     "log_level":"ERROR"
 }

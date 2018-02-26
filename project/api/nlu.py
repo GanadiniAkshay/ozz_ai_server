@@ -23,7 +23,6 @@ from project.helpers.eliza import Eliza
 from rasa_nlu.config import RasaNLUConfig
 from rasa_nlu.model import Trainer, Metadata, Interpreter
 
-import mitie
 import os
 import json
 import sys
