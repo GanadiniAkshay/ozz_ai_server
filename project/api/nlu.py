@@ -389,9 +389,10 @@ def train(bot_guid):
                         # print(child_count)
                 #print(rasa_data['rasa_nlu_data']['common_examples'])
                 job = q.enqueue(train_bot,bot,rasa_data,words_json)
-                print(job.get_id())
+                job_id = job.get_id()
+                print(job_id)
                 app.logger.info('GET /api/train/'+ bot_guid + ' bot training started')
-                return jsonify({"success":True})
+                return jsonify({"success":True, "job_id":job_id})
                 #train_bot(bot,rasa_data, words_json)
             else:
                 app.logger.warning('GET /api/train/'+ bot_guid + ' not authorized')

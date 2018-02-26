@@ -1,0 +1,1121 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/7.7.1_1/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '--save',
+1 verbose cli   'axios-request-handler' ]
+2 info using npm@4.1.2
+3 info using node@v7.7.1
+4 verbose config Skipping project config: /Users/akshaykulkarni/.npmrc. (matches userconfig)
+5 silly loadCurrentTree Starting
+6 silly install loadCurrentTree
+7 silly install readLocalPackageData
+8 silly fetchPackageMetaData axios-request-handler
+9 silly fetchNamedPackageData axios-request-handler
+10 silly mapToRegistry name axios-request-handler
+11 silly mapToRegistry using default registry
+12 silly mapToRegistry registry https://registry.npmjs.org/
+13 silly mapToRegistry data Result {
+13 silly mapToRegistry   raw: 'axios-request-handler',
+13 silly mapToRegistry   scope: null,
+13 silly mapToRegistry   escapedName: 'axios-request-handler',
+13 silly mapToRegistry   name: 'axios-request-handler',
+13 silly mapToRegistry   rawSpec: '',
+13 silly mapToRegistry   spec: 'latest',
+13 silly mapToRegistry   type: 'tag' }
+14 silly mapToRegistry uri https://registry.npmjs.org/axios-request-handler
+15 verbose request uri https://registry.npmjs.org/axios-request-handler
+16 verbose request no auth needed
+17 info attempt registry request try #1 at 9:51:42 AM
+18 verbose request using bearer token for auth
+19 verbose request id db008114c2d33453
+20 http request GET https://registry.npmjs.org/axios-request-handler
+21 http 200 https://registry.npmjs.org/axios-request-handler
+22 verbose headers { 'content-type': 'application/json; charset=UTF-8',
+22 verbose headers   server: 'UploadServer',
+22 verbose headers   'cache-control': 'max-age=300',
+22 verbose headers   'last-modified': 'Tue, 2 Jan 2018 14:28:41 GMT',
+22 verbose headers   etag: '"5a4b9719-336a"',
+22 verbose headers   'x-npm-region': 'Asia',
+22 verbose headers   'content-encoding': 'gzip',
+22 verbose headers   'content-length': '3013',
+22 verbose headers   'accept-ranges': 'bytes',
+22 verbose headers   date: 'Mon, 26 Feb 2018 04:21:43 GMT',
+22 verbose headers   via: '1.1 varnish',
+22 verbose headers   age: '0',
+22 verbose headers   connection: 'keep-alive',
+22 verbose headers   'x-served-by': 'cache-sin18028-SIN',
+22 verbose headers   'x-cache': 'MISS',
+22 verbose headers   'x-cache-hits': '0',
+22 verbose headers   'x-timer': 'S1519618903.982661,VS0,VE453',
+22 verbose headers   vary: 'Accept-Encoding, Accept' }
+23 silly get cb [ 200,
+23 silly get   { 'content-type': 'application/json; charset=UTF-8',
+23 silly get     server: 'UploadServer',
+23 silly get     'cache-control': 'max-age=300',
+23 silly get     'last-modified': 'Tue, 2 Jan 2018 14:28:41 GMT',
+23 silly get     etag: '"5a4b9719-336a"',
+23 silly get     'x-npm-region': 'Asia',
+23 silly get     'content-encoding': 'gzip',
+23 silly get     'content-length': '3013',
+23 silly get     'accept-ranges': 'bytes',
+23 silly get     date: 'Mon, 26 Feb 2018 04:21:43 GMT',
+23 silly get     via: '1.1 varnish',
+23 silly get     age: '0',
+23 silly get     connection: 'keep-alive',
+23 silly get     'x-served-by': 'cache-sin18028-SIN',
+23 silly get     'x-cache': 'MISS',
+23 silly get     'x-cache-hits': '0',
+23 silly get     'x-timer': 'S1519618903.982661,VS0,VE453',
+23 silly get     vary: 'Accept-Encoding, Accept' } ]
+24 verbose get saving axios-request-handler to /Users/akshaykulkarni/.npm/registry.npmjs.org/axios-request-handler/.cache.json
+25 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+26 silly install normalizeTree
+27 silly loadCurrentTree Finishing
+28 silly loadIdealTree Starting
+29 silly install loadIdealTree
+30 silly cloneCurrentTree Starting
+31 silly install cloneCurrentTreeToIdealTree
+32 silly cloneCurrentTree Finishing
+33 silly loadShrinkwrap Starting
+34 silly install loadShrinkwrap
+35 silly loadShrinkwrap Finishing
+36 silly loadAllDepsIntoIdealTree Starting
+37 silly install loadAllDepsIntoIdealTree
+38 silly resolveWithNewModule axios-request-handler@1.0.3 checking installable status
+39 silly cache add args [ 'axios-request-handler', null ]
+40 verbose cache add spec axios-request-handler
+41 silly cache add parsed spec Result {
+41 silly cache add   raw: 'axios-request-handler',
+41 silly cache add   scope: null,
+41 silly cache add   escapedName: 'axios-request-handler',
+41 silly cache add   name: 'axios-request-handler',
+41 silly cache add   rawSpec: '',
+41 silly cache add   spec: 'latest',
+41 silly cache add   type: 'tag' }
+42 silly addNamed axios-request-handler@latest
+43 verbose addNamed "latest" is being treated as a dist-tag for axios-request-handler
+44 info addNameTag [ 'axios-request-handler', 'latest' ]
+45 silly mapToRegistry name axios-request-handler
+46 silly mapToRegistry using default registry
+47 silly mapToRegistry registry https://registry.npmjs.org/
+48 silly mapToRegistry data Result {
+48 silly mapToRegistry   raw: 'axios-request-handler',
+48 silly mapToRegistry   scope: null,
+48 silly mapToRegistry   escapedName: 'axios-request-handler',
+48 silly mapToRegistry   name: 'axios-request-handler',
+48 silly mapToRegistry   rawSpec: '',
+48 silly mapToRegistry   spec: 'latest',
+48 silly mapToRegistry   type: 'tag' }
+49 silly mapToRegistry uri https://registry.npmjs.org/axios-request-handler
+50 verbose addNameTag registry:https://registry.npmjs.org/axios-request-handler not in flight; fetching
+51 verbose get https://registry.npmjs.org/axios-request-handler not expired, no request
+52 silly addNameTag next cb for axios-request-handler with tag latest
+53 silly addNamed axios-request-handler@1.0.3
+54 verbose addNamed "1.0.3" is a plain semver version for axios-request-handler
+55 silly mapToRegistry name axios-request-handler
+56 silly mapToRegistry using default registry
+57 silly mapToRegistry registry https://registry.npmjs.org/
+58 silly mapToRegistry data Result {
+58 silly mapToRegistry   raw: 'axios-request-handler',
+58 silly mapToRegistry   scope: null,
+58 silly mapToRegistry   escapedName: 'axios-request-handler',
+58 silly mapToRegistry   name: 'axios-request-handler',
+58 silly mapToRegistry   rawSpec: '',
+58 silly mapToRegistry   spec: 'latest',
+58 silly mapToRegistry   type: 'tag' }
+59 silly mapToRegistry uri https://registry.npmjs.org/axios-request-handler
+60 verbose addRemoteTarball https://registry.npmjs.org/axios-request-handler/-/axios-request-handler-1.0.3.tgz not in flight; adding
+61 verbose addRemoteTarball [ 'https://registry.npmjs.org/axios-request-handler/-/axios-request-handler-1.0.3.tgz',
+61 verbose addRemoteTarball   'ea1913957a6dd2de58ac8bb1d6feba2563e7ce40' ]
+62 info retry fetch attempt 1 at 9:51:43 AM
+63 info attempt registry request try #1 at 9:51:43 AM
+64 http fetch GET https://registry.npmjs.org/axios-request-handler/-/axios-request-handler-1.0.3.tgz
+65 verbose request using bearer token for auth
+66 http fetch 200 https://registry.npmjs.org/axios-request-handler/-/axios-request-handler-1.0.3.tgz
+67 silly fetchAndShaCheck shasum ea1913957a6dd2de58ac8bb1d6feba2563e7ce40
+68 verbose addTmpTarball /var/folders/gk/nxsbz2k506xbb_rd80ndyq7m0000gn/T/npm-10231-4b1b8fc0/registry.npmjs.org/axios-request-handler/-/axios-request-handler-1.0.3.tgz not in flight; adding
+69 verbose addTmpTarball already have metadata; skipping unpack for axios-request-handler@1.0.3
+70 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+71 silly cache afterAdd axios-request-handler@1.0.3
+72 verbose afterAdd /Users/akshaykulkarni/.npm/axios-request-handler/1.0.3/package/package.json not in flight; writing
+73 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+74 verbose afterAdd /Users/akshaykulkarni/.npm/axios-request-handler/1.0.3/package/package.json written
+75 silly fetchNamedPackageData axios
+76 silly mapToRegistry name axios
+77 silly mapToRegistry using default registry
+78 silly mapToRegistry registry https://registry.npmjs.org/
+79 silly mapToRegistry data Result {
+79 silly mapToRegistry   raw: 'axios',
+79 silly mapToRegistry   scope: null,
+79 silly mapToRegistry   escapedName: 'axios',
+79 silly mapToRegistry   name: 'axios',
+79 silly mapToRegistry   rawSpec: '',
+79 silly mapToRegistry   spec: 'latest',
+79 silly mapToRegistry   type: 'tag' }
+80 silly mapToRegistry uri https://registry.npmjs.org/axios
+81 verbose request uri https://registry.npmjs.org/axios
+82 verbose request no auth needed
+83 info attempt registry request try #1 at 9:51:43 AM
+84 verbose request using bearer token for auth
+85 verbose etag "5a846635-19218"
+86 verbose lastModified Wed, 14 Feb 2018 16:39:17 GMT
+87 http request GET https://registry.npmjs.org/axios
+88 http 200 https://registry.npmjs.org/axios
+89 verbose headers { 'content-type': 'application/json; charset=UTF-8',
+89 verbose headers   server: 'UploadServer',
+89 verbose headers   'cache-control': 'max-age=300',
+89 verbose headers   'last-modified': 'Fri, 23 Feb 2018 2:23:19 GMT',
+89 verbose headers   etag: '"5a8f7b17-19f1b"',
+89 verbose headers   'x-npm-region': 'Asia',
+89 verbose headers   'content-encoding': 'gzip',
+89 verbose headers   'content-length': '16565',
+89 verbose headers   'accept-ranges': 'bytes',
+89 verbose headers   date: 'Mon, 26 Feb 2018 04:21:43 GMT',
+89 verbose headers   via: '1.1 varnish',
+89 verbose headers   age: '5995',
+89 verbose headers   connection: 'keep-alive',
+89 verbose headers   'x-served-by': 'cache-sin18028-SIN',
+89 verbose headers   'x-cache': 'HIT',
+89 verbose headers   'x-cache-hits': '29',
+89 verbose headers   'x-timer': 'S1519618904.844914,VS0,VE0',
+89 verbose headers   vary: 'Accept-Encoding, Accept' }
+90 silly get cb [ 200,
+90 silly get   { 'content-type': 'application/json; charset=UTF-8',
+90 silly get     server: 'UploadServer',
+90 silly get     'cache-control': 'max-age=300',
+90 silly get     'last-modified': 'Fri, 23 Feb 2018 2:23:19 GMT',
+90 silly get     etag: '"5a8f7b17-19f1b"',
+90 silly get     'x-npm-region': 'Asia',
+90 silly get     'content-encoding': 'gzip',
+90 silly get     'content-length': '16565',
+90 silly get     'accept-ranges': 'bytes',
+90 silly get     date: 'Mon, 26 Feb 2018 04:21:43 GMT',
+90 silly get     via: '1.1 varnish',
+90 silly get     age: '5995',
+90 silly get     connection: 'keep-alive',
+90 silly get     'x-served-by': 'cache-sin18028-SIN',
+90 silly get     'x-cache': 'HIT',
+90 silly get     'x-cache-hits': '29',
+90 silly get     'x-timer': 'S1519618904.844914,VS0,VE0',
+90 silly get     vary: 'Accept-Encoding, Accept' } ]
+91 verbose get saving axios to /Users/akshaykulkarni/.npm/registry.npmjs.org/axios/.cache.json
+92 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+93 silly pickManifestFromRegistryMetadata spec >=0.16.2 <0.17.0 tag latest versions [ '0.1.0',
+93 silly pickManifestFromRegistryMetadata   '0.2.0',
+93 silly pickManifestFromRegistryMetadata   '0.2.1',
+93 silly pickManifestFromRegistryMetadata   '0.2.2',
+93 silly pickManifestFromRegistryMetadata   '0.3.0',
+93 silly pickManifestFromRegistryMetadata   '0.3.1',
+93 silly pickManifestFromRegistryMetadata   '0.4.0',
+93 silly pickManifestFromRegistryMetadata   '0.4.1',
+93 silly pickManifestFromRegistryMetadata   '0.4.2',
+93 silly pickManifestFromRegistryMetadata   '0.5.0',
+93 silly pickManifestFromRegistryMetadata   '0.5.1',
+93 silly pickManifestFromRegistryMetadata   '0.5.2',
+93 silly pickManifestFromRegistryMetadata   '0.5.3',
+93 silly pickManifestFromRegistryMetadata   '0.5.4',
+93 silly pickManifestFromRegistryMetadata   '0.6.0',
+93 silly pickManifestFromRegistryMetadata   '0.7.0',
+93 silly pickManifestFromRegistryMetadata   '0.8.0',
+93 silly pickManifestFromRegistryMetadata   '0.8.1',
+93 silly pickManifestFromRegistryMetadata   '0.9.0',
+93 silly pickManifestFromRegistryMetadata   '0.9.1',
+93 silly pickManifestFromRegistryMetadata   '0.10.0',
+93 silly pickManifestFromRegistryMetadata   '0.11.0',
+93 silly pickManifestFromRegistryMetadata   '0.11.1',
+93 silly pickManifestFromRegistryMetadata   '0.12.0',
+93 silly pickManifestFromRegistryMetadata   '0.13.0',
+93 silly pickManifestFromRegistryMetadata   '0.13.1',
+93 silly pickManifestFromRegistryMetadata   '0.14.0',
+93 silly pickManifestFromRegistryMetadata   '0.15.0',
+93 silly pickManifestFromRegistryMetadata   '0.15.1',
+93 silly pickManifestFromRegistryMetadata   '0.15.2',
+93 silly pickManifestFromRegistryMetadata   '0.15.3',
+93 silly pickManifestFromRegistryMetadata   '0.16.0',
+93 silly pickManifestFromRegistryMetadata   '0.16.1',
+93 silly pickManifestFromRegistryMetadata   '0.16.2',
+93 silly pickManifestFromRegistryMetadata   '0.17.0',
+93 silly pickManifestFromRegistryMetadata   '0.17.1',
+93 silly pickManifestFromRegistryMetadata   '0.18.0' ]
+94 silly resolveWithNewModule axios@0.16.2 checking installable status
+95 silly cache add args [ 'axios@^0.16.2', null ]
+96 verbose cache add spec axios@^0.16.2
+97 silly cache add parsed spec Result {
+97 silly cache add   raw: 'axios@^0.16.2',
+97 silly cache add   scope: null,
+97 silly cache add   escapedName: 'axios',
+97 silly cache add   name: 'axios',
+97 silly cache add   rawSpec: '^0.16.2',
+97 silly cache add   spec: '>=0.16.2 <0.17.0',
+97 silly cache add   type: 'range' }
+98 silly addNamed axios@>=0.16.2 <0.17.0
+99 verbose addNamed ">=0.16.2 <0.17.0" is a valid semver range for axios
+100 silly addNameRange { name: 'axios', range: '>=0.16.2 <0.17.0', hasData: false }
+101 silly mapToRegistry name axios
+102 silly mapToRegistry using default registry
+103 silly mapToRegistry registry https://registry.npmjs.org/
+104 silly mapToRegistry data Result {
+104 silly mapToRegistry   raw: 'axios',
+104 silly mapToRegistry   scope: null,
+104 silly mapToRegistry   escapedName: 'axios',
+104 silly mapToRegistry   name: 'axios',
+104 silly mapToRegistry   rawSpec: '',
+104 silly mapToRegistry   spec: 'latest',
+104 silly mapToRegistry   type: 'tag' }
+105 silly mapToRegistry uri https://registry.npmjs.org/axios
+106 verbose addNameRange registry:https://registry.npmjs.org/axios not in flight; fetching
+107 verbose get https://registry.npmjs.org/axios not expired, no request
+108 silly addNameRange number 2 { name: 'axios', range: '>=0.16.2 <0.17.0', hasData: true }
+109 silly addNameRange versions [ 'axios',
+109 silly addNameRange   [ '0.1.0',
+109 silly addNameRange     '0.2.0',
+109 silly addNameRange     '0.2.1',
+109 silly addNameRange     '0.2.2',
+109 silly addNameRange     '0.3.0',
+109 silly addNameRange     '0.3.1',
+109 silly addNameRange     '0.4.0',
+109 silly addNameRange     '0.4.1',
+109 silly addNameRange     '0.4.2',
+109 silly addNameRange     '0.5.0',
+109 silly addNameRange     '0.5.1',
+109 silly addNameRange     '0.5.2',
+109 silly addNameRange     '0.5.3',
+109 silly addNameRange     '0.5.4',
+109 silly addNameRange     '0.6.0',
+109 silly addNameRange     '0.7.0',
+109 silly addNameRange     '0.8.0',
+109 silly addNameRange     '0.8.1',
+109 silly addNameRange     '0.9.0',
+109 silly addNameRange     '0.9.1',
+109 silly addNameRange     '0.10.0',
+109 silly addNameRange     '0.11.0',
+109 silly addNameRange     '0.11.1',
+109 silly addNameRange     '0.12.0',
+109 silly addNameRange     '0.13.0',
+109 silly addNameRange     '0.13.1',
+109 silly addNameRange     '0.14.0',
+109 silly addNameRange     '0.15.0',
+109 silly addNameRange     '0.15.1',
+109 silly addNameRange     '0.15.2',
+109 silly addNameRange     '0.15.3',
+109 silly addNameRange     '0.16.0',
+109 silly addNameRange     '0.16.1',
+109 silly addNameRange     '0.16.2',
+109 silly addNameRange     '0.17.0',
+109 silly addNameRange     '0.17.1',
+109 silly addNameRange     '0.18.0' ] ]
+110 silly pickManifestFromRegistryMetadata spec >=0.16.2 <0.17.0 tag latest versions [ '0.1.0',
+110 silly pickManifestFromRegistryMetadata   '0.2.0',
+110 silly pickManifestFromRegistryMetadata   '0.2.1',
+110 silly pickManifestFromRegistryMetadata   '0.2.2',
+110 silly pickManifestFromRegistryMetadata   '0.3.0',
+110 silly pickManifestFromRegistryMetadata   '0.3.1',
+110 silly pickManifestFromRegistryMetadata   '0.4.0',
+110 silly pickManifestFromRegistryMetadata   '0.4.1',
+110 silly pickManifestFromRegistryMetadata   '0.4.2',
+110 silly pickManifestFromRegistryMetadata   '0.5.0',
+110 silly pickManifestFromRegistryMetadata   '0.5.1',
+110 silly pickManifestFromRegistryMetadata   '0.5.2',
+110 silly pickManifestFromRegistryMetadata   '0.5.3',
+110 silly pickManifestFromRegistryMetadata   '0.5.4',
+110 silly pickManifestFromRegistryMetadata   '0.6.0',
+110 silly pickManifestFromRegistryMetadata   '0.7.0',
+110 silly pickManifestFromRegistryMetadata   '0.8.0',
+110 silly pickManifestFromRegistryMetadata   '0.8.1',
+110 silly pickManifestFromRegistryMetadata   '0.9.0',
+110 silly pickManifestFromRegistryMetadata   '0.9.1',
+110 silly pickManifestFromRegistryMetadata   '0.10.0',
+110 silly pickManifestFromRegistryMetadata   '0.11.0',
+110 silly pickManifestFromRegistryMetadata   '0.11.1',
+110 silly pickManifestFromRegistryMetadata   '0.12.0',
+110 silly pickManifestFromRegistryMetadata   '0.13.0',
+110 silly pickManifestFromRegistryMetadata   '0.13.1',
+110 silly pickManifestFromRegistryMetadata   '0.14.0',
+110 silly pickManifestFromRegistryMetadata   '0.15.0',
+110 silly pickManifestFromRegistryMetadata   '0.15.1',
+110 silly pickManifestFromRegistryMetadata   '0.15.2',
+110 silly pickManifestFromRegistryMetadata   '0.15.3',
+110 silly pickManifestFromRegistryMetadata   '0.16.0',
+110 silly pickManifestFromRegistryMetadata   '0.16.1',
+110 silly pickManifestFromRegistryMetadata   '0.16.2',
+110 silly pickManifestFromRegistryMetadata   '0.17.0',
+110 silly pickManifestFromRegistryMetadata   '0.17.1',
+110 silly pickManifestFromRegistryMetadata   '0.18.0' ]
+111 silly addNamed axios@0.16.2
+112 verbose addNamed "0.16.2" is a plain semver version for axios
+113 silly mapToRegistry name axios
+114 silly mapToRegistry using default registry
+115 silly mapToRegistry registry https://registry.npmjs.org/
+116 silly mapToRegistry data Result {
+116 silly mapToRegistry   raw: 'axios',
+116 silly mapToRegistry   scope: null,
+116 silly mapToRegistry   escapedName: 'axios',
+116 silly mapToRegistry   name: 'axios',
+116 silly mapToRegistry   rawSpec: '',
+116 silly mapToRegistry   spec: 'latest',
+116 silly mapToRegistry   type: 'tag' }
+117 silly mapToRegistry uri https://registry.npmjs.org/axios
+118 verbose addRemoteTarball https://registry.npmjs.org/axios/-/axios-0.16.2.tgz not in flight; adding
+119 verbose addRemoteTarball [ 'https://registry.npmjs.org/axios/-/axios-0.16.2.tgz',
+119 verbose addRemoteTarball   'ba4f92f17167dfbab40983785454b9ac149c3c6d' ]
+120 info retry fetch attempt 1 at 9:51:43 AM
+121 info attempt registry request try #1 at 9:51:43 AM
+122 http fetch GET https://registry.npmjs.org/axios/-/axios-0.16.2.tgz
+123 verbose request using bearer token for auth
+124 http fetch 200 https://registry.npmjs.org/axios/-/axios-0.16.2.tgz
+125 silly fetchAndShaCheck shasum ba4f92f17167dfbab40983785454b9ac149c3c6d
+126 verbose addTmpTarball /var/folders/gk/nxsbz2k506xbb_rd80ndyq7m0000gn/T/npm-10231-4b1b8fc0/registry.npmjs.org/axios/-/axios-0.16.2.tgz not in flight; adding
+127 verbose addTmpTarball already have metadata; skipping unpack for axios@0.16.2
+128 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+129 silly cache afterAdd axios@0.16.2
+130 verbose afterAdd /Users/akshaykulkarni/.npm/axios/0.16.2/package/package.json not in flight; writing
+131 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+132 verbose afterAdd /Users/akshaykulkarni/.npm/axios/0.16.2/package/package.json written
+133 silly fetchNamedPackageData follow-redirects
+134 silly mapToRegistry name follow-redirects
+135 silly mapToRegistry using default registry
+136 silly mapToRegistry registry https://registry.npmjs.org/
+137 silly mapToRegistry data Result {
+137 silly mapToRegistry   raw: 'follow-redirects',
+137 silly mapToRegistry   scope: null,
+137 silly mapToRegistry   escapedName: 'follow-redirects',
+137 silly mapToRegistry   name: 'follow-redirects',
+137 silly mapToRegistry   rawSpec: '',
+137 silly mapToRegistry   spec: 'latest',
+137 silly mapToRegistry   type: 'tag' }
+138 silly mapToRegistry uri https://registry.npmjs.org/follow-redirects
+139 silly fetchNamedPackageData is-buffer
+140 silly mapToRegistry name is-buffer
+141 silly mapToRegistry using default registry
+142 silly mapToRegistry registry https://registry.npmjs.org/
+143 silly mapToRegistry data Result {
+143 silly mapToRegistry   raw: 'is-buffer',
+143 silly mapToRegistry   scope: null,
+143 silly mapToRegistry   escapedName: 'is-buffer',
+143 silly mapToRegistry   name: 'is-buffer',
+143 silly mapToRegistry   rawSpec: '',
+143 silly mapToRegistry   spec: 'latest',
+143 silly mapToRegistry   type: 'tag' }
+144 silly mapToRegistry uri https://registry.npmjs.org/is-buffer
+145 verbose request uri https://registry.npmjs.org/follow-redirects
+146 verbose request no auth needed
+147 info attempt registry request try #1 at 9:51:43 AM
+148 verbose request using bearer token for auth
+149 verbose etag "5a67d680-ade1"
+150 verbose lastModified Wed, 24 Jan 2018 0:42:40 GMT
+151 http request GET https://registry.npmjs.org/follow-redirects
+152 verbose request uri https://registry.npmjs.org/is-buffer
+153 verbose request no auth needed
+154 info attempt registry request try #1 at 9:51:44 AM
+155 verbose request using bearer token for auth
+156 verbose etag "5a6ed098-4965"
+157 verbose lastModified Mon, 29 Jan 2018 7:43:20 GMT
+158 http request GET https://registry.npmjs.org/is-buffer
+159 http 304 https://registry.npmjs.org/follow-redirects
+160 verbose headers { date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+160 verbose headers   via: '1.1 varnish',
+160 verbose headers   'cache-control': 'max-age=300',
+160 verbose headers   etag: '"5a67d680-ade1"',
+160 verbose headers   age: '3263',
+160 verbose headers   connection: 'keep-alive',
+160 verbose headers   'x-served-by': 'cache-sin18028-SIN',
+160 verbose headers   'x-cache': 'HIT',
+160 verbose headers   'x-cache-hits': '11',
+160 verbose headers   'x-timer': 'S1519618904.036670,VS0,VE0',
+160 verbose headers   vary: 'Accept-Encoding, Accept' }
+161 silly get cb [ 304,
+161 silly get   { date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+161 silly get     via: '1.1 varnish',
+161 silly get     'cache-control': 'max-age=300',
+161 silly get     etag: '"5a67d680-ade1"',
+161 silly get     age: '3263',
+161 silly get     connection: 'keep-alive',
+161 silly get     'x-served-by': 'cache-sin18028-SIN',
+161 silly get     'x-cache': 'HIT',
+161 silly get     'x-cache-hits': '11',
+161 silly get     'x-timer': 'S1519618904.036670,VS0,VE0',
+161 silly get     vary: 'Accept-Encoding, Accept' } ]
+162 verbose etag https://registry.npmjs.org/follow-redirects from cache
+163 verbose get saving follow-redirects to /Users/akshaykulkarni/.npm/registry.npmjs.org/follow-redirects/.cache.json
+164 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+165 silly pickManifestFromRegistryMetadata spec >=1.2.3 <2.0.0 tag latest versions [ '0.0.1',
+165 silly pickManifestFromRegistryMetadata   '0.0.2',
+165 silly pickManifestFromRegistryMetadata   '0.0.3',
+165 silly pickManifestFromRegistryMetadata   '0.0.4',
+165 silly pickManifestFromRegistryMetadata   '0.0.5',
+165 silly pickManifestFromRegistryMetadata   '0.0.6',
+165 silly pickManifestFromRegistryMetadata   '0.0.7',
+165 silly pickManifestFromRegistryMetadata   '0.1.0',
+165 silly pickManifestFromRegistryMetadata   '0.2.0',
+165 silly pickManifestFromRegistryMetadata   '0.3.0',
+165 silly pickManifestFromRegistryMetadata   '1.0.0',
+165 silly pickManifestFromRegistryMetadata   '1.1.0',
+165 silly pickManifestFromRegistryMetadata   '1.2.0',
+165 silly pickManifestFromRegistryMetadata   '1.2.1',
+165 silly pickManifestFromRegistryMetadata   '1.2.2',
+165 silly pickManifestFromRegistryMetadata   '1.2.3',
+165 silly pickManifestFromRegistryMetadata   '1.2.4',
+165 silly pickManifestFromRegistryMetadata   '1.2.5',
+165 silly pickManifestFromRegistryMetadata   '1.2.6',
+165 silly pickManifestFromRegistryMetadata   '1.3.0',
+165 silly pickManifestFromRegistryMetadata   '1.4.0',
+165 silly pickManifestFromRegistryMetadata   '1.4.1' ]
+166 silly resolveWithNewModule follow-redirects@1.4.1 checking installable status
+167 silly cache add args [ 'follow-redirects@^1.2.3', null ]
+168 verbose cache add spec follow-redirects@^1.2.3
+169 silly cache add parsed spec Result {
+169 silly cache add   raw: 'follow-redirects@^1.2.3',
+169 silly cache add   scope: null,
+169 silly cache add   escapedName: 'follow-redirects',
+169 silly cache add   name: 'follow-redirects',
+169 silly cache add   rawSpec: '^1.2.3',
+169 silly cache add   spec: '>=1.2.3 <2.0.0',
+169 silly cache add   type: 'range' }
+170 silly addNamed follow-redirects@>=1.2.3 <2.0.0
+171 verbose addNamed ">=1.2.3 <2.0.0" is a valid semver range for follow-redirects
+172 silly addNameRange { name: 'follow-redirects',
+172 silly addNameRange   range: '>=1.2.3 <2.0.0',
+172 silly addNameRange   hasData: false }
+173 silly mapToRegistry name follow-redirects
+174 silly mapToRegistry using default registry
+175 silly mapToRegistry registry https://registry.npmjs.org/
+176 silly mapToRegistry data Result {
+176 silly mapToRegistry   raw: 'follow-redirects',
+176 silly mapToRegistry   scope: null,
+176 silly mapToRegistry   escapedName: 'follow-redirects',
+176 silly mapToRegistry   name: 'follow-redirects',
+176 silly mapToRegistry   rawSpec: '',
+176 silly mapToRegistry   spec: 'latest',
+176 silly mapToRegistry   type: 'tag' }
+177 silly mapToRegistry uri https://registry.npmjs.org/follow-redirects
+178 verbose addNameRange registry:https://registry.npmjs.org/follow-redirects not in flight; fetching
+179 verbose get https://registry.npmjs.org/follow-redirects not expired, no request
+180 silly addNameRange number 2 { name: 'follow-redirects',
+180 silly addNameRange   range: '>=1.2.3 <2.0.0',
+180 silly addNameRange   hasData: true }
+181 silly addNameRange versions [ 'follow-redirects',
+181 silly addNameRange   [ '0.0.1',
+181 silly addNameRange     '0.0.2',
+181 silly addNameRange     '0.0.3',
+181 silly addNameRange     '0.0.4',
+181 silly addNameRange     '0.0.5',
+181 silly addNameRange     '0.0.6',
+181 silly addNameRange     '0.0.7',
+181 silly addNameRange     '0.1.0',
+181 silly addNameRange     '0.2.0',
+181 silly addNameRange     '0.3.0',
+181 silly addNameRange     '1.0.0',
+181 silly addNameRange     '1.1.0',
+181 silly addNameRange     '1.2.0',
+181 silly addNameRange     '1.2.1',
+181 silly addNameRange     '1.2.2',
+181 silly addNameRange     '1.2.3',
+181 silly addNameRange     '1.2.4',
+181 silly addNameRange     '1.2.5',
+181 silly addNameRange     '1.2.6',
+181 silly addNameRange     '1.3.0',
+181 silly addNameRange     '1.4.0',
+181 silly addNameRange     '1.4.1' ] ]
+182 silly pickManifestFromRegistryMetadata spec >=1.2.3 <2.0.0 tag latest versions [ '0.0.1',
+182 silly pickManifestFromRegistryMetadata   '0.0.2',
+182 silly pickManifestFromRegistryMetadata   '0.0.3',
+182 silly pickManifestFromRegistryMetadata   '0.0.4',
+182 silly pickManifestFromRegistryMetadata   '0.0.5',
+182 silly pickManifestFromRegistryMetadata   '0.0.6',
+182 silly pickManifestFromRegistryMetadata   '0.0.7',
+182 silly pickManifestFromRegistryMetadata   '0.1.0',
+182 silly pickManifestFromRegistryMetadata   '0.2.0',
+182 silly pickManifestFromRegistryMetadata   '0.3.0',
+182 silly pickManifestFromRegistryMetadata   '1.0.0',
+182 silly pickManifestFromRegistryMetadata   '1.1.0',
+182 silly pickManifestFromRegistryMetadata   '1.2.0',
+182 silly pickManifestFromRegistryMetadata   '1.2.1',
+182 silly pickManifestFromRegistryMetadata   '1.2.2',
+182 silly pickManifestFromRegistryMetadata   '1.2.3',
+182 silly pickManifestFromRegistryMetadata   '1.2.4',
+182 silly pickManifestFromRegistryMetadata   '1.2.5',
+182 silly pickManifestFromRegistryMetadata   '1.2.6',
+182 silly pickManifestFromRegistryMetadata   '1.3.0',
+182 silly pickManifestFromRegistryMetadata   '1.4.0',
+182 silly pickManifestFromRegistryMetadata   '1.4.1' ]
+183 silly addNamed follow-redirects@latest
+184 verbose addNamed "latest" is being treated as a dist-tag for follow-redirects
+185 info addNameTag [ 'follow-redirects', 'latest' ]
+186 silly mapToRegistry name follow-redirects
+187 silly mapToRegistry using default registry
+188 silly mapToRegistry registry https://registry.npmjs.org/
+189 silly mapToRegistry data Result {
+189 silly mapToRegistry   raw: 'follow-redirects',
+189 silly mapToRegistry   scope: null,
+189 silly mapToRegistry   escapedName: 'follow-redirects',
+189 silly mapToRegistry   name: 'follow-redirects',
+189 silly mapToRegistry   rawSpec: '',
+189 silly mapToRegistry   spec: 'latest',
+189 silly mapToRegistry   type: 'tag' }
+190 silly mapToRegistry uri https://registry.npmjs.org/follow-redirects
+191 verbose addNameTag registry:https://registry.npmjs.org/follow-redirects already in flight; waiting
+192 silly addNameTag next cb for follow-redirects with tag latest
+193 silly addNamed follow-redirects@1.4.1
+194 verbose addNamed "1.4.1" is a plain semver version for follow-redirects
+195 silly mapToRegistry name follow-redirects
+196 silly mapToRegistry using default registry
+197 silly mapToRegistry registry https://registry.npmjs.org/
+198 silly mapToRegistry data Result {
+198 silly mapToRegistry   raw: 'follow-redirects',
+198 silly mapToRegistry   scope: null,
+198 silly mapToRegistry   escapedName: 'follow-redirects',
+198 silly mapToRegistry   name: 'follow-redirects',
+198 silly mapToRegistry   rawSpec: '',
+198 silly mapToRegistry   spec: 'latest',
+198 silly mapToRegistry   type: 'tag' }
+199 silly mapToRegistry uri https://registry.npmjs.org/follow-redirects
+200 verbose addRemoteTarball https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.4.1.tgz not in flight; adding
+201 verbose addRemoteTarball [ 'https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.4.1.tgz',
+201 verbose addRemoteTarball   'd8120f4518190f55aac65bb6fc7b85fcd666d6aa' ]
+202 info retry fetch attempt 1 at 9:51:44 AM
+203 info attempt registry request try #1 at 9:51:44 AM
+204 http fetch GET https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.4.1.tgz
+205 verbose request using bearer token for auth
+206 http fetch 200 https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.4.1.tgz
+207 silly fetchAndShaCheck shasum d8120f4518190f55aac65bb6fc7b85fcd666d6aa
+208 verbose addTmpTarball /var/folders/gk/nxsbz2k506xbb_rd80ndyq7m0000gn/T/npm-10231-4b1b8fc0/registry.npmjs.org/follow-redirects/-/follow-redirects-1.4.1.tgz not in flight; adding
+209 verbose addTmpTarball already have metadata; skipping unpack for follow-redirects@1.4.1
+210 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+211 silly cache afterAdd follow-redirects@1.4.1
+212 verbose afterAdd /Users/akshaykulkarni/.npm/follow-redirects/1.4.1/package/package.json not in flight; writing
+213 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+214 verbose afterAdd /Users/akshaykulkarni/.npm/follow-redirects/1.4.1/package/package.json written
+215 http 304 https://registry.npmjs.org/is-buffer
+216 verbose headers { date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+216 verbose headers   via: '1.1 varnish',
+216 verbose headers   'cache-control': 'max-age=300',
+216 verbose headers   etag: '"5a6ed098-4965"',
+216 verbose headers   age: '5856',
+216 verbose headers   connection: 'keep-alive',
+216 verbose headers   'x-served-by': 'cache-sin18022-SIN',
+216 verbose headers   'x-cache': 'HIT',
+216 verbose headers   'x-cache-hits': '79',
+216 verbose headers   'x-timer': 'S1519618904.174744,VS0,VE0',
+216 verbose headers   vary: 'Accept-Encoding, Accept' }
+217 silly get cb [ 304,
+217 silly get   { date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+217 silly get     via: '1.1 varnish',
+217 silly get     'cache-control': 'max-age=300',
+217 silly get     etag: '"5a6ed098-4965"',
+217 silly get     age: '5856',
+217 silly get     connection: 'keep-alive',
+217 silly get     'x-served-by': 'cache-sin18022-SIN',
+217 silly get     'x-cache': 'HIT',
+217 silly get     'x-cache-hits': '79',
+217 silly get     'x-timer': 'S1519618904.174744,VS0,VE0',
+217 silly get     vary: 'Accept-Encoding, Accept' } ]
+218 verbose etag https://registry.npmjs.org/is-buffer from cache
+219 verbose get saving is-buffer to /Users/akshaykulkarni/.npm/registry.npmjs.org/is-buffer/.cache.json
+220 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+221 silly pickManifestFromRegistryMetadata spec >=1.1.5 <2.0.0 tag latest versions [ '1.0.0',
+221 silly pickManifestFromRegistryMetadata   '1.0.1',
+221 silly pickManifestFromRegistryMetadata   '1.0.2',
+221 silly pickManifestFromRegistryMetadata   '1.1.0',
+221 silly pickManifestFromRegistryMetadata   '1.1.1',
+221 silly pickManifestFromRegistryMetadata   '1.1.2',
+221 silly pickManifestFromRegistryMetadata   '1.1.3',
+221 silly pickManifestFromRegistryMetadata   '1.1.4',
+221 silly pickManifestFromRegistryMetadata   '1.1.5',
+221 silly pickManifestFromRegistryMetadata   '1.1.6',
+221 silly pickManifestFromRegistryMetadata   '2.0.0' ]
+222 silly resolveWithNewModule is-buffer@1.1.6 checking installable status
+223 silly cache add args [ 'is-buffer@^1.1.5', null ]
+224 verbose cache add spec is-buffer@^1.1.5
+225 silly cache add parsed spec Result {
+225 silly cache add   raw: 'is-buffer@^1.1.5',
+225 silly cache add   scope: null,
+225 silly cache add   escapedName: 'is-buffer',
+225 silly cache add   name: 'is-buffer',
+225 silly cache add   rawSpec: '^1.1.5',
+225 silly cache add   spec: '>=1.1.5 <2.0.0',
+225 silly cache add   type: 'range' }
+226 silly addNamed is-buffer@>=1.1.5 <2.0.0
+227 verbose addNamed ">=1.1.5 <2.0.0" is a valid semver range for is-buffer
+228 silly addNameRange { name: 'is-buffer', range: '>=1.1.5 <2.0.0', hasData: false }
+229 silly mapToRegistry name is-buffer
+230 silly mapToRegistry using default registry
+231 silly mapToRegistry registry https://registry.npmjs.org/
+232 silly mapToRegistry data Result {
+232 silly mapToRegistry   raw: 'is-buffer',
+232 silly mapToRegistry   scope: null,
+232 silly mapToRegistry   escapedName: 'is-buffer',
+232 silly mapToRegistry   name: 'is-buffer',
+232 silly mapToRegistry   rawSpec: '',
+232 silly mapToRegistry   spec: 'latest',
+232 silly mapToRegistry   type: 'tag' }
+233 silly mapToRegistry uri https://registry.npmjs.org/is-buffer
+234 verbose addNameRange registry:https://registry.npmjs.org/is-buffer not in flight; fetching
+235 verbose get https://registry.npmjs.org/is-buffer not expired, no request
+236 silly addNameRange number 2 { name: 'is-buffer', range: '>=1.1.5 <2.0.0', hasData: true }
+237 silly addNameRange versions [ 'is-buffer',
+237 silly addNameRange   [ '1.0.0',
+237 silly addNameRange     '1.0.1',
+237 silly addNameRange     '1.0.2',
+237 silly addNameRange     '1.1.0',
+237 silly addNameRange     '1.1.1',
+237 silly addNameRange     '1.1.2',
+237 silly addNameRange     '1.1.3',
+237 silly addNameRange     '1.1.4',
+237 silly addNameRange     '1.1.5',
+237 silly addNameRange     '1.1.6',
+237 silly addNameRange     '2.0.0' ] ]
+238 silly pickManifestFromRegistryMetadata spec >=1.1.5 <2.0.0 tag latest versions [ '1.0.0',
+238 silly pickManifestFromRegistryMetadata   '1.0.1',
+238 silly pickManifestFromRegistryMetadata   '1.0.2',
+238 silly pickManifestFromRegistryMetadata   '1.1.0',
+238 silly pickManifestFromRegistryMetadata   '1.1.1',
+238 silly pickManifestFromRegistryMetadata   '1.1.2',
+238 silly pickManifestFromRegistryMetadata   '1.1.3',
+238 silly pickManifestFromRegistryMetadata   '1.1.4',
+238 silly pickManifestFromRegistryMetadata   '1.1.5',
+238 silly pickManifestFromRegistryMetadata   '1.1.6',
+238 silly pickManifestFromRegistryMetadata   '2.0.0' ]
+239 silly addNamed is-buffer@1.1.6
+240 verbose addNamed "1.1.6" is a plain semver version for is-buffer
+241 silly cache afterAdd is-buffer@1.1.6
+242 verbose afterAdd /Users/akshaykulkarni/.npm/is-buffer/1.1.6/package/package.json not in flight; writing
+243 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+244 verbose afterAdd /Users/akshaykulkarni/.npm/is-buffer/1.1.6/package/package.json written
+245 silly fetchNamedPackageData debug
+246 silly mapToRegistry name debug
+247 silly mapToRegistry using default registry
+248 silly mapToRegistry registry https://registry.npmjs.org/
+249 silly mapToRegistry data Result {
+249 silly mapToRegistry   raw: 'debug',
+249 silly mapToRegistry   scope: null,
+249 silly mapToRegistry   escapedName: 'debug',
+249 silly mapToRegistry   name: 'debug',
+249 silly mapToRegistry   rawSpec: '',
+249 silly mapToRegistry   spec: 'latest',
+249 silly mapToRegistry   type: 'tag' }
+250 silly mapToRegistry uri https://registry.npmjs.org/debug
+251 verbose request uri https://registry.npmjs.org/debug
+252 verbose request no auth needed
+253 info attempt registry request try #1 at 9:51:44 AM
+254 verbose request using bearer token for auth
+255 verbose etag "5a86e5b7-193e0"
+256 verbose lastModified Fri, 16 Feb 2018 14:07:51 GMT
+257 http request GET https://registry.npmjs.org/debug
+258 http 200 https://registry.npmjs.org/debug
+259 verbose headers { 'content-type': 'application/json; charset=UTF-8',
+259 verbose headers   server: 'UploadServer',
+259 verbose headers   'cache-control': 'max-age=300',
+259 verbose headers   'last-modified': 'Sun, 25 Feb 2018 12:45:53 GMT',
+259 verbose headers   etag: '"5a92b001-19480"',
+259 verbose headers   'x-npm-region': 'Asia',
+259 verbose headers   'content-encoding': 'gzip',
+259 verbose headers   'content-length': '17744',
+259 verbose headers   'accept-ranges': 'bytes',
+259 verbose headers   date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+259 verbose headers   via: '1.1 varnish',
+259 verbose headers   age: '12870',
+259 verbose headers   connection: 'keep-alive',
+259 verbose headers   'x-served-by': 'cache-sin18028-SIN',
+259 verbose headers   'x-cache': 'HIT',
+259 verbose headers   'x-cache-hits': '350',
+259 verbose headers   'x-timer': 'S1519618904.292688,VS0,VE0',
+259 verbose headers   vary: 'Accept-Encoding, Accept' }
+260 silly get cb [ 200,
+260 silly get   { 'content-type': 'application/json; charset=UTF-8',
+260 silly get     server: 'UploadServer',
+260 silly get     'cache-control': 'max-age=300',
+260 silly get     'last-modified': 'Sun, 25 Feb 2018 12:45:53 GMT',
+260 silly get     etag: '"5a92b001-19480"',
+260 silly get     'x-npm-region': 'Asia',
+260 silly get     'content-encoding': 'gzip',
+260 silly get     'content-length': '17744',
+260 silly get     'accept-ranges': 'bytes',
+260 silly get     date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+260 silly get     via: '1.1 varnish',
+260 silly get     age: '12870',
+260 silly get     connection: 'keep-alive',
+260 silly get     'x-served-by': 'cache-sin18028-SIN',
+260 silly get     'x-cache': 'HIT',
+260 silly get     'x-cache-hits': '350',
+260 silly get     'x-timer': 'S1519618904.292688,VS0,VE0',
+260 silly get     vary: 'Accept-Encoding, Accept' } ]
+261 verbose get saving debug to /Users/akshaykulkarni/.npm/registry.npmjs.org/debug/.cache.json
+262 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+263 silly pickManifestFromRegistryMetadata spec >=3.1.0 <4.0.0 tag latest versions [ '0.0.1',
+263 silly pickManifestFromRegistryMetadata   '0.1.0',
+263 silly pickManifestFromRegistryMetadata   '0.2.0',
+263 silly pickManifestFromRegistryMetadata   '0.3.0',
+263 silly pickManifestFromRegistryMetadata   '0.4.0',
+263 silly pickManifestFromRegistryMetadata   '0.4.1',
+263 silly pickManifestFromRegistryMetadata   '0.5.0',
+263 silly pickManifestFromRegistryMetadata   '0.6.0',
+263 silly pickManifestFromRegistryMetadata   '0.7.0',
+263 silly pickManifestFromRegistryMetadata   '0.7.1',
+263 silly pickManifestFromRegistryMetadata   '0.7.2',
+263 silly pickManifestFromRegistryMetadata   '0.7.3',
+263 silly pickManifestFromRegistryMetadata   '0.7.4',
+263 silly pickManifestFromRegistryMetadata   '0.8.0',
+263 silly pickManifestFromRegistryMetadata   '0.8.1',
+263 silly pickManifestFromRegistryMetadata   '1.0.0',
+263 silly pickManifestFromRegistryMetadata   '1.0.1',
+263 silly pickManifestFromRegistryMetadata   '1.0.2',
+263 silly pickManifestFromRegistryMetadata   '1.0.3',
+263 silly pickManifestFromRegistryMetadata   '1.0.4',
+263 silly pickManifestFromRegistryMetadata   '2.0.0',
+263 silly pickManifestFromRegistryMetadata   '2.1.0',
+263 silly pickManifestFromRegistryMetadata   '2.1.1',
+263 silly pickManifestFromRegistryMetadata   '2.1.2',
+263 silly pickManifestFromRegistryMetadata   '2.1.3',
+263 silly pickManifestFromRegistryMetadata   '2.2.0',
+263 silly pickManifestFromRegistryMetadata   '2.3.0',
+263 silly pickManifestFromRegistryMetadata   '2.3.1',
+263 silly pickManifestFromRegistryMetadata   '2.3.2',
+263 silly pickManifestFromRegistryMetadata   '2.3.3',
+263 silly pickManifestFromRegistryMetadata   '2.4.0',
+263 silly pickManifestFromRegistryMetadata   '2.4.1',
+263 silly pickManifestFromRegistryMetadata   '2.4.2',
+263 silly pickManifestFromRegistryMetadata   '2.4.3',
+263 silly pickManifestFromRegistryMetadata   '2.4.4',
+263 silly pickManifestFromRegistryMetadata   '2.4.5',
+263 silly pickManifestFromRegistryMetadata   '2.5.0',
+263 silly pickManifestFromRegistryMetadata   '2.5.1',
+263 silly pickManifestFromRegistryMetadata   '2.5.2',
+263 silly pickManifestFromRegistryMetadata   '2.6.0',
+263 silly pickManifestFromRegistryMetadata   '2.6.1',
+263 silly pickManifestFromRegistryMetadata   '2.6.2',
+263 silly pickManifestFromRegistryMetadata   '2.6.3',
+263 silly pickManifestFromRegistryMetadata   '2.6.4',
+263 silly pickManifestFromRegistryMetadata   '2.6.5',
+263 silly pickManifestFromRegistryMetadata   '2.6.6',
+263 silly pickManifestFromRegistryMetadata   '2.6.7',
+263 silly pickManifestFromRegistryMetadata   '2.6.8',
+263 silly pickManifestFromRegistryMetadata   '1.0.5',
+263 silly pickManifestFromRegistryMetadata   '3.0.0',
+263 silly pickManifestFromRegistryMetadata   '3.0.1',
+263 silly pickManifestFromRegistryMetadata   '2.6.9',
+263 silly pickManifestFromRegistryMetadata   '3.1.0' ]
+264 silly resolveWithNewModule debug@3.1.0 checking installable status
+265 silly cache add args [ 'debug@^3.1.0', null ]
+266 verbose cache add spec debug@^3.1.0
+267 silly cache add parsed spec Result {
+267 silly cache add   raw: 'debug@^3.1.0',
+267 silly cache add   scope: null,
+267 silly cache add   escapedName: 'debug',
+267 silly cache add   name: 'debug',
+267 silly cache add   rawSpec: '^3.1.0',
+267 silly cache add   spec: '>=3.1.0 <4.0.0',
+267 silly cache add   type: 'range' }
+268 silly addNamed debug@>=3.1.0 <4.0.0
+269 verbose addNamed ">=3.1.0 <4.0.0" is a valid semver range for debug
+270 silly addNameRange { name: 'debug', range: '>=3.1.0 <4.0.0', hasData: false }
+271 silly mapToRegistry name debug
+272 silly mapToRegistry using default registry
+273 silly mapToRegistry registry https://registry.npmjs.org/
+274 silly mapToRegistry data Result {
+274 silly mapToRegistry   raw: 'debug',
+274 silly mapToRegistry   scope: null,
+274 silly mapToRegistry   escapedName: 'debug',
+274 silly mapToRegistry   name: 'debug',
+274 silly mapToRegistry   rawSpec: '',
+274 silly mapToRegistry   spec: 'latest',
+274 silly mapToRegistry   type: 'tag' }
+275 silly mapToRegistry uri https://registry.npmjs.org/debug
+276 verbose addNameRange registry:https://registry.npmjs.org/debug not in flight; fetching
+277 verbose get https://registry.npmjs.org/debug not expired, no request
+278 silly addNameRange number 2 { name: 'debug', range: '>=3.1.0 <4.0.0', hasData: true }
+279 silly addNameRange versions [ 'debug',
+279 silly addNameRange   [ '0.0.1',
+279 silly addNameRange     '0.1.0',
+279 silly addNameRange     '0.2.0',
+279 silly addNameRange     '0.3.0',
+279 silly addNameRange     '0.4.0',
+279 silly addNameRange     '0.4.1',
+279 silly addNameRange     '0.5.0',
+279 silly addNameRange     '0.6.0',
+279 silly addNameRange     '0.7.0',
+279 silly addNameRange     '0.7.1',
+279 silly addNameRange     '0.7.2',
+279 silly addNameRange     '0.7.3',
+279 silly addNameRange     '0.7.4',
+279 silly addNameRange     '0.8.0',
+279 silly addNameRange     '0.8.1',
+279 silly addNameRange     '1.0.0',
+279 silly addNameRange     '1.0.1',
+279 silly addNameRange     '1.0.2',
+279 silly addNameRange     '1.0.3',
+279 silly addNameRange     '1.0.4',
+279 silly addNameRange     '2.0.0',
+279 silly addNameRange     '2.1.0',
+279 silly addNameRange     '2.1.1',
+279 silly addNameRange     '2.1.2',
+279 silly addNameRange     '2.1.3',
+279 silly addNameRange     '2.2.0',
+279 silly addNameRange     '2.3.0',
+279 silly addNameRange     '2.3.1',
+279 silly addNameRange     '2.3.2',
+279 silly addNameRange     '2.3.3',
+279 silly addNameRange     '2.4.0',
+279 silly addNameRange     '2.4.1',
+279 silly addNameRange     '2.4.2',
+279 silly addNameRange     '2.4.3',
+279 silly addNameRange     '2.4.4',
+279 silly addNameRange     '2.4.5',
+279 silly addNameRange     '2.5.0',
+279 silly addNameRange     '2.5.1',
+279 silly addNameRange     '2.5.2',
+279 silly addNameRange     '2.6.0',
+279 silly addNameRange     '2.6.1',
+279 silly addNameRange     '2.6.2',
+279 silly addNameRange     '2.6.3',
+279 silly addNameRange     '2.6.4',
+279 silly addNameRange     '2.6.5',
+279 silly addNameRange     '2.6.6',
+279 silly addNameRange     '2.6.7',
+279 silly addNameRange     '2.6.8',
+279 silly addNameRange     '1.0.5',
+279 silly addNameRange     '3.0.0',
+279 silly addNameRange     '3.0.1',
+279 silly addNameRange     '2.6.9',
+279 silly addNameRange     '3.1.0' ] ]
+280 silly pickManifestFromRegistryMetadata spec >=3.1.0 <4.0.0 tag latest versions [ '0.0.1',
+280 silly pickManifestFromRegistryMetadata   '0.1.0',
+280 silly pickManifestFromRegistryMetadata   '0.2.0',
+280 silly pickManifestFromRegistryMetadata   '0.3.0',
+280 silly pickManifestFromRegistryMetadata   '0.4.0',
+280 silly pickManifestFromRegistryMetadata   '0.4.1',
+280 silly pickManifestFromRegistryMetadata   '0.5.0',
+280 silly pickManifestFromRegistryMetadata   '0.6.0',
+280 silly pickManifestFromRegistryMetadata   '0.7.0',
+280 silly pickManifestFromRegistryMetadata   '0.7.1',
+280 silly pickManifestFromRegistryMetadata   '0.7.2',
+280 silly pickManifestFromRegistryMetadata   '0.7.3',
+280 silly pickManifestFromRegistryMetadata   '0.7.4',
+280 silly pickManifestFromRegistryMetadata   '0.8.0',
+280 silly pickManifestFromRegistryMetadata   '0.8.1',
+280 silly pickManifestFromRegistryMetadata   '1.0.0',
+280 silly pickManifestFromRegistryMetadata   '1.0.1',
+280 silly pickManifestFromRegistryMetadata   '1.0.2',
+280 silly pickManifestFromRegistryMetadata   '1.0.3',
+280 silly pickManifestFromRegistryMetadata   '1.0.4',
+280 silly pickManifestFromRegistryMetadata   '2.0.0',
+280 silly pickManifestFromRegistryMetadata   '2.1.0',
+280 silly pickManifestFromRegistryMetadata   '2.1.1',
+280 silly pickManifestFromRegistryMetadata   '2.1.2',
+280 silly pickManifestFromRegistryMetadata   '2.1.3',
+280 silly pickManifestFromRegistryMetadata   '2.2.0',
+280 silly pickManifestFromRegistryMetadata   '2.3.0',
+280 silly pickManifestFromRegistryMetadata   '2.3.1',
+280 silly pickManifestFromRegistryMetadata   '2.3.2',
+280 silly pickManifestFromRegistryMetadata   '2.3.3',
+280 silly pickManifestFromRegistryMetadata   '2.4.0',
+280 silly pickManifestFromRegistryMetadata   '2.4.1',
+280 silly pickManifestFromRegistryMetadata   '2.4.2',
+280 silly pickManifestFromRegistryMetadata   '2.4.3',
+280 silly pickManifestFromRegistryMetadata   '2.4.4',
+280 silly pickManifestFromRegistryMetadata   '2.4.5',
+280 silly pickManifestFromRegistryMetadata   '2.5.0',
+280 silly pickManifestFromRegistryMetadata   '2.5.1',
+280 silly pickManifestFromRegistryMetadata   '2.5.2',
+280 silly pickManifestFromRegistryMetadata   '2.6.0',
+280 silly pickManifestFromRegistryMetadata   '2.6.1',
+280 silly pickManifestFromRegistryMetadata   '2.6.2',
+280 silly pickManifestFromRegistryMetadata   '2.6.3',
+280 silly pickManifestFromRegistryMetadata   '2.6.4',
+280 silly pickManifestFromRegistryMetadata   '2.6.5',
+280 silly pickManifestFromRegistryMetadata   '2.6.6',
+280 silly pickManifestFromRegistryMetadata   '2.6.7',
+280 silly pickManifestFromRegistryMetadata   '2.6.8',
+280 silly pickManifestFromRegistryMetadata   '1.0.5',
+280 silly pickManifestFromRegistryMetadata   '3.0.0',
+280 silly pickManifestFromRegistryMetadata   '3.0.1',
+280 silly pickManifestFromRegistryMetadata   '2.6.9',
+280 silly pickManifestFromRegistryMetadata   '3.1.0' ]
+281 silly addNamed debug@latest
+282 verbose addNamed "latest" is being treated as a dist-tag for debug
+283 info addNameTag [ 'debug', 'latest' ]
+284 silly mapToRegistry name debug
+285 silly mapToRegistry using default registry
+286 silly mapToRegistry registry https://registry.npmjs.org/
+287 silly mapToRegistry data Result {
+287 silly mapToRegistry   raw: 'debug',
+287 silly mapToRegistry   scope: null,
+287 silly mapToRegistry   escapedName: 'debug',
+287 silly mapToRegistry   name: 'debug',
+287 silly mapToRegistry   rawSpec: '',
+287 silly mapToRegistry   spec: 'latest',
+287 silly mapToRegistry   type: 'tag' }
+288 silly mapToRegistry uri https://registry.npmjs.org/debug
+289 verbose addNameTag registry:https://registry.npmjs.org/debug already in flight; waiting
+290 silly addNameTag next cb for debug with tag latest
+291 silly addNamed debug@3.1.0
+292 verbose addNamed "3.1.0" is a plain semver version for debug
+293 silly cache afterAdd debug@3.1.0
+294 verbose afterAdd /Users/akshaykulkarni/.npm/debug/3.1.0/package/package.json not in flight; writing
+295 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+296 verbose afterAdd /Users/akshaykulkarni/.npm/debug/3.1.0/package/package.json written
+297 silly fetchNamedPackageData ms
+298 silly mapToRegistry name ms
+299 silly mapToRegistry using default registry
+300 silly mapToRegistry registry https://registry.npmjs.org/
+301 silly mapToRegistry data Result {
+301 silly mapToRegistry   raw: 'ms',
+301 silly mapToRegistry   scope: null,
+301 silly mapToRegistry   escapedName: 'ms',
+301 silly mapToRegistry   name: 'ms',
+301 silly mapToRegistry   rawSpec: '',
+301 silly mapToRegistry   spec: 'latest',
+301 silly mapToRegistry   type: 'tag' }
+302 silly mapToRegistry uri https://registry.npmjs.org/ms
+303 verbose request uri https://registry.npmjs.org/ms
+304 verbose request no auth needed
+305 info attempt registry request try #1 at 9:51:44 AM
+306 verbose request using bearer token for auth
+307 verbose etag "5a74cafa-4937"
+308 verbose lastModified Fri, 2 Feb 2018 20:32:58 GMT
+309 http request GET https://registry.npmjs.org/ms
+310 http 200 https://registry.npmjs.org/ms
+311 verbose headers { 'content-type': 'application/json; charset=UTF-8',
+311 verbose headers   server: 'UploadServer',
+311 verbose headers   'cache-control': 'max-age=300',
+311 verbose headers   'last-modified': 'Tue, 20 Feb 2018 18:52:50 GMT',
+311 verbose headers   etag: '"5a8c6e82-495c"',
+311 verbose headers   'x-npm-region': 'Asia',
+311 verbose headers   'content-encoding': 'gzip',
+311 verbose headers   'content-length': '4527',
+311 verbose headers   'accept-ranges': 'bytes',
+311 verbose headers   date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+311 verbose headers   via: '1.1 varnish',
+311 verbose headers   age: '5140',
+311 verbose headers   connection: 'keep-alive',
+311 verbose headers   'x-served-by': 'cache-sin18022-SIN',
+311 verbose headers   'x-cache': 'HIT',
+311 verbose headers   'x-cache-hits': '148',
+311 verbose headers   'x-timer': 'S1519618904.391553,VS0,VE0',
+311 verbose headers   vary: 'Accept-Encoding, Accept' }
+312 silly get cb [ 200,
+312 silly get   { 'content-type': 'application/json; charset=UTF-8',
+312 silly get     server: 'UploadServer',
+312 silly get     'cache-control': 'max-age=300',
+312 silly get     'last-modified': 'Tue, 20 Feb 2018 18:52:50 GMT',
+312 silly get     etag: '"5a8c6e82-495c"',
+312 silly get     'x-npm-region': 'Asia',
+312 silly get     'content-encoding': 'gzip',
+312 silly get     'content-length': '4527',
+312 silly get     'accept-ranges': 'bytes',
+312 silly get     date: 'Mon, 26 Feb 2018 04:21:44 GMT',
+312 silly get     via: '1.1 varnish',
+312 silly get     age: '5140',
+312 silly get     connection: 'keep-alive',
+312 silly get     'x-served-by': 'cache-sin18022-SIN',
+312 silly get     'x-cache': 'HIT',
+312 silly get     'x-cache-hits': '148',
+312 silly get     'x-timer': 'S1519618904.391553,VS0,VE0',
+312 silly get     vary: 'Accept-Encoding, Accept' } ]
+313 verbose get saving ms to /Users/akshaykulkarni/.npm/registry.npmjs.org/ms/.cache.json
+314 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+315 silly pickManifestFromRegistryMetadata spec 2.0.0 tag latest versions [ '0.1.0',
+315 silly pickManifestFromRegistryMetadata   '0.2.0',
+315 silly pickManifestFromRegistryMetadata   '0.3.0',
+315 silly pickManifestFromRegistryMetadata   '0.4.0',
+315 silly pickManifestFromRegistryMetadata   '0.5.0',
+315 silly pickManifestFromRegistryMetadata   '0.5.1',
+315 silly pickManifestFromRegistryMetadata   '0.6.0',
+315 silly pickManifestFromRegistryMetadata   '0.6.1',
+315 silly pickManifestFromRegistryMetadata   '0.6.2',
+315 silly pickManifestFromRegistryMetadata   '0.7.0',
+315 silly pickManifestFromRegistryMetadata   '0.7.1',
+315 silly pickManifestFromRegistryMetadata   '0.7.2',
+315 silly pickManifestFromRegistryMetadata   '0.7.3',
+315 silly pickManifestFromRegistryMetadata   '1.0.0',
+315 silly pickManifestFromRegistryMetadata   '2.0.0',
+315 silly pickManifestFromRegistryMetadata   '2.1.0',
+315 silly pickManifestFromRegistryMetadata   '2.1.1' ]
+316 silly resolveWithNewModule ms@2.0.0 checking installable status
+317 silly cache add args [ 'ms@2.0.0', null ]
+318 verbose cache add spec ms@2.0.0
+319 silly cache add parsed spec Result {
+319 silly cache add   raw: 'ms@2.0.0',
+319 silly cache add   scope: null,
+319 silly cache add   escapedName: 'ms',
+319 silly cache add   name: 'ms',
+319 silly cache add   rawSpec: '2.0.0',
+319 silly cache add   spec: '2.0.0',
+319 silly cache add   type: 'version' }
+320 silly addNamed ms@2.0.0
+321 verbose addNamed "2.0.0" is a plain semver version for ms
+322 silly mapToRegistry name ms
+323 silly mapToRegistry using default registry
+324 silly mapToRegistry registry https://registry.npmjs.org/
+325 silly mapToRegistry data Result {
+325 silly mapToRegistry   raw: 'ms',
+325 silly mapToRegistry   scope: null,
+325 silly mapToRegistry   escapedName: 'ms',
+325 silly mapToRegistry   name: 'ms',
+325 silly mapToRegistry   rawSpec: '',
+325 silly mapToRegistry   spec: 'latest',
+325 silly mapToRegistry   type: 'tag' }
+326 silly mapToRegistry uri https://registry.npmjs.org/ms
+327 verbose addNameVersion registry:https://registry.npmjs.org/ms not in flight; fetching
+328 verbose get https://registry.npmjs.org/ms not expired, no request
+329 silly cache afterAdd ms@2.0.0
+330 verbose afterAdd /Users/akshaykulkarni/.npm/ms/2.0.0/package/package.json not in flight; writing
+331 verbose correctMkdir /Users/akshaykulkarni/.npm correctMkdir not in flight; initializing
+332 verbose afterAdd /Users/akshaykulkarni/.npm/ms/2.0.0/package/package.json written
+333 silly loadAllDepsIntoIdealTree Finishing
+334 silly loadIdealTree Finishing
+335 silly currentTree akshaykulkarni
+335 silly currentTree ├── bindings@1.2.1
+335 silly currentTree ├── nan@2.3.5
+335 silly currentTree └── zmq@2.15.3
+336 silly idealTree akshaykulkarni
+336 silly idealTree ├── axios-request-handler@1.0.3
+336 silly idealTree ├── axios@0.16.2
+336 silly idealTree ├── bindings@1.2.1
+336 silly idealTree ├── debug@3.1.0
+336 silly idealTree ├── follow-redirects@1.4.1
+336 silly idealTree ├── is-buffer@1.1.6
+336 silly idealTree ├── ms@2.0.0
+336 silly idealTree ├── nan@2.3.5
+336 silly idealTree └── zmq@2.15.3
+337 silly generateActionsToTake Starting
+338 silly install generateActionsToTake
+339 warn checkPermissions Missing write access to /Users/akshaykulkarni/node_modules
+340 silly rollbackFailedOptional Starting
+341 silly rollbackFailedOptional Finishing
+342 silly runTopLevelLifecycles Finishing
+343 silly install printInstalled
+344 warn enoent ENOENT: no such file or directory, open '/Users/akshaykulkarni/package.json'
+345 verbose enoent ENOENT: no such file or directory, open '/Users/akshaykulkarni/package.json'
+345 verbose enoent This is most likely not a problem with npm itself
+345 verbose enoent and is related to npm not being able to find a file.
+346 warn akshaykulkarni No description
+347 verbose If you need help, you may report this error at:
+347 verbose     <https://github.com/npm/npm/issues>
+348 warn akshaykulkarni No repository field.
+349 verbose If you need help, you may report this error at:
+349 verbose     <https://github.com/npm/npm/issues>
+350 warn akshaykulkarni No README data
+351 verbose If you need help, you may report this error at:
+351 verbose     <https://github.com/npm/npm/issues>
+352 warn akshaykulkarni No license field.
+353 verbose If you need help, you may report this error at:
+353 verbose     <https://github.com/npm/npm/issues>
+354 verbose stack Error: EACCES: permission denied, access '/Users/akshaykulkarni/node_modules'
+355 verbose cwd /Users/akshaykulkarni/Documents/ozz/code/ozz_nlp
+356 error Darwin 17.4.0
+357 error argv "/usr/local/Cellar/node/7.7.1_1/bin/node" "/usr/local/bin/npm" "install" "--save" "axios-request-handler"
+358 error node v7.7.1
+359 error npm  v4.1.2
+360 error path /Users/akshaykulkarni/node_modules
+361 error code EACCES
+362 error errno -13
+363 error syscall access
+364 error Error: EACCES: permission denied, access '/Users/akshaykulkarni/node_modules'
+364 error  { Error: EACCES: permission denied, access '/Users/akshaykulkarni/node_modules'
+364 error   errno: -13,
+364 error   code: 'EACCES',
+364 error   syscall: 'access',
+364 error   path: '/Users/akshaykulkarni/node_modules' }
+365 error Please try running this command again as root/Administrator.
+366 verbose exit [ -13, true ]
