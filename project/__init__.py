@@ -161,7 +161,11 @@ def create_app():
         else:
             status = job.get_status()
             if status == 'finished':
-                result = json.loads(job.result)
+                if job.result:
+                    result = json.loads(job.result)
+                else:
+                    print(job)
+                    result = None
             else:
                 result = None
             response = {

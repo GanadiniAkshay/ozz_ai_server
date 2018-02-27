@@ -178,36 +178,37 @@ def parse(bot_guid):
             persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
             if persona_bot:
                 persona_model = persona_bot.active_model
-                persona_nlu = nlus[persona_model]
-
-                ozz_intent, ozz_entities, ozz_confidence = persona_nlu.parse(message)
-                print('persona')
-                print(ozz_intent)
-                print(ozz_confidence)
-                if bot.persona == 1 and ozz_confidence > 0.25:
-                    intent, entities = ozz_intent, ozz_entities
-                    with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
-                        responses = json.loads(jsonFile.read())
-                    if intent in responses and len(responses[intent]) > 0:
-                        response = random.choice(responses[intent])
-                    else:
-                        response = ""
-                elif bot.persona == 2 and ozz_confidence > 0.25:
-                    intent, entities = ozz_intent, ozz_entities
-                    with open(os.getcwd() + '/data/persona/average/average.json') as jsonFile:
-                        responses = json.loads(jsonFile.read())
-                    if intent in responses and len(responses[intent]) > 0:
-                        response = random.choice(responses[intent])
-                    else:
-                        response = ""
-                elif bot.persona == 3 and ozz_confidence > 0.25:
-                    intent, entities = ozz_intent, ozz_entities
-                    with open(os.getcwd() + '/data/persona/professional/professional.json') as jsonFile:
-                        responses = json.loads(jsonFile.read())
-                    if intent in responses and len(responses[intent]) > 0:
-                        response = random.choice(responses[intent])
-                    else:
-                        response = ""
+                
+                if persona_model in nlus:
+                    persona_nlu = nlus[persona_model]
+                    ozz_intent, ozz_entities, ozz_confidence = persona_nlu.parse(message)
+                    print('persona')
+                    print(ozz_intent)
+                    print(ozz_confidence)
+                    if bot.persona == 1 and ozz_confidence > 0.25:
+                        intent, entities = ozz_intent, ozz_entities
+                        with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
+                            responses = json.loads(jsonFile.read())
+                        if intent in responses and len(responses[intent]) > 0:
+                            response = random.choice(responses[intent])
+                        else:
+                            response = ""
+                    elif bot.persona == 2 and ozz_confidence > 0.25:
+                        intent, entities = ozz_intent, ozz_entities
+                        with open(os.getcwd() + '/data/persona/average/average.json') as jsonFile:
+                            responses = json.loads(jsonFile.read())
+                        if intent in responses and len(responses[intent]) > 0:
+                            response = random.choice(responses[intent])
+                        else:
+                            response = ""
+                    elif bot.persona == 3 and ozz_confidence > 0.25:
+                        intent, entities = ozz_intent, ozz_entities
+                        with open(os.getcwd() + '/data/persona/professional/professional.json') as jsonFile:
+                            responses = json.loads(jsonFile.read())
+                        if intent in responses and len(responses[intent]) > 0:
+                            response = random.choice(responses[intent])
+                        else:
+                            response = ""
         if intent != 'None':
             intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
             if intent_obj:
