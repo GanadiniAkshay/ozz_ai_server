@@ -77,17 +77,17 @@ def create_app():
     app.config.from_object(app_settings)
 
     # set up rq dashboard
-    #app.config.from_object(rq_dashboard.default_settings)
-    # app.config.update(
-    #     REDIS_HOST = REDIS_HOST,
-    #     REDIS_PORT = REDIS_PORT,
-    #     REDIS_PASSWORD = None,
-    #     REDIS_DB = 0,
-    #     RQ_POLL_INTERVAL = 2500,  #: Web interface poll period for updates in ms
-    #     DEBUG = False,
-    #     WEB_BACKGROUND = "black",
-    #     DELETE_JOBS = False)
-    # app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
+    app.config.from_object(rq_dashboard.default_settings)
+    app.config.update(
+        REDIS_HOST = REDIS_HOST,
+        REDIS_PORT = REDIS_PORT,
+        REDIS_PASSWORD = None,
+        REDIS_DB = 0,
+        RQ_POLL_INTERVAL = 2500,  #: Web interface poll period for updates in ms
+        DEBUG = False,
+        WEB_BACKGROUND = "black",
+        DELETE_JOBS = False)
+    app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rq")
 
 
     # set up extensions
