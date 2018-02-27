@@ -14,6 +14,7 @@ from project.api.models.analytics import Analytics
 from project.api.models.schedule import Schedule
 from project.api.models.logs import Logs
 from project.api.models.knowledge import Knowledge
+from project.api.models.training import Training
 
 from flask_migrate import MigrateCommand
 

@@ -4,13 +4,18 @@ from flask import Blueprint, jsonify, request, render_template
 
 from project.api.models.users import User
 from project.api.models.bots import Bot
-from project import db, app
+from project.api.models.training import Training
+from project.helpers.parser import NLUParser
+from project import db, app, interpreters
 from sqlalchemy import exc
 
 from project.config import DevelopmentConfig
 from project.keys import super_secret
 
 from project.shared.checkAuth import checkAuth
+
+from rasa_nlu.config import RasaNLUConfig
+from rasa_nlu.model import Trainer, Metadata, Interpreter
 
 bots_blueprint = Blueprint('bots', __name__, template_folder='./templates')
 
@@ -58,9 +63,41 @@ def update_bots(bot_guid):
             return jsonify({"error":"Bot Not Found"}),404
         if bot.user_id == user_id:
             if request.method == 'PUT':
+                print('here')
                 put_data = request.get_json()
+
+                if 'last_trained' in put_data and bot.last_trained != put_data['last_trained']:
+                    if 'active_model' in put_data:
+                        model_directory = put_data['active_model']
+                        config = './project/config.json'
+                        current_model = bot.active_model
+
+                        if current_model and current_model != "":
+                            global interpreters
+                            interpreters.pop(current_model,0)
+                            if os.path.exists(current_model):
+                                shutil.rmtree(current_model)
+                        
+                        interpreters[model_directory] = NLUParser(model_directory,config)
+
+                        training_obj = Training(
+                            bot_guid=bot_guid,
+                            user_id=user_id,
+                            trained_at=put_data['last_trained'],
+                            train_time=put_data['train_time']
+                        )
+
+                        db.session.add(training_obj)
+
+                        bot.active_model = put_data['active_model']
+                        bot.words = put_data['words']
+                        bot.last_trained = put_data['last_trained']
+                        bot.name = put_data['name']
+
+                
                 bot.persona = put_data['persona']
                 bot.used = datetime.datetime.utcnow()
+                
                 try:
                     db.session.commit()
                 except Exception as e:

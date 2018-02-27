@@ -184,7 +184,7 @@ def parse(bot_guid):
                 print('persona')
                 print(ozz_intent)
                 print(ozz_confidence)
-                if bot.persona == 1 and ozz_confidence > confidence:
+                if bot.persona == 1 and ozz_confidence > 0.25:
                     intent, entities = ozz_intent, ozz_entities
                     with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
                         responses = json.loads(jsonFile.read())
@@ -192,7 +192,7 @@ def parse(bot_guid):
                         response = random.choice(responses[intent])
                     else:
                         response = ""
-                elif bot.persona == 2 and ozz_confidence > confidence:
+                elif bot.persona == 2 and ozz_confidence > 0.25:
                     intent, entities = ozz_intent, ozz_entities
                     with open(os.getcwd() + '/data/persona/average/average.json') as jsonFile:
                         responses = json.loads(jsonFile.read())
@@ -200,7 +200,7 @@ def parse(bot_guid):
                         response = random.choice(responses[intent])
                     else:
                         response = ""
-                elif bot.persona == 3 and ozz_confidence > confidence:
+                elif bot.persona == 3 and ozz_confidence > 0.25:
                     intent, entities = ozz_intent, ozz_entities
                     with open(os.getcwd() + '/data/persona/professional/professional.json') as jsonFile:
                         responses = json.loads(jsonFile.read())
