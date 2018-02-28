@@ -124,6 +124,24 @@ def parse(bot_guid):
                 entity_end = -1
                 parameters = pattern['entities']
                 ents ={}
+                reflections = {
+                    "am": "are",
+                    "was": "were",
+                    "i": "you",
+                    "I": "you",
+                    "yourself":"myself",
+                    "i'd": "you would",
+                    "i've": "you have",
+                    "i'll": "you will",
+                    "my": "your",
+                    "are": "am",
+                    "you've": "I have",
+                    "you'll": "I will",
+                    "your": "my",
+                    "yours": "mine",
+                    "you": "me",
+                    "me": "you"
+                }
                 for parameter in parameters:
                     if parameter['first'] != -1:
                         entity_start = parameter['first']
@@ -133,8 +151,16 @@ def parse(bot_guid):
                             entity_value = message[entity_start:]
                         else:
                             entity_value = message[entity_start:entity_end]
-                        ents[parameter['entity'][1:]] = entity_value
-                        entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
+                        entity_name = parameter['entity'][1:]
+                        if entity_name[-1] == '?' or entity_name[-1] == ',' or entity_name[-1] == '.':
+                            entity_name = entity_name[:-1]
+                        if entity_value[-1] == '?' or entity_value[-1] == '?' or entity_value[-1] == '.':
+                            entity_value = entity_value[:-1]
+                        for reflect in reflections:
+                            if reflect in entity_value:
+                                entity_value = entity_value.replace(reflect,reflections[reflect])
+                        ents[entity_name] = entity_value
+                        entities.append({"entity":entity_name,"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
                     else:
                         mid_expression= message[entity_end:]
                         if parameter['prior'] and parameter['prior'] in mid_expression:
@@ -148,17 +174,29 @@ def parse(bot_guid):
                         else:
                             entity_value = mid_expression[entity_start:entity_end]
                         start = message.index(entity_value)
-                        entities.append({"entity":parameter['entity'][1:],"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
+                        entity_name = parameter['entity'][1:]
+                        ents[entity_name] = entity_value
+                        if entity_name[-1] == '?' or entity_name[-1] == ',' or entity_name[-1] == '.':
+                            entity_name = entity_name[:-1]
+                        if entity_value[-1] == '?' or entity_value[-1] == ',' or entity_value[-1] == '.':
+                            entity_value = entity_value[:-1]
+                        for reflect in reflections:
+                            if reflect in entity_value:
+                                entity_value = entity_value.replace(reflect,reflections[reflect])
+                        ents[entity_name] = entity_value
+                        entities.append({"entity":entity_name,"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
                 if len(intent_obj.responses) > 0:
                     response = random.choice(intent_obj.responses)
                     resp_words = response.split(" ")
+                    print(ents)
                     for word in resp_words:
                         if len(word)>0 and word[0] == '@':
                             ent = word[1:]
-
-                            if ent[-1] == '?' or ent[-1] == '.':
+                            print(ent)
+                            if ent[-1] == '?' or ent[-1] == '.' or ent[-1] == ',':
                                 ent = ent[:-1]
                                 word = word[:-1]
+                            print(ent)
                             if ent in ents:
                                 response = response.replace(word,ents[ent])
                             else:
