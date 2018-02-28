@@ -125,22 +125,21 @@ def parse(bot_guid):
                 parameters = pattern['entities']
                 ents ={}
                 reflections = {
-                    "am": "are",
-                    "was": "were",
-                    "i": "you",
-                    "I": "you",
-                    "yourself":"myself",
-                    "i'd": "you would",
-                    "i've": "you have",
-                    "i'll": "you will",
-                    "my": "your",
-                    "are": "am",
-                    "you've": "I have",
-                    "you'll": "I will",
-                    "your": "my",
-                    "yours": "mine",
-                    "you": "me",
-                    "me": "you"
+                    " am ": " are ",
+                    " was ": " were ",
+                    " i ": " you ",
+                    " yourself ":" myself ",
+                    " i'd ": " you would ",
+                    " i've ": " you have ",
+                    " i'll ": " you will ",
+                    " my ": " your ",
+                    " are ": " am ",
+                    " you've ": " I have",
+                    " you'll ": " I will ",
+                    " your ": " my ",
+                    " yours ": " mine ",
+                    " you ": " me ",
+                    " me ": " you "
                 }
                 for parameter in parameters:
                     if parameter['first'] != -1:
@@ -186,7 +185,7 @@ def parse(bot_guid):
                         ents[entity_name] = entity_value
                         entities.append({"entity":entity_name,"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
                 if len(intent_obj.responses) > 0:
-                    response = random.choice(intent_obj.responses)
+                    response = random.choice(intent_obj.responses).lower()
                     resp_words = response.split(" ")
                     print(ents)
                     for word in resp_words:
@@ -212,17 +211,20 @@ def parse(bot_guid):
         # print(intent)
         print(confidence)
         if bot.persona and (bot.persona != -1 or bot.persona !=4):
-            #print('here')
+            print('here')
             persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
+            print(persona_bot)
             if persona_bot:
                 persona_model = persona_bot.active_model
-                
+                print(persona_model)
                 if persona_model in nlus:
+                    print('there')
                     persona_nlu = nlus[persona_model]
                     ozz_intent, ozz_entities, ozz_confidence = persona_nlu.parse(message)
                     print('persona')
                     print(ozz_intent)
                     print(ozz_confidence)
+                    print(bot.persona)
                     if bot.persona == 1 and ozz_confidence > 0.25:
                         intent, entities = ozz_intent, ozz_entities
                         with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
