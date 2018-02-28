@@ -389,7 +389,7 @@ def train(bot_guid):
                         #         child_count += 1
                         # print(child_count)
                 #print(rasa_data['rasa_nlu_data']['common_examples'])
-                job = q.enqueue(train_bot,bot,rasa_data,words_json)
+                job = q.enqueue(train_bot,bot,rasa_data,words_json,timeout=600)
                 job_id = job.get_id()
                 print(job_id)
                 app.logger.info('GET /api/train/'+ bot_guid + ' bot training started')
