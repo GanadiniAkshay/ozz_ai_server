@@ -14,7 +14,7 @@ RUN apt-get install -y default-jre
 
 # install requirements
 RUN pip install -r requirements.txt
-RUN python -m spacy download en_core_web_md && python -m spacy link en_core_web_md en
+RUN python -m spacy download en_core_web_sm && python -m spacy link en_core_web_sm en
 
 # add app
 ADD . /usr/src/app
