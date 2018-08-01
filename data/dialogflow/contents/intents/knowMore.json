@@ -1,0 +1,31 @@
+{
+  "id": "ac742907-4aaf-4b6f-b421-477239f2f19a",
+  "name": "knowMore",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "6ac89569-4c26-4daa-bc85-eaa2f95fc795",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "knowMore",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

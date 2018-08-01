@@ -1,0 +1,31 @@
+{
+  "id": "f031fbaa-78c6-4895-9c14-6d5116f9dbd3",
+  "name": "interestedAndWeakScheduleRequest",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "6e0c27e4-d058-4fb8-91c5-4b5d19ff8ab8",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "interestedAndWeakScheduleRequest",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

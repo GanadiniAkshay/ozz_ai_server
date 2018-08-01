@@ -1,0 +1,31 @@
+{
+  "id": "cb31cc2d-9f4d-4c38-83a0-b0bd2b4197b6",
+  "name": "scheduleConfirmationRequest",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "21948c50-a00a-4dff-aa64-7fb7c1af964b",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "scheduleConfirmationRequest",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

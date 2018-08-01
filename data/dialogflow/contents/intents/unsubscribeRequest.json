@@ -1,0 +1,31 @@
+{
+  "id": "daedc2e8-ee8f-4533-9eaa-9abe89e8be4e",
+  "name": "unsubscribeRequest",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "c9c38c17-005b-4412-a7c9-5a0c6647054c",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "unsubscribeRequest",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

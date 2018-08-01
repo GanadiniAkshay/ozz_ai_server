@@ -1,0 +1,31 @@
+{
+  "id": "c4f5174a-d1c5-4206-a74b-917418d3e31e",
+  "name": "leadCallingClientDirectly",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "cdb33fc2-991e-4abd-b6b8-1bcc41cac59d",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "leadCallingClientDirectly",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

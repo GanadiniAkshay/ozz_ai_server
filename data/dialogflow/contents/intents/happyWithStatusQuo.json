@@ -1,0 +1,31 @@
+{
+  "id": "8dc8b0a0-54ea-47d0-a097-313c1676e34b",
+  "name": "happyWithStatusQuo",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "f3e0dc24-d345-4094-b0e4-bd3dd4a8dd59",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "happyWithStatusQuo",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

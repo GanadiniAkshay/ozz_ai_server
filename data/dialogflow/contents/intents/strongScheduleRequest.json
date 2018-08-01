@@ -1,0 +1,31 @@
+{
+  "id": "dd1f6285-f6d9-4eb0-a74e-31b505f507f5",
+  "name": "strongScheduleRequest",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "e5fbecd9-3321-4b35-9bbb-0499026e4a9a",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "strongScheduleRequest",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

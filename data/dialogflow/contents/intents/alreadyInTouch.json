@@ -1,0 +1,31 @@
+{
+  "id": "d97a3178-6719-49b6-8551-b3d0d548c9e8",
+  "name": "alreadyInTouch",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "bdb7d9b0-9107-462f-90ca-962ea8b5951b",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "alreadyInTouch",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

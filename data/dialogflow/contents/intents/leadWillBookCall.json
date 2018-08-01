@@ -1,0 +1,31 @@
+{
+  "id": "eab6f200-b56f-4eb9-8655-846a95faecfb",
+  "name": "leadWillBookCall",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "253ef8f4-8de2-467a-ba1f-711672fa7364",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "leadWillBookCall",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

@@ -1,0 +1,31 @@
+{
+  "id": "dc0abd91-734a-4bc4-ae34-afd749c31ea8",
+  "name": "busyWillRevertLater",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "6db3f39c-f5ab-46c8-9632-17da4f3440b1",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "busyWillRevertLater",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

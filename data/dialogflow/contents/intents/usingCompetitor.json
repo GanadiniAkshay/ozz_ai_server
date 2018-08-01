@@ -1,0 +1,31 @@
+{
+  "id": "6e0556f9-59c6-4a03-89b3-5310ebc1dddd",
+  "name": "usingCompetitor",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "2d8d1a26-0926-49cb-b716-f68ad46b83ab",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "usingCompetitor",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

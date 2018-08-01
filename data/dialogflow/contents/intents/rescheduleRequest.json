@@ -1,0 +1,31 @@
+{
+  "id": "33e553ec-325c-4eec-a315-96ebbda8caa5",
+  "name": "rescheduleRequest",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "f7f126c1-38d0-4baf-a11e-0dbd87f8f4c0",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "rescheduleRequest",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

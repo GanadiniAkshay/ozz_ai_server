@@ -1,0 +1,31 @@
+{
+  "id": "aedfb139-a24a-478b-aed0-4386416013e9",
+  "name": "leadSendsCalendarLink",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "af3366c8-8f47-4550-b656-06b7ae26e0a3",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "leadSendsCalendarLink",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

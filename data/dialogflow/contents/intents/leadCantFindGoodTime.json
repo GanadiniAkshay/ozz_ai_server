@@ -1,0 +1,31 @@
+{
+  "id": "d648aa12-1835-4476-9d6c-1565b3f7e357",
+  "name": "leadCantFindGoodTime",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "1ea7191a-bbd8-4595-b14a-c6a790d19d56",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "leadCantFindGoodTime",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

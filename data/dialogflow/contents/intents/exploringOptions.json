@@ -1,0 +1,31 @@
+{
+  "id": "271d2711-fade-4d32-a319-633e918a5f28",
+  "name": "exploringOptions",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "fc8a3c0c-318f-4f23-95d1-fbc1b4b89508",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "exploringOptions",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

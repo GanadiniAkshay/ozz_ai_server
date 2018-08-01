@@ -1,0 +1,31 @@
+{
+  "id": "175e30df-b19a-4bc1-9694-a09082e062ca",
+  "name": "leadDoesNotHaveAuthority",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "3178e90b-c126-46d3-b219-e3a320aacb56",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "leadDoesNotHaveAuthority",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

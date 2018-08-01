@@ -36,6 +36,7 @@ import operator
 import csv
 import codecs
 import ast
+import zipfile
 
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
@@ -107,11 +108,11 @@ def parse(bot_guid):
                 regex = pattern["regex"]
             else:
                 regex = pattern["regex"].lower().strip()
-            if len(regex) > 0:
-                express = re.compile(regex,re.IGNORECASE)
-                match = express.match(message)
-            else:
-                match = False
+            # if len(regex) > 0:
+            #     express = re.compile(regex,re.IGNORECASE)
+            #     match = express.match(message)
+            # else:
+            match = False
             if match:
                 is_matched = True
                 intent = intent_obj.name
@@ -553,6 +554,43 @@ def upload(bot_guid):
                 
                 data = json.load(file)
                 load_from_json(data,bot,bot_guid)
+                app.logger.info('POST /api/upload/'+ bot_guid + ' successfully uploaded ozz data')
+                return jsonify({"filename":filename,"type":file.content_type})
+            else:
+                app.logger.warning('POST /api/upload/'+ bot_guid + ' not authorized')
+                return jsonify({"error":"Not Authorized"}),401
+        else:
+            app.logger.warning('POST /api/upload/'+ bot_guid + ' bot does not exist')
+            return jsonify({"error":"Bot doesn't exist"}),404
+    elif code == 400:
+        app.logger.warning('POST /api/upload/'+ bot_guid + ' invalid authorization token')
+        return jsonify({"error":"Invalid Authorization Token"}),400
+    elif code == 401:
+        app.logger.warning('POST /api/upload/'+ bot_guid + ' no authorization token sent')
+        return jsonify({"error":"No Authorization Token Sent"}),401
+
+
+@nlu_blueprint.route('/api/upload_dialogflow/<bot_guid>', methods=['POST'])
+def upload_dialogflow(bot_guid):
+    code,user_id = checkAuth(request)
+
+    if code == 200:
+        bot = Bot.query.filter_by(bot_guid=bot_guid).first()
+        if bot:
+            if bot.user_id == user_id:
+                #Get the file information
+                file = request.files['file']
+                filename = secure_filename(file.filename)
+                
+                print(filename)
+                path = os.path.join(os.getcwd(), 'data/dialogflow')
+                file.save(path+'/dialogflow.zip')
+                try:
+                    zip_ref = zipfile.ZipFile(os.path.join(path, 'dialogflow.zip'), 'r')
+                    zip_ref.extractall(path+'/contents')
+                    zip_ref.close()
+                except Exception as e:
+                    print(str(e))
                 app.logger.info('POST /api/upload/'+ bot_guid + ' successfully uploaded ozz data')
                 return jsonify({"filename":filename,"type":file.content_type})
             else:

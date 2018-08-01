@@ -1,0 +1,31 @@
+{
+  "id": "6665fd67-693e-4b91-a9d1-e5fda2f469e6",
+  "name": "greeting",
+  "auto": true,
+  "contexts": [],
+  "responses": [
+    {
+      "resetContexts": false,
+      "affectedContexts": [],
+      "parameters": [
+        {
+          "id": "bf8effed-0ce4-4b03-bcbb-b8a9843ab494",
+          "required": false,
+          "dataType": "",
+          "name": "intent",
+          "value": "greeting",
+          "isList": false
+        }
+      ],
+      "messages": [],
+      "defaultResponsePlatforms": {},
+      "speech": []
+    }
+  ],
+  "priority": 500000,
+  "webhookUsed": false,
+  "webhookForSlotFilling": false,
+  "lastUpdate": 1528975783,
+  "fallbackIntent": false,
+  "events": []
+}

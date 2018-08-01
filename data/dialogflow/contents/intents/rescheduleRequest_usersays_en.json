@@ -1,0 +1,158 @@
+[
+  {
+    "id": "f6e2de16-7042-40b8-a5ca-e068b1344027",
+    "data": [
+      {
+        "text": "time -SCRIBETIME- to reschedule the product demo.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "10fb1b11-50cd-4d9f-a40a-605289e2ba7d",
+    "data": [
+      {
+        "text": "is it ok for you if we scheduled it -SCRIBETIME- instead of -SCRIBETIME- ?",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "52124f8f-ab68-4842-b74e-f3e066a68533",
+    "data": [
+      {
+        "text": "As per trailing email -SCRIBETIME- is suitable for us.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "5bec66c5-7900-44f4-a71f-e0b3d64c2de6",
+    "data": [
+      {
+        "text": "email Megan back -SCRIBETIME-",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "175c4498-10cd-40cf-b48a-5917de717ebd",
+    "data": [
+      {
+        "text": "will be unable to contact Megan -SCRIBETIME-.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "16376e0d-6e98-4864-b900-a872028d7bcc",
+    "data": [
+      {
+        "text": "-SCRIBETIME- is not the best time for me.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "f136ac96-c5a0-4802-b0a5-7c062637cdf0",
+    "data": [
+      {
+        "text": "can not set up a call in this period of time.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "af1a14b0-6627-4376-96d1-84e2099b6408",
+    "data": [
+      {
+        "text": "We\u0027d have to reschedule it for -SCRIBETIME-.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "fda386d9-656b-4371-80ef-0be445453de3",
+    "data": [
+      {
+        "text": "Sorry that I can not talk to you -SCRIBETIME-!",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "dd906f6e-0f66-456c-9374-7115a87ccfde",
+    "data": [
+      {
+        "text": "if we can reschedule our meeting/discussion -SCRIBETIME-",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 1,
+    "updated": 1528975783
+  },
+  {
+    "id": "817bf509-fa87-46ae-bf48-9b2f2d0e3c8c",
+    "data": [
+      {
+        "text": "Hello Anushrut We can have a call -SCRIBETIME- post -SCRIBETIME- (2pm - 4pm)",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "9ce71455-3e9c-4091-80f7-9fd7d81f9be2",
+    "data": [
+      {
+        "text": "I have postponed our meeting -SCRIBETIME-.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  },
+  {
+    "id": "5ac63ffe-f2bf-4694-9629-1a60c6e86e75",
+    "data": [
+      {
+        "text": "my calendar is very full over the -SCRIBETIME-.",
+        "userDefined": false
+      }
+    ],
+    "isTemplate": false,
+    "count": 0,
+    "updated": 1528975783
+  }
+]

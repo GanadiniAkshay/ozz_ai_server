@@ -76,7 +76,7 @@ def update_bots(bot_guid):
             return jsonify({"error":"Bot Not Found"}),404
         if bot.user_id == user_id:
             if request.method == 'PUT':
-                print('here')
+                # print('here')
                 put_data = request.get_json()
 
                 if 'last_trained' in put_data and bot.last_trained != put_data['last_trained']:
