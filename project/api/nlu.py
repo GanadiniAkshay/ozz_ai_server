@@ -49,6 +49,7 @@ def parse_duckling():
 @nlu_blueprint.route('/api/parse/<bot_guid>', methods=['GET','POST'])
 def parse(bot_guid):
     start_time = time.time()
+    entities = []
     global interpreters
     nlus = interpreters
     config = './project/config.json'
@@ -64,262 +65,41 @@ def parse(bot_guid):
     bot = Bot.query.filter_by(bot_guid=bot_guid).first()
     if bot:
         model = bot.active_model
-        words_json = json.loads(bot.words)
-        key = bot_guid+"_"+message
-        if redis_db.exists(key):
-            event = redis_db.hgetall(key)
-            intent = str(event[b'intent'],'utf-8')
-            print('redis')
-            print(intent)
-            is_ozz = intent.split('.')[0] == 'ozz'
-            if not is_ozz:
-                entities = ast.literal_eval(str(event[b'entities'],'utf-8'))
-                response = ""
-                intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
-                if intent_obj:
-                    intent_obj.calls += 1
-                    if (len(intent_obj.responses) > 0):
-                        response = random.choice(intent_obj.responses)
-                end_time =time.time()
-                print(str(end_time - start_time))
-                app.logger.info('/api/parse/'+ bot_guid + ' parsed intents and entities ' + str(end_time - start_time))
-                return jsonify({"intent":intent,"entities":entities,"response":response})
-
-        if type(words_json) == str:
-            words_json = {}
         if model:
             nlu = nlus[model]
+            message = message.lower()
+            intent, confidence = nlu.parse(message)
+            response = ""
+            intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
+            if intent_obj:
+                intent_obj.calls += 1
+                if (len(intent_obj.responses) > 0):
+                    response = random.choice(intent_obj.responses)
+                db.session.commit()
+            end_time = time.time()
+            runtime = str(end_time - start_time)
+            if intent == 'None':
+                confident = False
+            else:
+                confident = True
+            row = Analytics(
+                        message = message,
+                        bot_guid=bot_guid,
+                        intent=intent,
+                        response_time = runtime,
+                        confident=confident,
+                        entities= entities
+                    )
+            db.session.add(row)
+            db.session.commit()
+            app.logger.info('/api/parse/'+ bot_guid + ' bot successfully parsed')
+            return jsonify({"intent":intent,"response":response,"confidence":confidence})
         else:
             app.logger.error('/api/parse/'+ bot_guid + ' bot not trained')
             return jsonify({"error":"Please train the bot before testing"})
     else:
         app.logger.warning('/api/parse/'+ bot_guid + ' bot does not exist')
         return jsonify({"error":"Bot doesn't exist"}),404
-
-    message = message.lower()
-
-    regex_match = False
-    intents = Intent.query.filter_by(bot_guid=bot_guid)
-    entities = []
-    response = ""
-    is_matched = False
-    for intent_obj in intents:
-        if is_matched:
-            break
-        patterns = intent_obj.patterns
-        for pattern in patterns:
-            pattern = json.loads(pattern)
-            if (intent_obj.name[:5] == 'eliza'):
-                regex = pattern["regex"]
-            else:
-                regex = pattern["regex"].lower().strip()
-            # if len(regex) > 0:
-            #     express = re.compile(regex,re.IGNORECASE)
-            #     match = express.match(message)
-            # else:
-            match = False
-            if match:
-                is_matched = True
-                intent = intent_obj.name
-                print("regex")
-                print(intent)
-                intent_obj.calls += 1
-                db.session.commit()
-                regex_match = True
-                entity_start = 0
-                entity_end = -1
-                parameters = pattern['entities']
-                ents ={}
-                reflections = {
-                    " am ": " are ",
-                    " was ": " were ",
-                    " i ": " you ",
-                    " yourself ":" myself ",
-                    " i'd ": " you would ",
-                    " i've ": " you have ",
-                    " i'll ": " you will ",
-                    " my ": " your ",
-                    " are ": " am ",
-                    " you've ": " I have",
-                    " you'll ": " I will ",
-                    " your ": " my ",
-                    " yours ": " mine ",
-                    " you ": " me ",
-                    " me ": " you "
-                }
-                for parameter in parameters:
-                    if parameter['first'] != -1:
-                        entity_start = parameter['first']
-                        if parameter['post'] and parameter['post'] in message:
-                            entity_end = entity_start + message[entity_start:].index(parameter['post'])
-                        if entity_end == -1:
-                            entity_value = message[entity_start:]
-                        else:
-                            entity_value = message[entity_start:entity_end]
-                        entity_name = parameter['entity'][1:]
-                        if entity_name[-1] == '?' or entity_name[-1] == ',' or entity_name[-1] == '.':
-                            entity_name = entity_name[:-1]
-                        if entity_value[-1] == '?' or entity_value[-1] == '?' or entity_value[-1] == '.':
-                            entity_value = entity_value[:-1]
-                        for reflect in reflections:
-                            if reflect in entity_value:
-                                entity_value = entity_value.replace(reflect,reflections[reflect])
-                        ents[entity_name] = entity_value
-                        entities.append({"entity":entity_name,"value":entity_value,"type":"regex","start":entity_start, "end":entity_start + len(entity_value)})
-                    else:
-                        mid_expression= message[entity_end:]
-                        if parameter['prior'] and parameter['prior'] in mid_expression:
-                            entity_start = mid_expression.index(parameter['prior']) + len(parameter['prior']) + 1
-                        if parameter['post'] and parameter['post'] in mid_expression:
-                            entity_end = mid_expression.index(parameter['post'])
-                        else:
-                            entity_end = -1
-                        if entity_end == -1:
-                            entity_value = mid_expression[entity_start:]
-                        else:
-                            entity_value = mid_expression[entity_start:entity_end]
-                        start = message.index(entity_value)
-                        entity_name = parameter['entity'][1:]
-                        ents[entity_name] = entity_value
-                        if entity_name[-1] == '?' or entity_name[-1] == ',' or entity_name[-1] == '.':
-                            entity_name = entity_name[:-1]
-                        if entity_value[-1] == '?' or entity_value[-1] == ',' or entity_value[-1] == '.':
-                            entity_value = entity_value[:-1]
-                        for reflect in reflections:
-                            if reflect in entity_value:
-                                entity_value = entity_value.replace(reflect,reflections[reflect])
-                        ents[entity_name] = entity_value
-                        entities.append({"entity":entity_name,"value":entity_value,"type":"regex","start":start,"end":start + len(entity_value)})
-                if len(intent_obj.responses) > 0:
-                    response = random.choice(intent_obj.responses).lower()
-                    resp_words = response.split(" ")
-                    print(ents)
-                    for word in resp_words:
-                        if len(word)>0 and word[0] == '@':
-                            ent = word[1:]
-                            print(ent)
-                            if ent[-1] == '?' or ent[-1] == '.' or ent[-1] == ',':
-                                ent = ent[:-1]
-                                word = word[:-1]
-                            print(ent)
-                            if ent in ents:
-                                response = response.replace(word,ents[ent])
-                            else:
-                                response = response.replace(word,"undefined")
-                else:
-                    response = ""
-                break
-    if not regex_match:
-        intent, confidence = nlu.parse(message)
-        # print("nlu")
-        # print(intent)
-        response = ""
-        # print(intent)
-        # print(confidence)
-        if bot.persona and (bot.persona != -1 or bot.persona !=4):
-            # print('here')
-            persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
-            # print(persona_bot)
-            if persona_bot:
-                persona_model = persona_bot.active_model
-                # print(persona_model)
-                if persona_model in nlus:
-                    # print('there')
-                    persona_nlu = nlus[persona_model]
-                    ozz_intent, ozz_entities, ozz_confidence = persona_nlu.parse(message)
-                    # print('persona')
-                    # print(ozz_intent)
-                    # print(ozz_confidence)
-                    # print(bot.persona)
-                    if bot.persona == 1 and ozz_confidence > 0.25:
-                        intent, entities = ozz_intent, ozz_entities
-                        with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
-                            responses = json.loads(jsonFile.read())
-                        if intent in responses and len(responses[intent]) > 0:
-                            response = random.choice(responses[intent])
-                        else:
-                            response = ""
-                    elif bot.persona == 2 and ozz_confidence > 0.25:
-                        intent, entities = ozz_intent, ozz_entities
-                        with open(os.getcwd() + '/data/persona/average/average.json') as jsonFile:
-                            responses = json.loads(jsonFile.read())
-                        if intent in responses and len(responses[intent]) > 0:
-                            response = random.choice(responses[intent])
-                        else:
-                            response = ""
-                    elif bot.persona == 3 and ozz_confidence > 0.25:
-                        intent, entities = ozz_intent, ozz_entities
-                        with open(os.getcwd() + '/data/persona/professional/professional.json') as jsonFile:
-                            responses = json.loads(jsonFile.read())
-                        if intent in responses and len(responses[intent]) > 0:
-                            response = random.choice(responses[intent])
-                        else:
-                            response = ""
-        # if intent != 'None':
-        intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
-        if intent_obj:
-            intent_obj.calls += 1
-            if (len(intent_obj.responses) > 0):
-                response = random.choice(intent_obj.responses)
-            db.session.commit()
-        # else:
-            # intent = "None"
-            # message_words = message.split(" ")
-            # scores = {}
-            # for word in message_words:
-            #     if word in stopWords:
-            #         continue
-            #     elif word in words_json:
-            #         intents = words_json[word]
-            #         for intent_key in intents:
-            #             if intent_key in scores:
-            #                 scores[intent_key] += intents[intent_key]
-            #             else:
-            #                 scores[intent_key] = intents[intent_key]
-
-            # scores = sorted(scores.items(),key = operator.itemgetter(1),reverse = True)
-
-            # if len(scores) > 0:
-            #     intent = scores[0][0]
-            #     print("words")
-            #     print(intent)
-            #     intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
-            #     if intent_obj:
-            #         intent_obj.calls += 1
-            #         if (len(intent_obj.responses) > 0):
-            #             response = random.choice(intent_obj.responses)
-            #         db.session.commit()
-            #         # else:
-            #         #     eliza = Eliza()
-            #         #     response = eliza.analyze(message)
-    end_time = time.time()
-    runtime = str(end_time - start_time)
-    if intent == 'None':
-        confident = False
-    else:
-        confident = True
-    row = Analytics(
-                message = message,
-                bot_guid=bot_guid,
-                intent=intent,
-                response_time = runtime,
-                confident=confident,
-                entities= entities
-            )
-    db.session.add(row)
-    db.session.commit()
-    # redis_db.hmset(bot_guid + "_" + message,intent)
-    key=bot_guid+"_"+message
-    event = {}
-    event["intent"] = intent
-    event["response"] = response
-    event["confidence"] = confidence
-    redis_db.delete(key) #remove old keys
-    redis_db.hmset(key, event)
-    redis_db.expire(key, 259200)
-    app.logger.info('/api/parse/'+ bot_guid + ' bot successfully parsed')
-    return jsonify({"intent":intent,"response":response,"confidence":confidence})
-    
 
 
 @nlu_blueprint.route('/api/train/<bot_guid>', methods=['GET'])
