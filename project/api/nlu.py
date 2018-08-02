@@ -40,6 +40,11 @@ import zipfile
 
 nlu_blueprint = Blueprint('nlu', __name__, template_folder='./templates')
 
+@nlu_blueprint.route('/api/parse_duckling',methods=['POST'])
+def parse_duckling():
+    text = request.form.get('text')
+    duckling_entities = d.parse(text)
+    return jsonify(duckling_entities)
 
 @nlu_blueprint.route('/api/parse/<bot_guid>', methods=['GET','POST'])
 def parse(bot_guid):
@@ -206,26 +211,26 @@ def parse(bot_guid):
                 break
     if not regex_match:
         intent, entities, confidence = nlu.parse(message)
-        print("nlu")
-        print(intent)
+        # print("nlu")
+        # print(intent)
         response = ""
         # print(intent)
-        print(confidence)
+        # print(confidence)
         if bot.persona and (bot.persona != -1 or bot.persona !=4):
-            print('here')
+            # print('here')
             persona_bot = Bot.query.filter_by(name='ozzpersonainternal7856').first()
-            print(persona_bot)
+            # print(persona_bot)
             if persona_bot:
                 persona_model = persona_bot.active_model
-                print(persona_model)
+                # print(persona_model)
                 if persona_model in nlus:
-                    print('there')
+                    # print('there')
                     persona_nlu = nlus[persona_model]
                     ozz_intent, ozz_entities, ozz_confidence = persona_nlu.parse(message)
-                    print('persona')
-                    print(ozz_intent)
-                    print(ozz_confidence)
-                    print(bot.persona)
+                    # print('persona')
+                    # print(ozz_intent)
+                    # print(ozz_confidence)
+                    # print(bot.persona)
                     if bot.persona == 1 and ozz_confidence > 0.25:
                         intent, entities = ozz_intent, ozz_entities
                         with open(os.getcwd() + '/data/persona/millenial/millenial.json') as jsonFile:
@@ -250,43 +255,43 @@ def parse(bot_guid):
                             response = random.choice(responses[intent])
                         else:
                             response = ""
-        if intent != 'None':
-            intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
-            if intent_obj:
-                intent_obj.calls += 1
-                if (len(intent_obj.responses) > 0):
-                    response = random.choice(intent_obj.responses)
-                db.session.commit()
-        else:
-            intent = "None"
-            message_words = message.split(" ")
-            scores = {}
-            for word in message_words:
-                if word in stopWords:
-                    continue
-                elif word in words_json:
-                    intents = words_json[word]
-                    for intent_key in intents:
-                        if intent_key in scores:
-                            scores[intent_key] += intents[intent_key]
-                        else:
-                            scores[intent_key] = intents[intent_key]
+        # if intent != 'None':
+        intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
+        if intent_obj:
+            intent_obj.calls += 1
+            if (len(intent_obj.responses) > 0):
+                response = random.choice(intent_obj.responses)
+            db.session.commit()
+        # else:
+            # intent = "None"
+            # message_words = message.split(" ")
+            # scores = {}
+            # for word in message_words:
+            #     if word in stopWords:
+            #         continue
+            #     elif word in words_json:
+            #         intents = words_json[word]
+            #         for intent_key in intents:
+            #             if intent_key in scores:
+            #                 scores[intent_key] += intents[intent_key]
+            #             else:
+            #                 scores[intent_key] = intents[intent_key]
 
-            scores = sorted(scores.items(),key = operator.itemgetter(1),reverse = True)
+            # scores = sorted(scores.items(),key = operator.itemgetter(1),reverse = True)
 
-            if len(scores) > 0:
-                intent = scores[0][0]
-                print("words")
-                print(intent)
-                intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
-                if intent_obj:
-                    intent_obj.calls += 1
-                    if (len(intent_obj.responses) > 0):
-                        response = random.choice(intent_obj.responses)
-                    db.session.commit()
-                    # else:
-                    #     eliza = Eliza()
-                    #     response = eliza.analyze(message)
+            # if len(scores) > 0:
+            #     intent = scores[0][0]
+            #     print("words")
+            #     print(intent)
+            #     intent_obj = Intent.query.filter_by(bot_guid=bot_guid).filter_by(name=intent).first()
+            #     if intent_obj:
+            #         intent_obj.calls += 1
+            #         if (len(intent_obj.responses) > 0):
+            #             response = random.choice(intent_obj.responses)
+            #         db.session.commit()
+            #         # else:
+            #         #     eliza = Eliza()
+            #         #     response = eliza.analyze(message)
     end_time = time.time()
     runtime = str(end_time - start_time)
     if intent == 'None':
@@ -309,11 +314,12 @@ def parse(bot_guid):
     event["intent"] = intent
     event["entities"] = entities
     event["response"] = response
+    event["confidence"] = confidence
     redis_db.delete(key) #remove old keys
     redis_db.hmset(key, event)
     redis_db.expire(key, 259200)
     app.logger.info('/api/parse/'+ bot_guid + ' bot successfully parsed')
-    return jsonify({"intent":intent,"entities":entities,"response":response})
+    return jsonify({"intent":intent,"entities":entities,"response":response,"confidence":confidence})
     
 
 

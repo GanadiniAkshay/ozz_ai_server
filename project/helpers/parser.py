@@ -28,21 +28,21 @@ class NLUParser(object):
         else:
             confidence = parsed_data['intent']['confidence']
             intent = parsed_data['intent']['name']
-            entities = []
-            for ent in parsed_data['entities']:
-                entities.append({"entity":ent['entity'],"value":ent['value'],"start":ent['start'],"end":ent['end'],'type':'builtin'})
-            duckling_entities = d.parse(message)
-            for ent in duckling_entities:
-                if ent['dim'] == 'time':
-                    if ent['value']['type'] == 'interval':
-                        entities.append({"entity":'interval','type':'duckling',"start":ent['start'],"end":ent['end'],"value":[{"from":ent['value']['from']['value'], "to":ent['value']['to']['value']}]})
-                    elif ent['value']['type'] == 'value':
-                        entities.append({"entity":"date",'type':'duckling',"start":ent['start'],"end":ent['end'],"value":ent['value']['value']})
-            doc = nlp(message.title())
-            spacy_entities = []
-            for ent in doc.ents:
-                if ent.label_ == 'GPE':
-                    start = message.title().find(ent.text)
-                    end = start + len(ent.text)
-                    entities.append({"entity": ent.label_, "start": start, "end": end,"value":ent.text,'type':'spacy'})
-        return intent,entities,confidence
+            # entities = []
+            # for ent in parsed_data['entities']:
+            #     entities.append({"entity":ent['entity'],"value":ent['value'],"start":ent['start'],"end":ent['end'],'type':'builtin'})
+            # duckling_entities = d.parse(message)
+            # for ent in duckling_entities:
+            #     if ent['dim'] == 'time':
+            #         if ent['value']['type'] == 'interval':
+            #             entities.append({"entity":'interval','type':'duckling',"start":ent['start'],"end":ent['end'],"value":[{"from":ent['value']['from']['value'], "to":ent['value']['to']['value']}]})
+            #         elif ent['value']['type'] == 'value':
+            #             entities.append({"entity":"date",'type':'duckling',"start":ent['start'],"end":ent['end'],"value":ent['value']['value']})
+            # doc = nlp(message.title())
+            # spacy_entities = []
+            # for ent in doc.ents:
+            #     if ent.label_ == 'GPE':
+            #         start = message.title().find(ent.text)
+            #         end = start + len(ent.text)
+            #         entities.append({"entity": ent.label_, "start": start, "end": end,"value":ent.text,'type':'spacy'})
+        return intent,confidence
