@@ -210,7 +210,7 @@ def parse(bot_guid):
                     response = ""
                 break
     if not regex_match:
-        intent, entities, confidence = nlu.parse(message)
+        intent, confidence = nlu.parse(message)
         # print("nlu")
         # print(intent)
         response = ""
@@ -312,14 +312,13 @@ def parse(bot_guid):
     key=bot_guid+"_"+message
     event = {}
     event["intent"] = intent
-    event["entities"] = entities
     event["response"] = response
     event["confidence"] = confidence
     redis_db.delete(key) #remove old keys
     redis_db.hmset(key, event)
     redis_db.expire(key, 259200)
     app.logger.info('/api/parse/'+ bot_guid + ' bot successfully parsed')
-    return jsonify({"intent":intent,"entities":entities,"response":response,"confidence":confidence})
+    return jsonify({"intent":intent,"response":response,"confidence":confidence})
     
 
 
