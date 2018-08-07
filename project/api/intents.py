@@ -55,11 +55,7 @@ def intent(bot_guid,intent_name):
                         intent_obj['responses'] = intent.responses
                         intent_obj['utterances'] = []
                         for utterance in intent.utterances:
-                            if nlu:
-                                int, entities, confidence = nlu.parse(utterance)
-                            else:
-                                entities = []
-                            intent_obj['utterances'].append({"utterance":utterance,"entities":entities})
+                            intent_obj['utterances'].append({"utterance":utterance,"entities":[]})
                         try:
                             db.session.commit()
                         except Exception as e:
